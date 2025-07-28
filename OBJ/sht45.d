@@ -1,11 +1,11 @@
 ..\obj\sht45.o: ..\HARDWARE\SHT45\sht45.c
-..\obj\sht45.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\math.h
-..\obj\sht45.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdbool.h
+..\obj\sht45.o: G:\MDK5\ARM\ARMCC\Bin\..\include\math.h
+..\obj\sht45.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\sht45.o: ..\SYSTEM\delay\delay.h
 ..\obj\sht45.o: ..\SYSTEM\sys\sys.h
 ..\obj\sht45.o: ..\USER\stm32f4xx.h
 ..\obj\sht45.o: ..\CORE\core_cm4.h
-..\obj\sht45.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdint.h
+..\obj\sht45.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdint.h
 ..\obj\sht45.o: ..\CORE\core_cmInstr.h
 ..\obj\sht45.o: ..\CORE\core_cmFunc.h
 ..\obj\sht45.o: ..\CORE\core_cm4_simd.h
@@ -41,4 +41,4 @@
 ..\obj\sht45.o: ..\HARDWARE\SHT45\sht45.h
 ..\obj\sht45.o: ..\HARDWARE\IIC\myiic.h
 ..\obj\sht45.o: ..\SYSTEM\usart\usart.h
-..\obj\sht45.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdio.h
+..\obj\sht45.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdio.h
