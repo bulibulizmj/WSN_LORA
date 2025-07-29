@@ -1,12 +1,12 @@
 ..\obj\tasks.o: ..\FreeRTOS\tasks.c
-..\obj\tasks.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdlib.h
-..\obj\tasks.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\string.h
+..\obj\tasks.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdlib.h
+..\obj\tasks.o: G:\MDK5\ARM\ARMCC\Bin\..\include\string.h
 ..\obj\tasks.o: ..\FreeRTOS\include\FreeRTOS.h
-..\obj\tasks.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stddef.h
-..\obj\tasks.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdint.h
+..\obj\tasks.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stddef.h
+..\obj\tasks.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdint.h
 ..\obj\tasks.o: ..\FreeRTOS\include\FreeRTOSConfig.h
 ..\obj\tasks.o: ..\SYSTEM\usart\usart.h
-..\obj\tasks.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdio.h
+..\obj\tasks.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\tasks.o: ..\USER\stm32f4xx_conf.h
 ..\obj\tasks.o: ..\FWLIB\inc\stm32f4xx_adc.h
 ..\obj\tasks.o: ..\USER\stm32f4xx.h
@@ -44,7 +44,7 @@
 ..\obj\tasks.o: ..\SYSTEM\sys\sys.h
 ..\obj\tasks.o: ..\HARDWARE\timer\timer.h
 ..\obj\tasks.o: ..\SYSTEM\mb_usart\Mb_usart.h
-..\obj\tasks.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdbool.h
+..\obj\tasks.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\tasks.o: ..\SYSTEM\freertos_demo\freertos_demo.h
 ..\obj\tasks.o: ..\FreeRTOS\include\projdefs.h
 ..\obj\tasks.o: ..\FreeRTOS\include\portable.h

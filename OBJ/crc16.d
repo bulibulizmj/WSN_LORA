@@ -1,11 +1,11 @@
 ..\obj\crc16.o: ..\HARDWARE\CRC16\crc16.c
 ..\obj\crc16.o: ..\HARDWARE\CRC16\crc16.h
-..\obj\crc16.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdio.h
+..\obj\crc16.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\crc16.o: ..\USER\stm32f4xx_conf.h
 ..\obj\crc16.o: ..\FWLIB\inc\stm32f4xx_adc.h
 ..\obj\crc16.o: ..\USER\stm32f4xx.h
 ..\obj\crc16.o: ..\CORE\core_cm4.h
-..\obj\crc16.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdint.h
+..\obj\crc16.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdint.h
 ..\obj\crc16.o: ..\CORE\core_cmInstr.h
 ..\obj\crc16.o: ..\CORE\core_cmFunc.h
 ..\obj\crc16.o: ..\CORE\core_cm4_simd.h

@@ -1,11 +1,11 @@
 ..\obj\mdbs_func.o: ..\HARDWARE\MDBS_FUNC\mdbs_func.c
 ..\obj\mdbs_func.o: ..\HARDWARE\MDBS_FUNC\mdbs_func.h
-..\obj\mdbs_func.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdio.h
+..\obj\mdbs_func.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\mdbs_func.o: ..\USER\stm32f4xx_conf.h
 ..\obj\mdbs_func.o: ..\FWLIB\inc\stm32f4xx_adc.h
 ..\obj\mdbs_func.o: ..\USER\stm32f4xx.h
 ..\obj\mdbs_func.o: ..\CORE\core_cm4.h
-..\obj\mdbs_func.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdint.h
+..\obj\mdbs_func.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdint.h
 ..\obj\mdbs_func.o: ..\CORE\core_cmInstr.h
 ..\obj\mdbs_func.o: ..\CORE\core_cmFunc.h
 ..\obj\mdbs_func.o: ..\CORE\core_cm4_simd.h
@@ -40,4 +40,4 @@
 ..\obj\mdbs_func.o: ..\SYSTEM\mb_usart\Mb_usart.h
 ..\obj\mdbs_func.o: ..\HARDWARE\CRC16\crc16.h
 ..\obj\mdbs_func.o: ..\SYSTEM\delay\delay.h
-..\obj\mdbs_func.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdbool.h
+..\obj\mdbs_func.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdbool.h
