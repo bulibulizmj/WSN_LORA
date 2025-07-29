@@ -3,7 +3,7 @@
 ..\obj\exti.o: ..\SYSTEM\sys\sys.h
 ..\obj\exti.o: ..\USER\stm32f4xx.h
 ..\obj\exti.o: ..\CORE\core_cm4.h
-..\obj\exti.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdint.h
+..\obj\exti.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdint.h
 ..\obj\exti.o: ..\CORE\core_cmInstr.h
 ..\obj\exti.o: ..\CORE\core_cmFunc.h
 ..\obj\exti.o: ..\CORE\core_cm4_simd.h
@@ -40,13 +40,13 @@
 ..\obj\exti.o: ..\HARDWARE\LED\led.h
 ..\obj\exti.o: ..\HARDWARE\KEY\key.h
 ..\obj\exti.o: ..\FreeRTOS\include\FreeRTOS.h
-..\obj\exti.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stddef.h
+..\obj\exti.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stddef.h
 ..\obj\exti.o: ..\FreeRTOS\include\FreeRTOSConfig.h
 ..\obj\exti.o: ..\SYSTEM\usart\usart.h
-..\obj\exti.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdio.h
+..\obj\exti.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\exti.o: ..\HARDWARE\timer\timer.h
 ..\obj\exti.o: ..\SYSTEM\mb_usart\Mb_usart.h
-..\obj\exti.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdbool.h
+..\obj\exti.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\exti.o: ..\SYSTEM\freertos_demo\freertos_demo.h
 ..\obj\exti.o: ..\FreeRTOS\include\projdefs.h
 ..\obj\exti.o: ..\FreeRTOS\include\portable.h

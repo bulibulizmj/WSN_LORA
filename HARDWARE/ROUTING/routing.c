@@ -15,9 +15,9 @@
 #include "led.h"
 
 //阿里云物联网平台需要介入的参数产品秘钥 设备名称 设备秘钥
-#define PRODUCTKEY "k0puwwuG4GT"
-#define DEVICENAME   "GW_01"
-#define DEVICESECRET   "f2677adef1cb7f03a835696e9378dd3f"
+#define PRODUCTKEY "k0puwvMslxK"
+#define DEVICENAME   "test01"
+#define DEVICESECRET   "20bb28caf9e9ed27ce79b9a66cfc2f20"
 
 extern NodeAddr ADDR_MINE;                                  //节点MAC层地址，由节点节点地理坐标来定义
 extern NodeAddr ADDR_CURRENT;										            //当前通信的节点地址

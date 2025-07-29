@@ -1,11 +1,11 @@
 ..\obj\event_groups.o: ..\FreeRTOS\event_groups.c
-..\obj\event_groups.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdlib.h
+..\obj\event_groups.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdlib.h
 ..\obj\event_groups.o: ..\FreeRTOS\include\FreeRTOS.h
-..\obj\event_groups.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stddef.h
-..\obj\event_groups.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdint.h
+..\obj\event_groups.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stddef.h
+..\obj\event_groups.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdint.h
 ..\obj\event_groups.o: ..\FreeRTOS\include\FreeRTOSConfig.h
 ..\obj\event_groups.o: ..\SYSTEM\usart\usart.h
-..\obj\event_groups.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdio.h
+..\obj\event_groups.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\event_groups.o: ..\USER\stm32f4xx_conf.h
 ..\obj\event_groups.o: ..\FWLIB\inc\stm32f4xx_adc.h
 ..\obj\event_groups.o: ..\USER\stm32f4xx.h
@@ -43,7 +43,7 @@
 ..\obj\event_groups.o: ..\SYSTEM\sys\sys.h
 ..\obj\event_groups.o: ..\HARDWARE\timer\timer.h
 ..\obj\event_groups.o: ..\SYSTEM\mb_usart\Mb_usart.h
-..\obj\event_groups.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdbool.h
+..\obj\event_groups.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\event_groups.o: ..\SYSTEM\freertos_demo\freertos_demo.h
 ..\obj\event_groups.o: ..\FreeRTOS\include\projdefs.h
 ..\obj\event_groups.o: ..\FreeRTOS\include\portable.h

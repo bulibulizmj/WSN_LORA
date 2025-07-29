@@ -1,11 +1,11 @@
 ..\obj\routing.o: ..\HARDWARE\ROUTING\routing.c
 ..\obj\routing.o: ..\HARDWARE\ROUTING\routing.h
-..\obj\routing.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdio.h
+..\obj\routing.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\routing.o: ..\USER\stm32f4xx_conf.h
 ..\obj\routing.o: ..\FWLIB\inc\stm32f4xx_adc.h
 ..\obj\routing.o: ..\USER\stm32f4xx.h
 ..\obj\routing.o: ..\CORE\core_cm4.h
-..\obj\routing.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdint.h
+..\obj\routing.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdint.h
 ..\obj\routing.o: ..\CORE\core_cmInstr.h
 ..\obj\routing.o: ..\CORE\core_cmFunc.h
 ..\obj\routing.o: ..\CORE\core_cm4_simd.h
@@ -39,7 +39,7 @@
 ..\obj\routing.o: ..\SYSTEM\sys\sys.h
 ..\obj\routing.o: ..\HARDWARE\MAC\mac.h
 ..\obj\routing.o: ..\HARDWARE\CRC16\crc16.h
-..\obj\routing.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdbool.h
+..\obj\routing.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\routing.o: ..\SYSTEM\usart\usart.h
 ..\obj\routing.o: ..\HARDWARE\LORA\lora.h
 ..\obj\routing.o: ..\SYSTEM\delay\delay.h
@@ -47,7 +47,7 @@
 ..\obj\routing.o: ..\HARDWARE\ROUTING\tree_node.h
 ..\obj\routing.o: ..\SYSTEM\freertos_demo\freertos_demo.h
 ..\obj\routing.o: ..\FreeRTOS\include\FreeRTOS.h
-..\obj\routing.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stddef.h
+..\obj\routing.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stddef.h
 ..\obj\routing.o: ..\FreeRTOS\include\FreeRTOSConfig.h
 ..\obj\routing.o: ..\HARDWARE\timer\timer.h
 ..\obj\routing.o: ..\SYSTEM\mb_usart\Mb_usart.h
@@ -63,7 +63,7 @@
 ..\obj\routing.o: ..\FreeRTOS\include\event_groups.h
 ..\obj\routing.o: ..\FreeRTOS\include\timers.h
 ..\obj\routing.o: ..\HARDWARE\FLASH\flash.h
-..\obj\routing.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\string.h
+..\obj\routing.o: G:\MDK5\ARM\ARMCC\Bin\..\include\string.h
 ..\obj\routing.o: ..\HARDWARE\SHT45\sht45.h
 ..\obj\routing.o: ..\HARDWARE\IIC\myiic.h
 ..\obj\routing.o: ..\HARDWARE\BMP280\bmp280.h

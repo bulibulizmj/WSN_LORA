@@ -1,12 +1,12 @@
 ..\obj\queue.o: ..\FreeRTOS\queue.c
-..\obj\queue.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdlib.h
-..\obj\queue.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\string.h
+..\obj\queue.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdlib.h
+..\obj\queue.o: G:\MDK5\ARM\ARMCC\Bin\..\include\string.h
 ..\obj\queue.o: ..\FreeRTOS\include\FreeRTOS.h
-..\obj\queue.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stddef.h
-..\obj\queue.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdint.h
+..\obj\queue.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stddef.h
+..\obj\queue.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdint.h
 ..\obj\queue.o: ..\FreeRTOS\include\FreeRTOSConfig.h
 ..\obj\queue.o: ..\SYSTEM\usart\usart.h
-..\obj\queue.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdio.h
+..\obj\queue.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\queue.o: ..\USER\stm32f4xx_conf.h
 ..\obj\queue.o: ..\FWLIB\inc\stm32f4xx_adc.h
 ..\obj\queue.o: ..\USER\stm32f4xx.h
@@ -44,7 +44,7 @@
 ..\obj\queue.o: ..\SYSTEM\sys\sys.h
 ..\obj\queue.o: ..\HARDWARE\timer\timer.h
 ..\obj\queue.o: ..\SYSTEM\mb_usart\Mb_usart.h
-..\obj\queue.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdbool.h
+..\obj\queue.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\queue.o: ..\SYSTEM\freertos_demo\freertos_demo.h
 ..\obj\queue.o: ..\FreeRTOS\include\projdefs.h
 ..\obj\queue.o: ..\FreeRTOS\include\portable.h

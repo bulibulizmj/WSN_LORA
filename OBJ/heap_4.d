@@ -1,12 +1,12 @@
 ..\obj\heap_4.o: ..\FreeRTOS\portable\MemMang\heap_4.c
-..\obj\heap_4.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdlib.h
-..\obj\heap_4.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\string.h
+..\obj\heap_4.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdlib.h
+..\obj\heap_4.o: G:\MDK5\ARM\ARMCC\Bin\..\include\string.h
 ..\obj\heap_4.o: ..\FreeRTOS\include\FreeRTOS.h
-..\obj\heap_4.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stddef.h
-..\obj\heap_4.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdint.h
+..\obj\heap_4.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stddef.h
+..\obj\heap_4.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdint.h
 ..\obj\heap_4.o: ..\FreeRTOS\include\FreeRTOSConfig.h
 ..\obj\heap_4.o: ..\SYSTEM\usart\usart.h
-..\obj\heap_4.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdio.h
+..\obj\heap_4.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\heap_4.o: ..\USER\stm32f4xx_conf.h
 ..\obj\heap_4.o: ..\FWLIB\inc\stm32f4xx_adc.h
 ..\obj\heap_4.o: ..\USER\stm32f4xx.h
@@ -44,7 +44,7 @@
 ..\obj\heap_4.o: ..\SYSTEM\sys\sys.h
 ..\obj\heap_4.o: ..\HARDWARE\timer\timer.h
 ..\obj\heap_4.o: ..\SYSTEM\mb_usart\Mb_usart.h
-..\obj\heap_4.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdbool.h
+..\obj\heap_4.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\heap_4.o: ..\SYSTEM\freertos_demo\freertos_demo.h
 ..\obj\heap_4.o: ..\FreeRTOS\include\projdefs.h
 ..\obj\heap_4.o: ..\FreeRTOS\include\portable.h

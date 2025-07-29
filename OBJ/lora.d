@@ -3,7 +3,7 @@
 ..\obj\lora.o: ..\SYSTEM\sys\sys.h
 ..\obj\lora.o: ..\USER\stm32f4xx.h
 ..\obj\lora.o: ..\CORE\core_cm4.h
-..\obj\lora.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdint.h
+..\obj\lora.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdint.h
 ..\obj\lora.o: ..\CORE\core_cmInstr.h
 ..\obj\lora.o: ..\CORE\core_cmFunc.h
 ..\obj\lora.o: ..\CORE\core_cm4_simd.h
@@ -36,12 +36,12 @@
 ..\obj\lora.o: ..\FWLIB\inc\stm32f4xx_dac.h
 ..\obj\lora.o: ..\FWLIB\inc\stm32f4xx_dcmi.h
 ..\obj\lora.o: ..\FWLIB\inc\stm32f4xx_fsmc.h
-..\obj\lora.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdio.h
+..\obj\lora.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\lora.o: ..\SYSTEM\delay\delay.h
 ..\obj\lora.o: ..\SYSTEM\usart\usart.h
 ..\obj\lora.o: ..\HARDWARE\MAC\mac.h
 ..\obj\lora.o: ..\HARDWARE\CRC16\crc16.h
-..\obj\lora.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdbool.h
+..\obj\lora.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\lora.o: ..\HARDWARE\LORA\lora.h
-..\obj\lora.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdlib.h
-..\obj\lora.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\string.h
+..\obj\lora.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdlib.h
+..\obj\lora.o: G:\MDK5\ARM\ARMCC\Bin\..\include\string.h
