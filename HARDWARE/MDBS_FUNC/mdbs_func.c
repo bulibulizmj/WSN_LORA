@@ -218,7 +218,7 @@ u16 CurrentPrecipitation(void)
 		delay_ms(20);
 		mb_sent_writeHoldingReg_all(mbp_s, 0x03);
 		errcount++;
-		if(errcount>20)  {errcount = 0; printf("precipitation error!\r\n"); break;}
+		if(errcount>20)  {errcount = 0; printf("precipitation error!\r\n"); return 0xffff;}
 	}//接收到数据并保存在mbp_r中,若错误则间隔20ms重复发送
 //	printf("raw data:%d\r\n", mbp_r.buf[0]);
 	return mbp_r.buf[0];//返回的雨量值扩大了十倍
@@ -274,7 +274,7 @@ u16 CurrentRadiation(void)
 		delay_ms(20);
 		mb_sent_writeHoldingReg_all(mbp_s, 0x03);
 		errcount++;
-		if(errcount>20)  {errcount = 0; printf("Radiation error!\r\n"); break;}
+		if(errcount>20)  {errcount = 0; printf("Radiation error!\r\n"); return 0xffff;}
 	}//接收到数据并保存在mbp_r中,若错误则间隔20ms重复发送
 //	printf("raw data:%d\r\n", mbp_r.buf[0]);
 	return mbp_r.buf[0];//返回的风向角度值扩大了十倍,保留一位小数
@@ -303,7 +303,7 @@ u16 CurrentWindsSpeed(void)
 		delay_ms(20);
 		mb_sent_writeHoldingReg_all(mbp_s, 0x03);
 		errcount++;
-		if(errcount>20)  {errcount = 0; printf("WindsSpeed error!\r\n"); break;}
+		if(errcount>20)  {errcount = 0; printf("WindsSpeed error!\r\n"); return 0xffff;}
 	}//接收到数据并保存在mbp_r中,若错误则间隔20ms重复发送
 //	printf("raw data:%d\r\n", mbp_r.buf[0]);
 	return mbp_r.buf[0];//返回的风向角度值扩大了十倍,保留一位小数
@@ -332,7 +332,7 @@ u16 CurrentWindsDirection(void)
 		delay_ms(20);
 		mb_sent_writeHoldingReg_all(mbp_s, 0x03);
 		errcount++;
-		if(errcount>20)  {errcount = 0; printf("WindsDirection error!\r\n"); break;}
+		if(errcount>20)  {errcount = 0; printf("WindsDirection error!\r\n"); return 0xffff;}
 	}//接收到数据并保存在mbp_r中,若错误则间隔20ms重复发送
 //	printf("raw data:%d\r\n", mbp_r.buf[0]);
 	return mbp_r.buf[0];//返回的风速值扩大了十倍，保留一位小数
