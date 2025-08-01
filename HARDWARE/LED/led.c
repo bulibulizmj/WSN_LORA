@@ -61,7 +61,7 @@ void PWR_sensor_CTRL(void)
 		GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_DOWN;
 		GPIO_Init(GPIOF, &GPIO_InitStructure);
 
-		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
+		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
 		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
 		GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
 		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
@@ -69,7 +69,7 @@ void PWR_sensor_CTRL(void)
 		GPIO_Init(GPIOG, &GPIO_InitStructure);
 		
 		GPIO_SetBits(GPIOD,GPIO_Pin_6);
-		GPIO_SetBits(GPIOG,GPIO_Pin_13);
+		GPIO_SetBits(GPIOG,GPIO_Pin_8);
 		GPIO_SetBits(GPIOF,GPIO_Pin_4);
 }
 

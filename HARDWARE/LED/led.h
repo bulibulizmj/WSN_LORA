@@ -7,7 +7,7 @@
 #define LED1 PFout(10)	// DS1
 
 #define PWR_I2C PFout(4)//低电平关闭供电，高电平开启供电
-#define PWR_Mdbs PGout(13)//低电平关闭供电，高电平开启供电
+#define PWR_Mdbs PGout(8)//低电平关闭供电，高电平开启供电
 #define PWR_LORA PDout(6)//低电平关闭供电，高电平开启供电
 
 void LED_Init(void);//初始化
