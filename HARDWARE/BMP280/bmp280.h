@@ -53,7 +53,7 @@
 #define BMP280_FORCED_MODE             	(0x01)
 #define BMP280_NORMAL_MODE				(0x03)
 
-void BMP280(void);
+bool BMP280(void);
 bool bmp280Init(void);
 void bmp280GetData(float* pressure, float* temperature);
 bool bmp280SpiReadRegister(uint8_t reg, uint8_t length, uint8_t *data);

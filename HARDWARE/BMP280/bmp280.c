@@ -52,7 +52,7 @@ static s32 bmp280RawTemperature = 0;
 
 static void bmp280GetPressure(void);
 
-void BMP280(void)
+bool BMP280(void)
 {
 		u8 cnt = 0;
 		while(!bmp280Init())
@@ -62,10 +62,11 @@ void BMP280(void)
 				{
 						cnt = 0;
             printf("Î´¼ì²âµ½bmp280\r\n");
-						break;
+						return 0;
 				}
 			delay_ms(50);
 		}
+    return 1;
 }
 
 

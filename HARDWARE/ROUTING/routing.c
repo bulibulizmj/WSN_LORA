@@ -232,9 +232,11 @@ void SensorDataGet(void)
     send_frame_route.payload.routing_sensor_data.temperature = raw_data & 0xFFFF;
     send_frame_route.payload.routing_sensor_data.humidity = raw_data >> 16;
     printf("Temperature: %f, Humidity:%f\r\n", (-45 + 175*(send_frame_route.payload.routing_sensor_data.temperature)/65535.0), (-6 + 125*(send_frame_route.payload.routing_sensor_data.humidity)/65535.0));
-    BMP280();
-    delay_ms(50);
-    raw_data = bmp280GetRawData();
+    if(BMP280()){
+        delay_ms(50);
+        raw_data = bmp280GetRawData();
+    }
+    else raw_data = 0;
     send_frame_route.payload.routing_sensor_data.pressure = raw_data;
     printf("pressure:%f\r\n", send_frame_route.payload.routing_sensor_data.pressure/256.0f);
 		delay_ms(100);
