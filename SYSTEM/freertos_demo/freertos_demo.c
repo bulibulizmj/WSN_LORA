@@ -124,6 +124,8 @@ TimerHandle_t reset_recv_timer_handle = 0;							/* 单次定时器 */
 void Beacon_Send_Timer_Callback( TimerHandle_t pxTimer );//接收到RTS并成为接收方后，过一段时间自动还原为非接收方，防止卡死在接收RTS后没有接收到数据型帧的状态
 TimerHandle_t beacon_send_timer_handle = 0;							 /* 单次定时器 */
 
+void Reset_Timer_Callback( TimerHandle_t pxTimer );//重启定时器，每36小时重启一次
+TimerHandle_t reset_timer_handle = 0;							 /* 单次定时器 */
 
 extern EventGroupHandle_t recv_eventgroup_handle;		  //接收事件标志组句柄
 extern EventBits_t recv_eventgroup_bit;
@@ -198,12 +200,14 @@ void start_task(void * pvParameters)
     
 		/* 单次定时器 */
 		send_timer_handle =  xTimerCreate("send_timer", 3600000, pdFALSE, (void *)1, Send_Timer_Callback);
-		wait_comm_timer_handle = xTimerCreate("wait_comm_timer", 20000, pdFALSE, (void *)1, Wait_Comm_Timer_Callback); // 强制休眠时间暂定60s
-		reset_recv_timer_handle = xTimerCreate("reset_recv_timer", 40000, pdFALSE, (void *)1, Reset_Recv_Timer_Callback); // 强制重置接收方标志位定时器
+		wait_comm_timer_handle = xTimerCreate("wait_comm_timer", 20000, pdFALSE, (void *)2, Wait_Comm_Timer_Callback); // 强制休眠时间暂定60s
+		reset_recv_timer_handle = xTimerCreate("reset_recv_timer", 40000, pdFALSE, (void *)3, Reset_Recv_Timer_Callback); // 强制重置接收方标志位定时器
 #if IS_GATWAY	
-    beacon_send_timer_handle = xTimerCreate("beacon_send_timer", 900000, pdFALSE, (void *)1, Beacon_Send_Timer_Callback);
+    beacon_send_timer_handle = xTimerCreate("beacon_send_timer", 900000, pdFALSE, (void *)4, Beacon_Send_Timer_Callback);
+    reset_timer_handle = xTimerCreate("reset_timer", 129600000, pdFALSE, (void *)5, Reset_Timer_Callback); // 重启定时器
 #else
     beacon_send_timer_handle = xTimerCreate("beacon_send_timer", 900000, pdFALSE, (void *)1, Beacon_Send_Timer_Callback);
+    reset_timer_handle = xTimerCreate("reset_timer", 129600000, pdFALSE, (void *)5, Reset_Timer_Callback); // 重启定时器
 #endif    
     if(wait_comm_timer_handle != NULL)
 		{
@@ -384,7 +388,7 @@ void debug_task(void * pvParameters)
         printf("\r\n\r\n");
         uxHighWaterMark = uxTaskGetStackHighWaterMark(NULL); 
         printf("debug_task任务使用情况：%ld\r\n",uxHighWaterMark);
-        vTaskDelay(120000);
+        vTaskDelay(120000 * 10);
 		}
 }
 
@@ -585,6 +589,15 @@ void Beacon_Send_Timer_Callback( TimerHandle_t pxTimer )
     xEventGroupSetBits(route_eventgroup_handle, BEACON_TIMER_OK);	/* 将事件标志组BEACON_TIMER_OK置1 */
 }
 
-
-
-
+/**
+  * @brief  重启定时器的超时回调函数
+  *         每36小时重启一次单片机，防止长时间运行后出现问题
+  *         该函数会关闭总中断并请求单片机重启   
+  * @param  pxTimer
+  * @retval None
+  */
+void Reset_Timer_Callback(TimerHandle_t pxTimer){
+    printf("重启定时器时间到\r\n");
+    __set_FAULTMASK(1); //关闭总中断
+    NVIC_SystemReset(); //请求单片机重启
+}
