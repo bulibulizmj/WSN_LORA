@@ -16,7 +16,7 @@
 #include "tree_node.h"
 #include "routing.h"
 #include "iwdg.h"
-
+#include "myrtc.h"
 
 
 int main(void)
@@ -40,6 +40,7 @@ int main(void)
 		lora_init(0x31415926);
 		IWDG_Init(IWDG_Prescaler_256,2000);//时间计算(大概):Tout=256 * rlr/32 (ms) = 8*rlr(ms) rlr取值范围0-2047
 		My_RTC_Init();
+		RTC_Set_WakeUp(RTC_WakeUpClock_CK_SPRE_16bits, WAKE_UP_SECONDS - 1); //配置WAKE UP中断，WAKE_UP_SECONDS秒钟中断一次
 		freertos_demo();
 
     
