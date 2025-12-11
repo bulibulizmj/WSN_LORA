@@ -111,6 +111,16 @@ void node_check(void * pvParameters);
 TaskHandle_t feed_dog_handler;//任务句柄
 void feed_dog(void * pvParameters);
 
+/***************************  各任务和定时器周期配置 *********************************/
+#define send_timer_period_ms         3600*1000          //数据上报与计时任务周期，单位ms
+#define node_check_period_ms         4800*1000          //邻居节点与子节点检查任务
+#define feed_dog_period_ms           4*1000             //喂狗任务周期，单位ms
+#define debug_task_period_ms         600*1000           //调试信息打印任务周期，单位ms
+#define beacon_send_period_ms        900*1000           //Beacon发送任务周期，单位ms
+#define reset_recv_ms                40*1000            //强制重置接收方标志，单位ms
+#define wait_comm_period_ms          20*1000            //强制休眠时间，单位ms
+
+
 
 /******************************************************************************************************/
 void Send_Timer_Callback( TimerHandle_t pxTimer );	//发送数据定时器回调函数，超时则发送一次数据
@@ -200,15 +210,15 @@ void start_task(void * pvParameters)
     xEventGroupSetBits(route_eventgroup_handle, IS_JOIN_WAN );     //将IS_JOIN_WAN位置1，表示未入网；将IS_ADDR_NULL置1，表示当前没有地址
     
 		/* 单次定时器 */
-		send_timer_handle =  xTimerCreate("send_timer", 3600000, pdFALSE, (void *)1, Send_Timer_Callback);
-		wait_comm_timer_handle = xTimerCreate("wait_comm_timer", 20000, pdFALSE, (void *)2, Wait_Comm_Timer_Callback); // 强制休眠时间暂定60s
-		reset_recv_timer_handle = xTimerCreate("reset_recv_timer", 40000, pdFALSE, (void *)3, Reset_Recv_Timer_Callback); // 强制重置接收方标志位定时器
+		send_timer_handle =  xTimerCreate("send_timer", send_timer_period_ms, pdFALSE, (void *)1, Send_Timer_Callback);
+		wait_comm_timer_handle = xTimerCreate("wait_comm_timer", wait_comm_period_ms, pdFALSE, (void *)2, Wait_Comm_Timer_Callback); // 强制休眠时间暂定60s
+		reset_recv_timer_handle = xTimerCreate("reset_recv_timer", reset_recv_ms, pdFALSE, (void *)3, Reset_Recv_Timer_Callback); // 强制重置接收方标志位定时器
 #if IS_GATWAY	
-    beacon_send_timer_handle = xTimerCreate("beacon_send_timer", 900000, pdFALSE, (void *)4, Beacon_Send_Timer_Callback);
-    reset_timer_handle = xTimerCreate("reset_timer", 129600000, pdFALSE, (void *)5, Reset_Timer_Callback); // 重启定时器
+    beacon_send_timer_handle = xTimerCreate("beacon_send_timer", beacon_send_period_ms, pdFALSE, (void *)4, Beacon_Send_Timer_Callback);
+    //reset_timer_handle = xTimerCreate("reset_timer", 129600000, pdFALSE, (void *)5, Reset_Timer_Callback); // 重启定时器
 #else
     beacon_send_timer_handle = xTimerCreate("beacon_send_timer", 900000, pdFALSE, (void *)1, Beacon_Send_Timer_Callback);
-    reset_timer_handle = xTimerCreate("reset_timer", 129600000, pdFALSE, (void *)5, Reset_Timer_Callback); // 重启定时器
+    //reset_timer_handle = xTimerCreate("reset_timer", 129600000, pdFALSE, (void *)5, Reset_Timer_Callback); // 重启定时器
 #endif    
     if(wait_comm_timer_handle != NULL)
 		{
@@ -318,7 +328,7 @@ void feed_dog(void * pvParameters)
     while(1)
     {
         IWDG_Feed();
-        vTaskDelay(4000);
+        vTaskDelay(feed_dog_period_ms);
     }
 }
 
@@ -414,7 +424,7 @@ void node_check(void * pvParameters)
                 routing_table.neighbors[i].is_neighbors_alive = 0;
             }
         }
-        vTaskDelay(1800000);
+        vTaskDelay(node_check_period_ms);
 		}
 }
 
@@ -598,7 +608,7 @@ void Beacon_Send_Timer_Callback( TimerHandle_t pxTimer )
   * @retval None
   */
 void Reset_Timer_Callback(TimerHandle_t pxTimer){
-    printf("重启定时器时间到\r\n");
-    __set_FAULTMASK(1); //关闭总中断
-    NVIC_SystemReset(); //请求单片机重启
+    // printf("重启定时器时间到\r\n");
+    // __set_FAULTMASK(1); //关闭总中断
+    // NVIC_SystemReset(); //请求单片机重启
 }

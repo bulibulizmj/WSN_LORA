@@ -114,8 +114,8 @@ bool is_channel_idle(void)
 				xEventGroupClearBits(recv_eventgroup_handle, CSMA_BUSY_7);//重置CSMA接收的事件标志位
 				BE = macBE[cnt];
 //        printf("pow(2,BE)= %lf\r\n", pow(2,BE));//会触发硬件错误
-				backoff = RNG_Get_RandnomRange(2, (int)pow(2,BE)-1);//延迟的时间 = backoff*2 秒
-//        backoff = RNG_Get_RandnomRange(1, pow(2,BE)-1);//延迟的时间 = backoff*2 秒
+				backoff = RNG_Get_RandnomRange(2, (int)pow(2,BE)-1);//延迟的时间 = backoff*4 秒
+//        backoff = RNG_Get_RandnomRange(1, pow(2,BE)-1);//延迟的时间 = backoff*4 秒
 				printf("CSMA随机时延：%d秒\r\n", 4 * backoff);
 				recv_eventgroup_bit = xEventGroupWaitBits(recv_eventgroup_handle, CSMA_BUSY_7, pdTRUE, pdTRUE, 4000 * backoff);
 				if((recv_eventgroup_bit & CSMA_BUSY_7) == 0)	//没有获取到事件标志组

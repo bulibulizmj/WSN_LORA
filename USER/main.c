@@ -28,18 +28,18 @@ int main(void)
 		uart_init(115200);	//串口初始化波特率为115200
 		Mdbus_CTRL_Init();
 		Usart3_init(4800);
-    PWR_sensor_CTRL();
+    	PWR_sensor_CTRL();
 		LED_Init();
 		KEY_Init();
-	
+		
 		SensorDataGet(); //测试传感器数据
 #if IS_GATWAY	
-    EC800_Init();
-    MqttConnect();
+    	EC800_Init();
+    	MqttConnect();
 #endif
 		lora_init(0x31415926);
 		IWDG_Init(IWDG_Prescaler_256,2000);//时间计算(大概):Tout=256 * rlr/32 (ms) = 8*rlr(ms) rlr取值范围0-2047
-
+		My_RTC_Init();
 		freertos_demo();
 
     
