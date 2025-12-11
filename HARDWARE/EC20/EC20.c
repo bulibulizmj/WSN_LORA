@@ -367,7 +367,7 @@ u8 EC20_MQTT_SEND_AUTO(u8 *TOPIC)
     memset(AtStrBuf_EC800,0,BUFLEN); //发送数据命令
     //AT+QMTPUB=0,0,0,0,"/sys/a18dtRetCT0/BC26TEST/thing/event/property/post"
     //AT+QMTPUB=0,0,0,0,"sensor/data"
-    sprintf(AtStrBuf_EC800,"AT+QMTPUB=0,0,0,0,\"%s\"\r\n",TOPIC);
+    sprintf(AtStrBuf_EC800,"AT+QMTPUB=0,1,0,1,\"%s\"\r\n",TOPIC);
     Uart2_SendStr(AtStrBuf_EC800);
     delay_ms(1000);
     strx_EC800=strstr((const char*)AtRxBuffer_EC800,(const char*)">");//模块反馈的字符串
@@ -419,7 +419,7 @@ u8 EC20_MQTT_SEND_DATA(u8 *TOPIC,u8 *DATA)
 {
     memset(AtStrBuf_EC800,0,BUFLEN); //发送数据命令
     //AT+QMTPUB=0,0,0,0,"sensor/data"
-    sprintf(AtStrBuf_EC800,"AT+QMTPUB=0,0,0,0,\"%s\"\r\n",TOPIC);
+    sprintf(AtStrBuf_EC800,"AT+QMTPUB=0,1,0,1,\"%s\"\r\n",TOPIC);
     Uart2_SendStr(AtStrBuf_EC800);
     delay_ms(1000);
     strx_EC800=strstr((const char*)AtRxBuffer_EC800,(const char*)">");//模块反馈的字符串
