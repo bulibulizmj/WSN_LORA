@@ -4,8 +4,8 @@
 #include "usart.h"	
 
 
-#define SERVERIP "125.77.80.212"
-#define SERVERPORT 1001
+#define SERVERIP "47.109.93.42"  //EMQX服务器IP地址
+#define SERVERPORT 1883  //EMQX服务器端口
 
 
 int errcount = 0, i = 0;
@@ -259,15 +259,15 @@ void  EC800_Init(void)
 
 
 /**
- * @brief       连接阿里云物联网平台
+ * @brief       连接EMQX服务器平台
  * @param       PRODUCTKEY
- *							DEVICENAME
- *							DEVICESECRET
+ *				DEVICENAME
+ *				DEVICESECRET
  * @retval      0 连接成功
- *							1 连接失败
+ *				1 连接失败
  *              
  */
-u8 EC20_CONNECT_MQTT_SERVER(u8 *PRODUCTKEY,u8 *DEVICENAME,u8 *DEVICESECRET)
+u8 EC20_CONNECT_MQTT_SERVER(u8 *CLIENTID,u8 *USERNAME,u8 *PASSWORD)
 {
     Uart2_SendStr("AT+QIDEACT=1\r\n"); //关闭当前连接
     delay_ms(500);
@@ -279,33 +279,10 @@ u8 EC20_CONNECT_MQTT_SERVER(u8 *PRODUCTKEY,u8 *DEVICENAME,u8 *DEVICESECRET)
     delay_ms(500);
     Clear_Buffer_EC800();
 
-    //配置进入阿里云
+    //打开EMQX的连接
     memset(AtStrBuf_EC800,0,BUFLEN);
-    sprintf(AtStrBuf_EC800,"AT+QMTCFG=\"ALIAUTH\",0,\"%s\",\"%s\",\"%s\"\r\n",PRODUCTKEY,DEVICENAME,DEVICESECRET);
+    sprintf(AtStrBuf_EC800,"AT+QMTOPEN=0,\"%s\",%d\r\n",SERVERIP,SERVERPORT);
     Uart2_SendStr(AtStrBuf_EC800);
-    delay_ms(500);
-    strx_EC800=strstr((const char*)AtRxBuffer_EC800,(const char*)"OK");//返OK表示配置成功了
-    errcount = 0;
-    while(strx_EC800==NULL)
-    {
-        errcount++;
-			  Clear_Buffer_EC800();
-			  Uart2_SendStr(AtStrBuf_EC800);
-			  delay_ms(500);
-        strx_EC800=strstr((const char*)AtRxBuffer_EC800,(const char*)"OK");//返回1,表明注网成功
-        if(errcount>100)     //防止死循环
-        {
-            errcount = 0;
-            reset_4g();
-            __set_FAULTMASK(1); //关闭总中断
-            NVIC_SystemReset(); //请求单片机重启
-            break;
-        }
-    }
-    Clear_Buffer_EC800();
-		
-    //打开阿里云的连接，需要比较久的时间
-    Uart2_SendStr("AT+QMTOPEN=0,\"iot-as-mqtt.cn-shanghai.aliyuncs.com\",1883\r\n");
     delay_ms(300);
     strx_EC800=strstr((const char*)AtRxBuffer_EC800,(const char*)"+QMTOPEN: 0,0");//返OK表示配置成功了
     errcount = 0;
@@ -314,7 +291,7 @@ u8 EC20_CONNECT_MQTT_SERVER(u8 *PRODUCTKEY,u8 *DEVICENAME,u8 *DEVICESECRET)
         errcount++;
 //				Clear_Buffer_EC800();
 //				Uart2_SendStr("AT+QMTOPEN=0,\"iot-as-mqtt.cn-shanghai.aliyuncs.com\",1883\r\n");
-        delay_ms(300);
+        delay_ms(200);
         strx_EC800=strstr((const char*)AtRxBuffer_EC800,(const char*)"+QMTOPEN: 0,0");//返回1,表明注网成功
         if(errcount>100)     //防止死循环
         {
@@ -327,9 +304,9 @@ u8 EC20_CONNECT_MQTT_SERVER(u8 *PRODUCTKEY,u8 *DEVICENAME,u8 *DEVICESECRET)
     }
     Clear_Buffer_EC800();
 
-    //连接到阿里云设备
+    //连接到EMQX服务器
     memset(AtStrBuf_EC800,0,BUFLEN);
-    sprintf(AtStrBuf_EC800,"AT+QMTCONN=0,\"%s\"\r\n",DEVICENAME);
+    sprintf(AtStrBuf_EC800,"AT+QMTCONN=0,\"%s\",\"%s\",\"%s\"\r\n",CLIENTID,USERNAME,PASSWORD);
     Uart2_SendStr(AtStrBuf_EC800);
     delay_ms(3000);
     strx_EC800=strstr((const char*)AtRxBuffer_EC800,(const char*)"+QMTCONN: 0,0,0");//返OK表示配置成功了
@@ -344,12 +321,12 @@ u8 EC20_CONNECT_MQTT_SERVER(u8 *PRODUCTKEY,u8 *DEVICENAME,u8 *DEVICESECRET)
 		}
     Clear_Buffer_EC800();
 
-    //订阅到阿里云
-    memset(AtStrBuf_EC800,0,BUFLEN);
-    sprintf(AtStrBuf_EC800,"AT+QMTSUB=0,1,\"/%s/%s/user/get\",0 \r\n",PRODUCTKEY,DEVICENAME);
-    Uart2_SendStr(AtStrBuf_EC800);
-    delay_ms(1000);
-    strx_EC800=strstr((const char*)AtRxBuffer_EC800,(const char*)"+QMTSUB: 0,1,0,1");//返OK表示配置成功了
+    // //订阅到阿里云
+    // memset(AtStrBuf_EC800,0,BUFLEN);
+    // sprintf(AtStrBuf_EC800,"AT+QMTSUB=0,1,\"/%s/%s/user/get\",0 \r\n",PRODUCTKEY,DEVICENAME);
+    // Uart2_SendStr(AtStrBuf_EC800);
+    // delay_ms(1000);
+    // strx_EC800=strstr((const char*)AtRxBuffer_EC800,(const char*)"+QMTSUB: 0,1,0,1");//返OK表示配置成功了
     if(strx_EC800)
     {
         printf("阿里云物联网平台连接成功\r\n");
@@ -369,28 +346,28 @@ u8 EC20_CONNECT_MQTT_SERVER(u8 *PRODUCTKEY,u8 *DEVICENAME,u8 *DEVICESECRET)
  *									1 连接失败
  *              
  */
-u8 EC20_CONNECT_SERVER_CFG_INFOR(u8 *PRODUCTKEY,u8 *DEVICENAME,u8 *DEVICESECRET)
+u8 EC20_CONNECT_SERVER_CFG_INFOR(u8 *CLIENTID,u8 *USERNAME,u8 *PASSWORD)
 {
     u8 res;
-    res=EC20_CONNECT_MQTT_SERVER(PRODUCTKEY,DEVICENAME,DEVICESECRET);
+    res=EC20_CONNECT_MQTT_SERVER(CLIENTID,USERNAME,PASSWORD);
     return res;
 }
 
 int MQTTVAL=0;
 /**
  * @brief       向阿里云物联网平台发送测试数据（自动发光照度）
- * @param       PRODUCTKEY
- *							DEVICENAME
+ * @param       TOPIC		
  *
  * @retval      0 发送成功
- *							1 发送失败
+ *				1 发送失败
  *              
  */
-u8 EC20_MQTT_SEND_AUTO(u8 *PRODUCTKEY,u8 *DEVICENAME)
+u8 EC20_MQTT_SEND_AUTO(u8 *TOPIC)
 {
     memset(AtStrBuf_EC800,0,BUFLEN); //发送数据命令
     //AT+QMTPUB=0,0,0,0,"/sys/a18dtRetCT0/BC26TEST/thing/event/property/post"
-    sprintf(AtStrBuf_EC800,"AT+QMTPUB=0,0,0,0,\"/sys/%s/%s/thing/event/property/post\"\r\n",PRODUCTKEY,DEVICENAME);
+    //AT+QMTPUB=0,0,0,0,"sensor/data"
+    sprintf(AtStrBuf_EC800,"AT+QMTPUB=0,0,0,0,\"%s\"\r\n",TOPIC);
     Uart2_SendStr(AtStrBuf_EC800);
     delay_ms(1000);
     strx_EC800=strstr((const char*)AtRxBuffer_EC800,(const char*)">");//模块反馈的字符串
@@ -422,7 +399,7 @@ u8 EC20_MQTT_SEND_AUTO(u8 *PRODUCTKEY,u8 *DEVICENAME)
     while((USART2->SR&0X40)==0);//等待发送完成
     USART2->DR = (u8) 0x1a;
     delay_ms(300);
-		EC20Send_RecAccessMode();
+	EC20Send_RecAccessMode();
     Clear_Buffer_EC800();
     printf("系统数据发送成功  [OK]\r\n");
     return 0;
@@ -431,19 +408,18 @@ u8 EC20_MQTT_SEND_AUTO(u8 *PRODUCTKEY,u8 *DEVICENAME)
 
 /**
  * @brief       向阿里云物联网平台发送自定义数据
- * @param       PRODUCTKEY
- *							DEVICENAME
- *							DATA
+ * @param       TOPIC
+ *				DATA
  *
  * @retval      0 发送成功
- *							1 发送失败
+ *				1 发送失败
  *              
  */
-u8 EC20_MQTT_SEND_DATA(u8 *PRODUCTKEY,u8 *DEVICENAME,u8 *DATA)
+u8 EC20_MQTT_SEND_DATA(u8 *TOPIC,u8 *DATA)
 {
     memset(AtStrBuf_EC800,0,BUFLEN); //发送数据命令
-    //AT+QMTPUB=0,0,0,0,"/sys/a18dtRetCT0/BC26TEST/thing/event/property/post"
-    sprintf(AtStrBuf_EC800,"AT+QMTPUB=0,0,0,0,\"/sys/%s/%s/thing/event/property/post\"\r\n",PRODUCTKEY,DEVICENAME);
+    //AT+QMTPUB=0,0,0,0,"sensor/data"
+    sprintf(AtStrBuf_EC800,"AT+QMTPUB=0,0,0,0,\"%s\"\r\n",TOPIC);
     Uart2_SendStr(AtStrBuf_EC800);
     delay_ms(1000);
     strx_EC800=strstr((const char*)AtRxBuffer_EC800,(const char*)">");//模块反馈的字符串
@@ -452,7 +428,7 @@ u8 EC20_MQTT_SEND_DATA(u8 *PRODUCTKEY,u8 *DEVICENAME,u8 *DATA)
     {
         errcount++;
         delay_ms(300);
-				strx_EC800=strstr((const char*)AtRxBuffer_EC800,(const char*)">");//模块反馈的字符串
+		strx_EC800=strstr((const char*)AtRxBuffer_EC800,(const char*)">");//模块反馈的字符串
         if(errcount>100)     //防止死循环
         {
             errcount = 0;
@@ -468,9 +444,9 @@ u8 EC20_MQTT_SEND_DATA(u8 *PRODUCTKEY,u8 *DEVICENAME,u8 *DATA)
     while((USART2->SR&0X40)==0);//等待发送完成
     USART2->DR = (u8) 0x1a;
     delay_ms(300);
-		EC20Send_RecAccessMode();
+    EC20Send_RecAccessMode();
     Clear_Buffer_EC800();
-		printf("用户数据发送成功  [OK]\r\n");
+    printf("用户数据发送成功  [OK]\r\n");
     return 0;
 }
 

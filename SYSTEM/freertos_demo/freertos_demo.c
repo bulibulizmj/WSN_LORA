@@ -24,7 +24,7 @@ TaskHandle_t start_task_handler;//任务句柄
 void start_task(void * pvParameters);
 
 /* 调试信息打印任务配置
- * 包括：任务句柄 任务优先级 堆栈大小 创建任务
+ * 包括：任务句柄 任务优先级 堆栈大小 创建任务 
  */
 #define DEBUG_TASK_PRIO 				  4
 #define DEBUG_TASK_STACK_SIZE		156 
@@ -110,6 +110,7 @@ void node_check(void * pvParameters);
 #define FEED_DOG_STACK_SIZE		128 
 TaskHandle_t feed_dog_handler;//任务句柄
 void feed_dog(void * pvParameters);
+
 
 /******************************************************************************************************/
 void Send_Timer_Callback( TimerHandle_t pxTimer );	//发送数据定时器回调函数，超时则发送一次数据

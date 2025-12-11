@@ -14,10 +14,10 @@
 #include "mdbs_func.h"
 #include "led.h"
 
-//阿里云物联网平台需要介入的参数产品秘钥 设备名称 设备秘钥
-#define PRODUCTKEY "k0puwvMslxK"
-#define DEVICENAME   "test01"
-#define DEVICESECRET   "20bb28caf9e9ed27ce79b9a66cfc2f20"
+//MQTT接入信息
+#define  CLIENTID       "WSN_GW_001"
+#define  USERNAME       "test_client"
+#define  PASSWORD       "public"
 
 extern NodeAddr ADDR_MINE;                                  //节点MAC层地址，由节点节点地理坐标来定义
 extern NodeAddr ADDR_CURRENT;										            //当前通信的节点地址
@@ -314,7 +314,7 @@ void MqttConnect(void)
     while(res)
     {
   //         IWDG_Feed();//喂狗
-        res=EC20_CONNECT_SERVER_CFG_INFOR((u8 *)PRODUCTKEY,(u8 *)DEVICENAME,(u8 *)DEVICESECRET);   //接入阿里云
+        res=EC20_CONNECT_SERVER_CFG_INFOR((u8 *)CLIENTID,(u8 *)USERNAME,(u8 *)PASSWORD);   //接入阿里云
         delay_ms(1000);
         printf("连接次数: %d次\r\n",errcont);
         errcont++;
@@ -345,7 +345,7 @@ void MqttReport(RoutingFrame report_data_frame)
             report_data_frame.payload.routing_sensor_data.windspeed, report_data_frame.payload.routing_sensor_data.wind_direction,
             report_data_frame.payload.routing_sensor_data.radiation);
     printf(send_data_4g);
-    EC20_MQTT_SEND_DATA((u8 *)PRODUCTKEY,(u8 *)DEVICENAME,(u8 *)send_data_4g);
+    EC20_MQTT_SEND_DATA((u8 *)"sensor/data",(u8 *)send_data_4g);   //发送数据
 }
 
 /**
