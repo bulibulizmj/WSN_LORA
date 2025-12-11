@@ -337,7 +337,7 @@ void MqttConnect(void)
 void MqttReport(RoutingFrame report_data_frame)
 {    
     memset(send_data_4g,0,BUFLEN);//AtStrBuf_EC800«Â¡„
-    sprintf(send_data_4g, "{params:{F:\"%llx %x %x %x %x %x %x %x %x %x %x\"}}",
+    sprintf(send_data_4g, "{params:\"%llx %x %x %x %x %x %x %x %x %x %x\"}",
             report_data_frame.payload.routing_sensor_data.addr_src, report_data_frame.payload.routing_sensor_data.temperature, 
             report_data_frame.payload.routing_sensor_data.humidity, report_data_frame.payload.routing_sensor_data.pressure,
             report_data_frame.payload.routing_sensor_data.soilstate1, report_data_frame.payload.routing_sensor_data.soilstate2,
