@@ -112,7 +112,7 @@ TaskHandle_t feed_dog_handler;//任务句柄
 void feed_dog(void * pvParameters);
 
 /***************************  各任务和定时器周期配置 *********************************/
-#define send_timer_period_ms         3600*1000          //数据上报与计时任务周期，单位ms
+#define send_timer_period_ms         120*1000          //数据上报与计时任务周期，单位ms
 #define node_check_period_ms         4800*1000          //邻居节点与子节点检查任务
 #define feed_dog_period_ms           4*1000             //喂狗任务周期，单位ms
 #define debug_task_period_ms         600*1000           //调试信息打印任务周期，单位ms

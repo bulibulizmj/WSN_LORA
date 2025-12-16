@@ -19,6 +19,7 @@
 #define  USERNAME       "test_client"
 #define  PASSWORD       "public"
 
+
 extern NodeAddr ADDR_MINE;                                  //节点MAC层地址，由节点节点地理坐标来定义
 extern NodeAddr ADDR_CURRENT;										            //当前通信的节点地址
 extern MACframe send_frame;							                    //发送MAC数据帧缓存，在路由层中仅对send_frame.src_addr和对send_frame.dst_addr以及payload进行操作
@@ -188,7 +189,6 @@ void data_report_route(void)
     {
         printf("开启定时\r\n");
         xTimerStart(send_timer_handle, portMAX_DELAY);
-        xTimerChangePeriod(send_timer_handle, 3600000, 0); //调整定时器时间
         route_eventgroup_bit = xEventGroupWaitBits(route_eventgroup_handle, TIMER_OK_4, pdTRUE, pdTRUE, portMAX_DELAY);	//超时时间到且发送空闲
         xSemaphoreTake(is_sender_route_handle, portMAX_DELAY); //获取信号量并死等 
         printf("开启上报数据\r\n");
@@ -202,7 +202,6 @@ void data_report_route(void)
     {
         printf("开启定时\r\n");
         xTimerStart(send_timer_handle, portMAX_DELAY);
-        xTimerChangePeriod(send_timer_handle, 3600000, 0); //调整定时器时间
         route_eventgroup_bit = xEventGroupWaitBits(route_eventgroup_handle, TIMER_OK_4, pdTRUE, pdTRUE, portMAX_DELAY);	//超时时间到且发送空闲
         xSemaphoreTake(is_sender_route_handle, portMAX_DELAY); //获取信号量并死等 
         printf("开启上报数据\r\n");
@@ -337,7 +336,7 @@ void MqttConnect(void)
 void MqttReport(RoutingFrame report_data_frame)
 {    
     memset(send_data_4g,0,BUFLEN);//AtStrBuf_EC800清零
-    sprintf(send_data_4g, "{params:\"%llx %x %x %x %x %x %x %x %x %x %x\"}",
+    sprintf(send_data_4g, "{\"params\":\"%llx %x %x %x %x %x %x %x %x %x %x\"}",
             report_data_frame.payload.routing_sensor_data.addr_src, report_data_frame.payload.routing_sensor_data.temperature, 
             report_data_frame.payload.routing_sensor_data.humidity, report_data_frame.payload.routing_sensor_data.pressure,
             report_data_frame.payload.routing_sensor_data.soilstate1, report_data_frame.payload.routing_sensor_data.soilstate2,
