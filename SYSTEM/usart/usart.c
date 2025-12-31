@@ -8,6 +8,7 @@ u16 Rxcouter_EC800;
 
 u8 lora_serialRXbuf_st[200];
 u16 lora_Rxcouter;
+volatile u8 lora_frame_locked = 0; // LoRa frame lock (1=ready, stop writing RX buffer)
 ////////////////////////////////////////////////////////////////////////////////// 	 
 //如果使用ucos,则包括下面的头文件即可.
 #if SYSTEM_SUPPORT_OS
@@ -280,11 +281,31 @@ void UART4_IRQHandler(void)
     if(USART_GetITStatus(UART4, USART_IT_RXNE) != RESET)  //接收中断
     {
         Res = USART_ReceiveData(UART4);//(USART4->DR);      //读取接收到的数据
-        lora_serialRXbuf_st[lora_Rxcouter++]=Res;//
+        if((lora_frame_locked != 0) && (lora_Rxcouter == 0))
+        {
+            lora_frame_locked = 0;
+        }
+        if(lora_frame_locked == 0)
+        {
+            if(lora_Rxcouter < sizeof(lora_serialRXbuf_st))
+            {
+                lora_serialRXbuf_st[lora_Rxcouter++] = Res;
+            }
+            else
+            {
+                lora_Rxcouter = 0;
+            }
+        }
     
         if(recv_eventgroup_bit & INITIAL_OK)
         {
-            xResult = xEventGroupSetBitsFromISR(recv_eventgroup_handle, PACKET_RECV_2 | CSMA_BUSY_7, &xHigherPriorityTaskWoken);
+            EventBits_t bits_to_set = CSMA_BUSY_7;
+            if((lora_frame_locked == 0) && (lora_Rxcouter == (1U + sizeof(MACframe))))
+            {
+                bits_to_set |= PACKET_RECV_2;
+                lora_frame_locked = 1;
+            }
+            xResult = xEventGroupSetBitsFromISR(recv_eventgroup_handle, bits_to_set, &xHigherPriorityTaskWoken);
             if( xResult == pdPASS )//是否导致有高优先级任务就绪？如果有则进行任务切换
             {
                 portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
