@@ -11,6 +11,7 @@
 #include "routing.h"
 #include "flash.h"
 #include "iwdg.h"
+#include "ewdg.h"
 /******************************************************************************************************/
 
 /* start_task任务配置
@@ -103,18 +104,27 @@ void routing_update(void * pvParameters);
 TaskHandle_t node_check_handler;//任务句柄
 void node_check(void * pvParameters);
 
-/* 喂狗任务配置
+/* 喂内部看门狗任务配置
  * 包括：任务句柄 任务优先级 堆栈大小 创建任务
  */
-#define FEED_DOG_PRIO 				31
-#define FEED_DOG_STACK_SIZE		128 
-TaskHandle_t feed_dog_handler;//任务句柄
-void feed_dog(void * pvParameters);
+#define FEED_IWDOG_PRIO 				29
+#define FEED_IWDOG_STACK_SIZE		128 
+TaskHandle_t feed_iwdog_handler;//任务句柄
+void feed_iwdog(void * pvParameters);
+
+/* 喂外部看门狗任务配置
+ * 包括：任务句柄 任务优先级 堆栈大小 创建任务
+ */
+#define FEED_EWDOG_PRIO 				30
+#define FEED_EWDOG_STACK_SIZE		128 
+TaskHandle_t feed_ewdog_handler;//任务句柄
+void feed_ewdog(void * pvParameters);
 
 /***************************  各任务和定时器周期配置 *********************************/
-#define send_timer_period_ms         120*1000          //数据上报与计时任务周期，单位ms
+#define send_timer_period_ms         120*1000           //数据上报与计时任务周期，单位ms
 #define node_check_period_ms         4800*1000          //邻居节点与子节点检查任务
-#define feed_dog_period_ms           4*1000             //喂狗任务周期，单位ms
+#define feed_iwdog_period_ms         4*1000             //喂内部看门狗任务周期，单位ms
+#define feed_ewdog_period_ms         300                //喂外部看门狗任务周期，单位ms
 #define debug_task_period_ms         600*1000           //调试信息打印任务周期，单位ms
 #define beacon_send_period_ms        900*1000           //Beacon发送任务周期，单位ms
 #define reset_recv_ms                40*1000            //强制重置接收方标志，单位ms
@@ -234,12 +244,19 @@ void start_task(void * pvParameters)
         xEventGroupClearBits(route_eventgroup_handle, IS_ADDR_NULL);
     }
     IWDG_Feed();
-    xTaskCreate((TaskFunction_t 				)   feed_dog,
-								(char *                 )   "feed_dog",
-								(configSTACK_DEPTH_TYPE )   FEED_DOG_STACK_SIZE,
+    xTaskCreate((TaskFunction_t 				)   feed_iwdog,
+								(char *                 )   "feed_iwdog",
+								(configSTACK_DEPTH_TYPE )   FEED_IWDOG_STACK_SIZE,
 								(void *                 )   NULL,
-								(UBaseType_t            )   FEED_DOG_PRIO,
-								(TaskHandle_t *         )   &feed_dog_handler );
+								(UBaseType_t            )   FEED_IWDOG_PRIO,
+								(TaskHandle_t *         )   &feed_iwdog_handler );
+
+    xTaskCreate((TaskFunction_t 				)   feed_ewdog,
+                (char *                 )   "feed_ewdog",
+                (configSTACK_DEPTH_TYPE )   FEED_EWDOG_STACK_SIZE,
+                (void *                 )   NULL,
+                (UBaseType_t            )   FEED_EWDOG_PRIO,
+                (TaskHandle_t *         )   &feed_ewdog_handler );
 
 		xTaskCreate((TaskFunction_t 				)   send_timer,
 								(char *                 )   "send_timer",
@@ -319,18 +336,35 @@ void start_task(void * pvParameters)
 }
 
 /**
-  * @brief  喂狗任务
+  * @brief  喂狗任务,内部看门狗
   * @param  None
   * @retval None
   */
-void feed_dog(void * pvParameters)
+void feed_iwdog(void * pvParameters)
 {
+    TickType_t xLastWakeTime = xTaskGetTickCount();
     while(1)
     {
         IWDG_Feed();
-        vTaskDelay(feed_dog_period_ms);
+        vTaskDelayUntil(&xLastWakeTime, feed_iwdog_period_ms);
     }
 }
+
+/**
+  * @brief  喂狗任务，外部看门狗
+  * @param  None
+  * @retval None
+  */
+void feed_ewdog(void * pvParameters)
+{
+    TickType_t xLastWakeTime = xTaskGetTickCount();
+    while(1)
+    {
+        EWDG_Feed();
+        vTaskDelayUntil(&xLastWakeTime, feed_ewdog_period_ms);
+    }
+}
+
 
 /**
   * @brief  调试信息打印任务
@@ -381,9 +415,12 @@ void debug_task(void * pvParameters)
         uxHighWaterMark = uxTaskGetStackHighWaterMark(data_relay_handler); 
         printf("data_relay任务使用情况：%ld\r\n",uxHighWaterMark);
         
-        uxHighWaterMark = uxTaskGetStackHighWaterMark(feed_dog_handler); 
-        printf("feed_dog_handler任务使用情况：%ld\r\n",uxHighWaterMark);
-        
+        uxHighWaterMark = uxTaskGetStackHighWaterMark(feed_iwdog_handler); 
+        printf("feed_iwdog_handler任务使用情况：%ld\r\n",uxHighWaterMark);
+
+        uxHighWaterMark = uxTaskGetStackHighWaterMark(feed_ewdog_handler); 
+        printf("feed_ewdog_handler任务使用情况：%ld\r\n",uxHighWaterMark);  
+
         printf("最小剩余栈空间大小 %d \r\n",(int32_t)uxTaskGetStackHighWaterMark(NULL));
         printf("历史剩余最小内存大小:%d 字节\r\n\r\n",xPortGetMinimumEverFreeHeapSize());//查询历史剩余最小内存大小
         printf("当前父节点：%llx\r\n", routing_table.parent_addr);

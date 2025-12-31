@@ -4,7 +4,7 @@
 #include "usart.h"	
 
 
-#define SERVERIP "47.109.93.42"  //EMQX服务器IP地址
+#define SERVERIP "47.109.185.56"  //EMQX服务器IP地址
 #define SERVERPORT 1883  //EMQX服务器端口
 
 

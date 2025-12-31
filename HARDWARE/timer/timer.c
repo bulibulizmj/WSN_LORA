@@ -1,5 +1,5 @@
 #include "timer.h"
-
+#include "ewdg.h"
 uint32_t FreeRTOSRunTimeTicks;
 
 void ConfigureTimeForRunTimeStats(void)
@@ -65,9 +65,9 @@ void TIM3_IRQHandler(void)
 
 void TIM2_IRQHandler(void)
 {
-	if(TIM_GetFlagStatus(TIM3,TIM_FLAG_Update) == 1)//溢出中断
+	if(TIM_GetFlagStatus(TIM2,TIM_FLAG_Update) == 1)//溢出中断
 	{
-			printf("TIM2优先级为4正在运行\r\n");
+			EWDG_Feed(); // 喂外部看门狗
 	}
 	TIM_ClearITPendingBit(TIM2,TIM_IT_Update);  //清除中断标志位
 }
