@@ -64,3 +64,4 @@
 ..\obj\freertos_demo.o: ..\HARDWARE\ROUTING\tree_node.h
 ..\obj\freertos_demo.o: ..\HARDWARE\FLASH\flash.h
 ..\obj\freertos_demo.o: ..\HARDWARE\IWDG\iwdg.h
+..\obj\freertos_demo.o: ..\HARDWARE\EWDG\ewdg.h

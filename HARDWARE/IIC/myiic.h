@@ -15,8 +15,8 @@
 ////////////////////////////////////////////////////////////////////////////////// 	
    	   		   
 //IO方向设置
-#define SDA_IN()  {GPIOC->MODER&=~(3<<(9*2));GPIOC->MODER|=0<<9*2;}	//PD5输入模式
-#define SDA_OUT() {GPIOC->MODER&=~(3<<(9*2));GPIOC->MODER|=1<<9*2;} //PD5输入模式
+#define SDA_IN()  {GPIOC->MODER&=~(3<<(9*2));GPIOC->MODER|=0<<9*2;}	//PC9输入模式
+#define SDA_OUT() {GPIOC->MODER&=~(3<<(9*2));GPIOC->MODER|=1<<9*2;} //PC9输出模式
 //IO操作函数	 
 #define IIC_SCL    PAout(8) //SCL
 #define IIC_SDA    PCout(9) //SDA	 
