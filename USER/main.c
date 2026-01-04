@@ -7,7 +7,7 @@
 #include "Mb_usart.h"
 #include "crc16.h"
 #include "mdbs_func.h"
-#include                                 "ec20.h"
+#include "ec20.h"
 #include "timer.h"
 #include "FreeRTOS.h"
 #include "task.h"
@@ -19,10 +19,10 @@
 #include "ewdg.h"
 #include "myrtc.h"
 #include "ina226.h"
+#include "adaptive_report.h"
 
 int main(void)
 { 	
-		int32_t v_mV, p_mW;
 		NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);//设置系统中断优先级分组4
 		delay_init(168);		//延时初始化 
 		delay_xms(50);//加这个延时，防止外设还没来得及上电的时候就已经开始初始化了
@@ -35,31 +35,19 @@ int main(void)
 		LED_Init();
 		KEY_Init();
 		INA226_Init(INA226_I2C_ADDR_DEFAULT);
-		while (1)
-		{
-			if (INA226_Probe(INA226_I2C_ADDR_DEFAULT) == 0) {
-				INA226_ReadBusVoltage_mV(INA226_I2C_ADDR_DEFAULT, &v_mV);
-				printf("Bus Voltage: %d mV\n", v_mV);
-				INA226_ReadPower_mW(INA226_I2C_ADDR_DEFAULT, INA226_RSHUNT_MOHM_DEFAULT, &p_mW);
-				printf("Power: %d mW\n", p_mW);
-			}		
-			else {
-				printf("INA226 not found!\n");
-			}
-			delay_xms(1000);
-		}
-			
+		AdaptiveReport_Init();
 
-		// SensorDataGet(); //测试传感器数据
-// #if IS_GATWAY	
-//     	EC800_Init();
-//     	MqttConnect();
-// #endif
-// 		lora_init(0x31415926);
-// 		IWDG_Init(IWDG_Prescaler_256,2000);//时间计算(大概):Tout=256 * rlr/32 (ms) = 8*rlr(ms) rlr取值范围0-2047
-// 		My_RTC_Init();
-// 		RTC_Set_WakeUp(RTC_WakeUpClock_CK_SPRE_16bits, WAKE_UP_SECONDS - 1); //配置WAKE UP中断，WAKE_UP_SECONDS秒钟中断一次
-// 		TIM_Cmd(TIM2, DISABLE);//关闭TIM2，在FreeRTOS中喂狗
-// 		freertos_demo();
+		SensorDataGet(); //测试传感器数据
+
+#if IS_GATWAY	
+		EC800_Init();
+		MqttConnect();
+#endif
+		lora_init(0x31415926);
+		IWDG_Init(IWDG_Prescaler_256,2000);//时间计算(大概):Tout=256 * rlr/32 (ms) = 8*rlr(ms) rlr取值范围0-2047
+		My_RTC_Init();
+		RTC_Set_WakeUp(RTC_WakeUpClock_CK_SPRE_16bits, WAKE_UP_SECONDS - 1); //配置WAKE UP中断，WAKE_UP_SECONDS秒钟中断一次
+		TIM_Cmd(TIM2, DISABLE);//关闭TIM2，在FreeRTOS中喂狗
+		freertos_demo();
 }
  

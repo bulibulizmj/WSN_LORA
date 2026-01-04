@@ -7,7 +7,7 @@
 #include "mac.h"
 #include "tree_node.h"
 
-#define IS_GATWAY                          0          //网关标志，为1为网关（根节点），为0为其他节点
+#define IS_GATWAY                          1          //网关标志，为1为网关（根节点），为0为其他节点
 
 
 #define IS_JOIN_WAN                       (1 << 0)    //入网标志位，该位为0表示入网，为1表示未入网
@@ -90,7 +90,7 @@ typedef struct {
 
 #pragma pack(pop)                         //还原之前的对齐方式
 
-void RoutingTableInitial(RoutingTable routing_table);
+void RoutingTableInitial(RoutingTable *routing_table);
 void write_my_addr_route(void);
 void data_report_route(void);
 void beacon_send_route(void);
@@ -110,7 +110,7 @@ void delete_dead_neighbor_route(void);
 void route_update_process(void);
 void update_broadcast_route(void);
 void SensorDataGet(void);
-void MqttReport(RoutingFrame report_data_frame);
+u8 MqttReport(RoutingFrame report_data_frame);
 void MqttConnect(void);
 #endif
 

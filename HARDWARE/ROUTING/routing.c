@@ -14,6 +14,7 @@
 #include "mdbs_func.h"
 #include "led.h"
 
+#include "adaptive_report.h"
 //MQTT接入信息
 #define  CLIENTID       "WSN_GW_001"
 #define  USERNAME       "test_client"
@@ -56,16 +57,21 @@ RoutingTable routing_table; //定义路由表
   * @param  None
   * @retval None
   */
-void RoutingTableInitial(RoutingTable table)
+void RoutingTableInitial(RoutingTable *table)
 {
-    table.tree_pointer = NULL;
-    table.node_addr.addr = read_from_flash();
-    table.parent_addr = NULL;
-    table.parent_rssi = 0xff;
-    table.child_count = 0;
-    table.neighbor_count = 0;
-    table.join_flag = 1;
-    table.tree_depth = 0xff;
+    if (table == NULL)
+    {
+        return;
+    }
+
+    table->tree_pointer = NULL;
+    table->node_addr.addr = read_from_flash();
+    table->parent_addr = 0;
+    table->parent_rssi = 0xff;
+    table->child_count = 0;
+    table->neighbor_count = 0;
+    table->join_flag = 1;
+    table->tree_depth = 0xff;
 }
 
 
@@ -185,25 +191,38 @@ void node_check_route(void)
   */
 void data_report_route(void)
 {
+    uint32_t period_ms = 0;
+    TickType_t period_ticks = 0;
+
     if(IS_GATWAY)
     {
-        printf("开启定时\r\n");
-        xTimerStart(send_timer_handle, portMAX_DELAY);
-        route_eventgroup_bit = xEventGroupWaitBits(route_eventgroup_handle, TIMER_OK_4, pdTRUE, pdTRUE, portMAX_DELAY);	//超时时间到且发送空闲
-        xSemaphoreTake(is_sender_route_handle, portMAX_DELAY); //获取信号量并死等 
+        period_ms = (uint32_t)ADAPT_REPORT_TMAX_MINUTES * 60U * 1000U;
+    }
+    else
+    {
+        period_ms = AdaptiveReport_GetNextPeriodMs(routing_table.tree_depth);
+    }
+    period_ticks = pdMS_TO_TICKS(period_ms);
+
+    xEventGroupClearBits(route_eventgroup_handle, TIMER_OK_4);
+    xTimerChangePeriod(send_timer_handle, period_ticks, portMAX_DELAY);
+    route_eventgroup_bit = xEventGroupWaitBits(route_eventgroup_handle, TIMER_OK_4, pdTRUE, pdTRUE, portMAX_DELAY);	//超时时间到且发送空闲
+
+    if(IS_GATWAY)
+    {
+        xSemaphoreTake(is_sender_route_handle, portMAX_DELAY); //获取信号量并死等
         printf("开启上报数据\r\n");
         send_frame_route.payload.routing_sensor_data.addr_src = routing_table.node_addr.addr;
         SensorDataGet();
-        MqttReport(send_frame_route);
+        (void)MqttReport(send_frame_route);
         xSemaphoreGive(is_sender_route_handle); //释放信号量，表示重新回到发送空闲
         printf("上报数据完毕\r\n");
     }
     else
     {
-        printf("开启定时\r\n");
-        xTimerStart(send_timer_handle, portMAX_DELAY);
-        route_eventgroup_bit = xEventGroupWaitBits(route_eventgroup_handle, TIMER_OK_4, pdTRUE, pdTRUE, portMAX_DELAY);	//超时时间到且发送空闲
-        xSemaphoreTake(is_sender_route_handle, portMAX_DELAY); //获取信号量并死等 
+        u8 tx_ret = 0;
+
+        xSemaphoreTake(is_sender_route_handle, portMAX_DELAY); //获取信号量并死等
         printf("开启上报数据\r\n");
         mac_frame_clear(&send_frame);
         send_frame.src_addr = routing_table.node_addr.addr;
@@ -213,17 +232,21 @@ void data_report_route(void)
         send_frame_route.depth = routing_table.tree_depth;
         send_frame_route.payload.routing_sensor_data.addr_src = routing_table.node_addr.addr;
         SensorDataGet();
-        memcpy((&send_frame)->payload, &send_frame_route, sizeof(RoutingFrame));	    
-        if(mac_send_without_data_recv() == 0) xEventGroupSetBits(route_eventgroup_handle, IS_JOIN_WAN); //如果发送失败则进入未入网状态，重新选择父节点  
+        memcpy((&send_frame)->payload, &send_frame_route, sizeof(RoutingFrame));
+        tx_ret = mac_send_without_data_recv();
+        AdaptiveReport_RecordTxResult(tx_ret == 2);
+        if(tx_ret == 0) xEventGroupSetBits(route_eventgroup_handle, IS_JOIN_WAN); //如果发送失败则进入未入网状态，重新选择父节点
         xSemaphoreGive(is_sender_route_handle); //释放信号量，表示重新回到发送空闲
         printf("上报数据完毕\r\n");
     }
 }
 
+
 void SensorDataGet(void)
 {
     uint32_t raw_data = 0;
     UBaseType_t uxHighWaterMark;
+    AdaptiveReport_SensorLock();
     sensor_power_on();
     delay_ms(50);
     sht45init();
@@ -261,6 +284,7 @@ void SensorDataGet(void)
     raw_data = CurrentWindsDirection();
     send_frame_route.payload.routing_sensor_data.wind_direction = raw_data & 0xFFFF; 
     sensor_power_off();
+    AdaptiveReport_SensorUnlock();
     uxHighWaterMark = uxTaskGetStackHighWaterMark(NULL); 
     printf("send_timer任务使用情况：%ld\r\n",uxHighWaterMark);
     
@@ -333,7 +357,7 @@ void MqttConnect(void)
   * @param  report_data_frame：要上报的数据帧
   * @retval None
   */
-void MqttReport(RoutingFrame report_data_frame)
+u8 MqttReport(RoutingFrame report_data_frame)
 {    
     memset(send_data_4g,0,BUFLEN);//AtStrBuf_EC800清零
     sprintf(send_data_4g, "{\"params\":\"%llx %x %x %x %x %x %x %x %x %x %x\"}",
@@ -344,7 +368,7 @@ void MqttReport(RoutingFrame report_data_frame)
             report_data_frame.payload.routing_sensor_data.windspeed, report_data_frame.payload.routing_sensor_data.wind_direction,
             report_data_frame.payload.routing_sensor_data.radiation);
     printf(send_data_4g);
-    EC20_MQTT_SEND_DATA((u8 *)"sensor/data",(u8 *)send_data_4g);   //发送数据
+    return EC20_MQTT_SEND_DATA((u8 *)"sensor/data",(u8 *)send_data_4g);   //发送数据
 }
 
 /**

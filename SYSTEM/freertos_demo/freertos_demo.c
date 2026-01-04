@@ -234,7 +234,7 @@ void start_task(void * pvParameters)
 		{
 				printf("定时器创造成功!!\r\n");
 		}
-    RoutingTableInitial(routing_table); //初始化路由表
+    RoutingTableInitial(&routing_table); //初始化路由表
     if((routing_table.node_addr.addr == NULL) || (routing_table.node_addr.addr == 0xffffffffffffffff))  //当前没有地址或地址全为f，则将标志位置1,若不然置0
     {
         xEventGroupSetBits(route_eventgroup_handle, IS_ADDR_NULL); 

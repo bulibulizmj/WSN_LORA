@@ -68,3 +68,4 @@
 ..\obj\main.o: ..\HARDWARE\MYRTC\myrtc.h
 ..\obj\main.o: ..\HARDWARE\INA226\ina226.h
 ..\obj\main.o: ..\HARDWARE\IIC\myiic.h
+..\obj\main.o: adaptive_report.h
