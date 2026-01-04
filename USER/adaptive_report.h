@@ -90,6 +90,9 @@
 /* ------------------------ API ------------------------ */
 void AdaptiveReport_Init(void);
 
+/* Env sampling task entry (created in FreeRTOS start_task). */
+void AdaptiveReport_EnvTask(void *pvParameters);
+
 /* Protect shared sensor/I2C access (optional but recommended). */
 void AdaptiveReport_SensorLock(void);
 void AdaptiveReport_SensorUnlock(void);

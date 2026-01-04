@@ -7,7 +7,7 @@
 #include "mac.h"
 #include "tree_node.h"
 
-#define IS_GATWAY                          1          //网关标志，为1为网关（根节点），为0为其他节点
+#define IS_GATWAY                          0          //网关标志，为1为网关（根节点），为0为其他节点
 
 
 #define IS_JOIN_WAN                       (1 << 0)    //入网标志位，该位为0表示入网，为1表示未入网

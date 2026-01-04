@@ -38,6 +38,40 @@ typedef struct
 
 static AdaptiveReportState g_adapt;
 
+static void AdaptiveReport_EnsureSensorLockCreated(void)
+{
+    SemaphoreHandle_t lock = NULL;
+
+    if (g_adapt.sensor_lock != NULL)
+    {
+        return;
+    }
+
+    if (xTaskGetSchedulerState() == taskSCHEDULER_NOT_STARTED)
+    {
+        return;
+    }
+
+    lock = xSemaphoreCreateMutex();
+    if (lock == NULL)
+    {
+        return;
+    }
+
+    taskENTER_CRITICAL();
+    if (g_adapt.sensor_lock == NULL)
+    {
+        g_adapt.sensor_lock = lock;
+        lock = NULL;
+    }
+    taskEXIT_CRITICAL();
+
+    if (lock != NULL)
+    {
+        vSemaphoreDelete(lock);
+    }
+}
+
 static float adapt_clampf(float v, float vmin, float vmax)
 {
     if (v < vmin)
@@ -157,7 +191,7 @@ static void AdaptiveReport_SampleEnvOnce(void)
     adapt_radiation_push(l_comp);
 }
 
-static void AdaptiveReport_EnvTask(void *pvParameters)
+void AdaptiveReport_EnvTask(void *pvParameters)
 {
     (void)pvParameters;
 
@@ -173,7 +207,6 @@ static void AdaptiveReport_EnvTask(void *pvParameters)
 
 void AdaptiveReport_Init(void)
 {
-    g_adapt.sensor_lock = xSemaphoreCreateMutex();
     g_adapt.radiation_sum = 0.0f;
     g_adapt.radiation_count = 0;
     g_adapt.radiation_index = 0;
@@ -183,17 +216,11 @@ void AdaptiveReport_Init(void)
     g_adapt.tx_fail_count = 0;
 
     g_adapt.prev_period_ms = (uint32_t)ADAPT_REPORT_TMIN_MINUTES * 60U * 1000U;
-
-    (void)xTaskCreate(AdaptiveReport_EnvTask,
-                      "env_sample",
-                      256,
-                      NULL,
-                      tskIDLE_PRIORITY + 1,
-                      NULL);
 }
 
 void AdaptiveReport_SensorLock(void)
 {
+    AdaptiveReport_EnsureSensorLockCreated();
     if (g_adapt.sensor_lock != NULL)
     {
         (void)xSemaphoreTake(g_adapt.sensor_lock, portMAX_DELAY);

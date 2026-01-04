@@ -189,7 +189,7 @@ void RTC_WKUP_IRQHandler(void)
 	if(RTC_GetFlagStatus(RTC_FLAG_WUTF)==SET)//判断WK_UP中断状态位是否为1
 	{
 		RTC_ClearFlag(RTC_FLAG_WUTF);//清空中断标志
-		printf("wake up %d!!\r\n", overflow_count);
+		// printf("wake up %d!!\r\n", overflow_count);
         overflow_count ++;
 		//LED1=!LED1;
         if (overflow_count >= target_overflows)

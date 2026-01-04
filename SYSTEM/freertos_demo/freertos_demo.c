@@ -9,6 +9,7 @@
 #include "task.h"
 #include "mac.h"
 #include "routing.h"
+#include "adaptive_report.h"
 #include "flash.h"
 #include "iwdg.h"
 #include "ewdg.h"
@@ -84,7 +85,7 @@ void beacon_send(void * pvParameters);
  * 包括：任务句柄 任务优先级 堆栈大小 创建任务
  */
 #define DATA_RELAY_PRIO 				21
-#define DATA_RELAY_STACK_SIZE		256 
+#define DATA_RELAY_STACK_SIZE		128 
 TaskHandle_t data_relay_handler;//任务句柄
 void data_relay(void * pvParameters);
 
@@ -92,7 +93,7 @@ void data_relay(void * pvParameters);
  * 包括：任务句柄 任务优先级 堆栈大小 创建任务
  */
 #define ROUTING_UPDATE_PRIO 				18
-#define ROUTING_UPDATE_STACK_SIZE		256 
+#define ROUTING_UPDATE_STACK_SIZE		128 
 TaskHandle_t routing_update_handler;//任务句柄
 void routing_update(void * pvParameters);
 
@@ -327,6 +328,12 @@ void start_task(void * pvParameters)
 								(void *                 )   NULL,
 								(UBaseType_t            )   NODE_CHECK_PRIO,                                      
 								(TaskHandle_t *         )   &node_check_handler );                   
+		xTaskCreate((TaskFunction_t 				)   AdaptiveReport_EnvTask,
+								(char *                 )   "env_sample",
+								(configSTACK_DEPTH_TYPE )   256,
+								(void *                 )   NULL,
+								(UBaseType_t            )   (tskIDLE_PRIORITY + 1),
+								(TaskHandle_t *         )   NULL );
                 
 		xEventGroupSetBits(recv_eventgroup_handle, INITIAL_OK);//将INITIAL_OK状态位初始化为1，表示初始化成功
     recv_eventgroup_bit = xEventGroupWaitBits(recv_eventgroup_handle, INITIAL_OK, pdFALSE, pdTRUE, 0);	

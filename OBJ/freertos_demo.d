@@ -62,6 +62,7 @@
 ..\obj\freertos_demo.o: ..\HARDWARE\MAC\mac.h
 ..\obj\freertos_demo.o: ..\HARDWARE\ROUTING\routing.h
 ..\obj\freertos_demo.o: ..\HARDWARE\ROUTING\tree_node.h
+..\obj\freertos_demo.o: ..\USER\adaptive_report.h
 ..\obj\freertos_demo.o: ..\HARDWARE\FLASH\flash.h
 ..\obj\freertos_demo.o: ..\HARDWARE\IWDG\iwdg.h
 ..\obj\freertos_demo.o: ..\HARDWARE\EWDG\ewdg.h
