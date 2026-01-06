@@ -34,6 +34,10 @@
 /* If SHT45 read fails, use this temperature (C) for compensation. */
 #define ADAPT_REPORT_TEMP_FALLBACK_C           25.0f
 
+/* ------------------------ Sensor Test Sequence ------------------------ */
+/* Enable test sequence when SHT45/radiation sensor is not installed. */
+#define ADAPT_REPORT_SENSOR_TESTSEQ_ENABLE     1
+
 /* CurrentRadiation() returns 0xFFFF on error in this project. */
 #define ADAPT_REPORT_RADIATION_INVALID_RAW     0xFFFFu
 
@@ -86,6 +90,8 @@
 
 /* Debug prints */
 #define ADAPT_REPORT_DEBUG                     1
+/* Extra debug prints for validation (prev/calc/smooth/clamps). */
+#define ADAPT_REPORT_DEBUG_VERBOSE             1
 
 /* ------------------------ API ------------------------ */
 void AdaptiveReport_Init(void);
@@ -102,5 +108,14 @@ void AdaptiveReport_RecordTxResult(uint8_t ok);
 
 /* Calculate and update the next report period (ms). hop_count is hops to gateway. */
 uint32_t AdaptiveReport_GetNextPeriodMs(uint8_t hop_count);
+
+#if ADAPT_REPORT_SENSOR_TESTSEQ_ENABLE
+/* Test-only: provide fake temperature/radiation samples in sequence. */
+void AdaptiveReport_TestSeqNext(float *temperature_c, float *humidity, uint16_t *radiation_raw);
+
+/* Helpers: convert engineering values to the raw format used in routing.c prints. */
+uint16_t AdaptiveReport_TestSeqTempCToSht45Raw(float temperature_c);
+uint16_t AdaptiveReport_TestSeqHumidityToSht45Raw(float humidity);
+#endif
 
 #endif

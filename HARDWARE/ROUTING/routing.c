@@ -163,12 +163,6 @@ void write_my_addr_route(void)
         printf("\r\nlongtitude:%d,latitude:%d\r\n", routing_table.node_addr.long_latitude[0], routing_table.node_addr.long_latitude[1]);
         printf("addr:%llx\r\n", routing_table.node_addr.addr);
         ADDR_MINE = routing_table.node_addr.addr; //写入MAC层的地址
-        is_sender_route_handle = xSemaphoreCreateBinary();
-        if(is_sender_route_handle != NULL)
-        {
-            printf("二值信号量创建成功\r\n");
-        }
-        xSemaphoreGive(is_sender_route_handle); //释放信号量
         vTaskDelay(100);
     }
 }
@@ -245,14 +239,27 @@ void data_report_route(void)
 void SensorDataGet(void)
 {
     uint32_t raw_data = 0;
+#if ADAPT_REPORT_SENSOR_TESTSEQ_ENABLE
+    float temperature_c = 0.0f;
+    float humidity = 0.0f;
+    uint16_t radiation_raw = 0u;
+#endif
     UBaseType_t uxHighWaterMark;
     AdaptiveReport_SensorLock();
     sensor_power_on();
     delay_ms(50);
+
+#if ADAPT_REPORT_SENSOR_TESTSEQ_ENABLE
+    AdaptiveReport_TestSeqNext(&temperature_c, &humidity, &radiation_raw);
+    send_frame_route.payload.routing_sensor_data.temperature = AdaptiveReport_TestSeqTempCToSht45Raw(temperature_c);
+    send_frame_route.payload.routing_sensor_data.humidity = AdaptiveReport_TestSeqHumidityToSht45Raw(humidity);
+    send_frame_route.payload.routing_sensor_data.radiation = radiation_raw;
+#else
     sht45init();
     raw_data = SHT45_ReadRawData(1);
     send_frame_route.payload.routing_sensor_data.temperature = raw_data & 0xFFFF;
     send_frame_route.payload.routing_sensor_data.humidity = raw_data >> 16;
+#endif
     printf("Temperature: %f, Humidity:%f\r\n", (-45 + 175*(send_frame_route.payload.routing_sensor_data.temperature)/65535.0), (-6 + 125*(send_frame_route.payload.routing_sensor_data.humidity)/65535.0));
     if(BMP280()){
         delay_ms(50);
@@ -275,8 +282,10 @@ void SensorDataGet(void)
     send_frame_route.payload.routing_sensor_data.precipitation = raw_data & 0xFFFF;
     CleanPrecipitation();
 		delay_ms(100);
+#if !ADAPT_REPORT_SENSOR_TESTSEQ_ENABLE
     raw_data = CurrentRadiation();
     send_frame_route.payload.routing_sensor_data.radiation = raw_data & 0xFFFF;
+#endif
 		delay_ms(100);
     raw_data = CurrentWindsSpeed();
     send_frame_route.payload.routing_sensor_data.windspeed = raw_data & 0xFFFF;

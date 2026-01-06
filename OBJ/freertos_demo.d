@@ -52,10 +52,12 @@
 ..\obj\freertos_demo.o: ..\FreeRTOS\include\deprecated_definitions.h
 ..\obj\freertos_demo.o: ..\FreeRTOS\portable\RVDS\ARM_CM4F\portmacro.h
 ..\obj\freertos_demo.o: ..\FreeRTOS\include\mpu_wrappers.h
-..\obj\freertos_demo.o: ..\FreeRTOS\include\event_groups.h
-..\obj\freertos_demo.o: ..\FreeRTOS\include\timers.h
+..\obj\freertos_demo.o: ..\FreeRTOS\include\semphr.h
+..\obj\freertos_demo.o: ..\FreeRTOS\include\queue.h
 ..\obj\freertos_demo.o: ..\FreeRTOS\include\task.h
 ..\obj\freertos_demo.o: ..\FreeRTOS\include\list.h
+..\obj\freertos_demo.o: ..\FreeRTOS\include\event_groups.h
+..\obj\freertos_demo.o: ..\FreeRTOS\include\timers.h
 ..\obj\freertos_demo.o: ..\HARDWARE\MAC\mac.h
 ..\obj\freertos_demo.o: ..\HARDWARE\CRC16\crc16.h
 ..\obj\freertos_demo.o: ..\HARDWARE\LORA\lora.h

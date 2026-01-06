@@ -5,6 +5,7 @@
 #include "usart.h"
 #include "delay.h"
 #include "FreeRTOS.h"
+#include "semphr.h"
 #include "event_groups.h" 
 #include "task.h"
 #include "mac.h"
@@ -154,6 +155,7 @@ extern EventBits_t recv_eventgroup_bit;
 extern EventGroupHandle_t route_eventgroup_handle;		//路由层事件标志组句柄
 extern EventBits_t route_eventgroup_bit;
 extern RoutingTable routing_table;                    //定义路由表
+extern QueueHandle_t is_sender_route_handle;          //路由层发送互斥信号量
 
 extern NodeAddr ADDR_CURRENT;		
 extern NodeAddr ADDR_MINE;		
@@ -236,6 +238,24 @@ void start_task(void * pvParameters)
 				printf("定时器创造成功!!\r\n");
 		}
     RoutingTableInitial(&routing_table); //初始化路由表
+
+    /* 写入MAC层的地址（即使还未入网也需要初始化ADDR_MINE，避免后续逻辑使用默认0） */
+    ADDR_MINE = routing_table.node_addr.addr;
+
+    /* 路由层发送互斥：必须在任何可能发送/上报的任务运行前创建，否则xSemaphoreTake(NULL)会触发断言并进入HardFault */
+    if(is_sender_route_handle == NULL)
+    {
+        is_sender_route_handle = xSemaphoreCreateBinary();
+        if(is_sender_route_handle != NULL)
+        {
+            xSemaphoreGive(is_sender_route_handle); //初始置1：发送空闲
+        }
+        else
+        {
+            printf("Error: is_sender_route_handle create failed\r\n");
+        }
+    }
+
     if((routing_table.node_addr.addr == NULL) || (routing_table.node_addr.addr == 0xffffffffffffffff))  //当前没有地址或地址全为f，则将标志位置1,若不然置0
     {
         xEventGroupSetBits(route_eventgroup_handle, IS_ADDR_NULL); 

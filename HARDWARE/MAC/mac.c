@@ -25,6 +25,89 @@ EventBits_t recv_eventgroup_bit = 0;
 extern TimerHandle_t wait_comm_timer_handle; 			/* 单次定时器 */
 extern TimerHandle_t reset_recv_timer_handle;
 extern TaskHandle_t mac_packet_process_handler;
+
+/* ------------------------ CSMA/CA congestion statistics ------------------------
+ * We treat each CSMA listen window as one sample:
+ * - busy=1 if we received any byte during the window (CSMA_BUSY_7 set)
+ * - busy=0 if the window timed out without receiving bytes
+ * The congestion score is the busy-hit ratio in a sliding window.
+ */
+#if MAC_CSMA_CONGESTION_WINDOW_SIZE > 0
+static u8 g_csma_busy_window[MAC_CSMA_CONGESTION_WINDOW_SIZE];
+static u16 g_csma_busy_hits = 0;
+static u16 g_csma_window_count = 0;
+static u16 g_csma_window_index = 0;
+#endif
+
+static void MAC_CSMA_RecordListenWindow(u8 busy)
+{
+#if MAC_CSMA_CONGESTION_WINDOW_SIZE == 0
+    (void)busy;
+#else
+    u8 old = 0;
+
+    busy = (busy != 0) ? 1 : 0;
+
+    taskENTER_CRITICAL();
+    if (g_csma_window_count < (u16)MAC_CSMA_CONGESTION_WINDOW_SIZE)
+    {
+        g_csma_busy_window[g_csma_window_index] = busy;
+        if (busy)
+        {
+            g_csma_busy_hits++;
+        }
+        g_csma_window_count++;
+    }
+    else
+    {
+        old = g_csma_busy_window[g_csma_window_index];
+        if (old)
+        {
+            g_csma_busy_hits--;
+        }
+
+        g_csma_busy_window[g_csma_window_index] = busy;
+        if (busy)
+        {
+            g_csma_busy_hits++;
+        }
+    }
+
+    g_csma_window_index++;
+    if (g_csma_window_index >= (u16)MAC_CSMA_CONGESTION_WINDOW_SIZE)
+    {
+        g_csma_window_index = 0;
+    }
+    taskEXIT_CRITICAL();
+#endif
+}
+
+float MAC_GetCsmaCongestionScore(void)
+{
+#if MAC_CSMA_CONGESTION_WINDOW_SIZE == 0
+    return 0.0f;
+#else
+    float score = 0.0f;
+
+    taskENTER_CRITICAL();
+    if (g_csma_window_count > 0)
+    {
+        score = (float)g_csma_busy_hits / (float)g_csma_window_count;
+    }
+    taskEXIT_CRITICAL();
+
+    if (score < 0.0f)
+    {
+        score = 0.0f;
+    }
+    if (score > 1.0f)
+    {
+        score = 1.0f;
+    }
+
+    return score;
+#endif
+}
 /**
   * @brief  MACFrame帧发送函数，将MAC帧赋值到数组中
   * @param  None
@@ -120,11 +203,13 @@ bool is_channel_idle(void)
 				recv_eventgroup_bit = xEventGroupWaitBits(recv_eventgroup_handle, CSMA_BUSY_7, pdTRUE, pdTRUE, 4000 * backoff);
 				if((recv_eventgroup_bit & CSMA_BUSY_7) == 0)	//没有获取到事件标志组
 				{
+            MAC_CSMA_RecordListenWindow(0);
 						CW --;
 						if(CW == 0) return 1;
 				}
 				else	//获取到了事件标志组
 				{
+            MAC_CSMA_RecordListenWindow(1);
 						NB ++;
 						cnt ++;
 						CW = 2;

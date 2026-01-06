@@ -59,6 +59,9 @@
 ..\obj\adaptive_report.o: ..\HARDWARE\LED\led.h
 ..\obj\adaptive_report.o: ..\HARDWARE\INA226\ina226.h
 ..\obj\adaptive_report.o: ..\HARDWARE\IIC\myiic.h
-..\obj\adaptive_report.o: ..\HARDWARE\MDBS_FUNC\mdbs_func.h
+..\obj\adaptive_report.o: ..\HARDWARE\MAC\mac.h
 ..\obj\adaptive_report.o: ..\HARDWARE\CRC16\crc16.h
+..\obj\adaptive_report.o: ..\HARDWARE\LORA\lora.h
+..\obj\adaptive_report.o: ..\HARDWARE\MAC\mac.h
+..\obj\adaptive_report.o: ..\HARDWARE\MDBS_FUNC\mdbs_func.h
 ..\obj\adaptive_report.o: ..\HARDWARE\SHT45\sht45.h

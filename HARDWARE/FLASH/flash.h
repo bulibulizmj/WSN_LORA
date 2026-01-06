@@ -8,7 +8,7 @@
 
 #define DATA_FLASH_SAVE_NUM 4   //存储数据个数
  
-#define FLASH_SAVE_ADDR  ADDR_FLASH_SECTOR_4    //扇区有64kb的大小 一般寸几个数据已经足够
+#define FLASH_SAVE_ADDR  ADDR_FLASH_SECTOR_11   //注意：该扇区必须避开程序代码区，否则擦除会导致程序损坏/复位后一直HardFault
 //FLASH 扇区的起始地址
 #define ADDR_FLASH_SECTOR_0     ((u32)0x08000000) 	//扇区0起始地址, 16 Kbytes  
 #define ADDR_FLASH_SECTOR_1     ((u32)0x08004000) 	//扇区1起始地址, 16 Kbytes  
