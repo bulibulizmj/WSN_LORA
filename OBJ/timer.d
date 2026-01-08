@@ -39,3 +39,4 @@
 ..\obj\timer.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\timer.o: ..\SYSTEM\mb_usart\Mb_usart.h
 ..\obj\timer.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdbool.h
+..\obj\timer.o: ..\HARDWARE\EWDG\ewdg.h

@@ -62,6 +62,8 @@
     "core_cm4.h": "c",
     "mac.h": "c",
     "lora.h": "c",
-    "stdio.h": "c"
+    "stdio.h": "c",
+    "myrtc.h": "c",
+    "freertos_demo.h": "c"
   }
 }

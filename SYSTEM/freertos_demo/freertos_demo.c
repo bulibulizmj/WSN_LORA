@@ -5,12 +5,15 @@
 #include "usart.h"
 #include "delay.h"
 #include "FreeRTOS.h"
+#include "semphr.h"
 #include "event_groups.h" 
 #include "task.h"
 #include "mac.h"
 #include "routing.h"
+#include "adaptive_report.h"
 #include "flash.h"
 #include "iwdg.h"
+#include "ewdg.h"
 /******************************************************************************************************/
 
 /* start_task任务配置
@@ -83,7 +86,7 @@ void beacon_send(void * pvParameters);
  * 包括：任务句柄 任务优先级 堆栈大小 创建任务
  */
 #define DATA_RELAY_PRIO 				21
-#define DATA_RELAY_STACK_SIZE		256 
+#define DATA_RELAY_STACK_SIZE		128 
 TaskHandle_t data_relay_handler;//任务句柄
 void data_relay(void * pvParameters);
 
@@ -91,7 +94,7 @@ void data_relay(void * pvParameters);
  * 包括：任务句柄 任务优先级 堆栈大小 创建任务
  */
 #define ROUTING_UPDATE_PRIO 				18
-#define ROUTING_UPDATE_STACK_SIZE		256 
+#define ROUTING_UPDATE_STACK_SIZE		128 
 TaskHandle_t routing_update_handler;//任务句柄
 void routing_update(void * pvParameters);
 
@@ -103,13 +106,32 @@ void routing_update(void * pvParameters);
 TaskHandle_t node_check_handler;//任务句柄
 void node_check(void * pvParameters);
 
-/* 喂狗任务配置
+/* 喂内部看门狗任务配置
  * 包括：任务句柄 任务优先级 堆栈大小 创建任务
  */
-#define FEED_DOG_PRIO 				31
-#define FEED_DOG_STACK_SIZE		128 
-TaskHandle_t feed_dog_handler;//任务句柄
-void feed_dog(void * pvParameters);
+#define FEED_IWDOG_PRIO 				29
+#define FEED_IWDOG_STACK_SIZE		128 
+TaskHandle_t feed_iwdog_handler;//任务句柄
+void feed_iwdog(void * pvParameters);
+
+/* 喂外部看门狗任务配置
+ * 包括：任务句柄 任务优先级 堆栈大小 创建任务
+ */
+#define FEED_EWDOG_PRIO 				30
+#define FEED_EWDOG_STACK_SIZE		128 
+TaskHandle_t feed_ewdog_handler;//任务句柄
+void feed_ewdog(void * pvParameters);
+
+/***************************  各任务和定时器周期配置 *********************************/
+#define send_timer_period_ms         120*1000           //数据上报与计时任务周期，单位ms
+#define node_check_period_ms         4800*1000          //邻居节点与子节点检查任务
+#define feed_iwdog_period_ms         4*1000             //喂内部看门狗任务周期，单位ms
+#define feed_ewdog_period_ms         300                //喂外部看门狗任务周期，单位ms
+#define debug_task_period_ms         600*1000           //调试信息打印任务周期，单位ms
+#define beacon_send_period_ms        900*1000           //Beacon发送任务周期，单位ms
+#define reset_recv_ms                40*1000            //强制重置接收方标志，单位ms
+#define wait_comm_period_ms          20*1000            //强制休眠时间，单位ms
+
 
 
 /******************************************************************************************************/
@@ -133,6 +155,7 @@ extern EventBits_t recv_eventgroup_bit;
 extern EventGroupHandle_t route_eventgroup_handle;		//路由层事件标志组句柄
 extern EventBits_t route_eventgroup_bit;
 extern RoutingTable routing_table;                    //定义路由表
+extern QueueHandle_t is_sender_route_handle;          //路由层发送互斥信号量
 
 extern NodeAddr ADDR_CURRENT;		
 extern NodeAddr ADDR_MINE;		
@@ -200,22 +223,40 @@ void start_task(void * pvParameters)
     xEventGroupSetBits(route_eventgroup_handle, IS_JOIN_WAN );     //将IS_JOIN_WAN位置1，表示未入网；将IS_ADDR_NULL置1，表示当前没有地址
     
 		/* 单次定时器 */
-		send_timer_handle =  xTimerCreate("send_timer", 3600000, pdFALSE, (void *)1, Send_Timer_Callback);
-		wait_comm_timer_handle = xTimerCreate("wait_comm_timer", 20000, pdFALSE, (void *)2, Wait_Comm_Timer_Callback); // 强制休眠时间暂定60s
-		reset_recv_timer_handle = xTimerCreate("reset_recv_timer", 40000, pdFALSE, (void *)3, Reset_Recv_Timer_Callback); // 强制重置接收方标志位定时器
+		send_timer_handle =  xTimerCreate("send_timer", send_timer_period_ms, pdFALSE, (void *)1, Send_Timer_Callback);
+		wait_comm_timer_handle = xTimerCreate("wait_comm_timer", wait_comm_period_ms, pdFALSE, (void *)2, Wait_Comm_Timer_Callback); // 强制休眠时间暂定60s
+		reset_recv_timer_handle = xTimerCreate("reset_recv_timer", reset_recv_ms, pdFALSE, (void *)3, Reset_Recv_Timer_Callback); // 强制重置接收方标志位定时器
 #if IS_GATWAY	
-    beacon_send_timer_handle = xTimerCreate("beacon_send_timer", 900000, pdFALSE, (void *)4, Beacon_Send_Timer_Callback);
-    reset_timer_handle = xTimerCreate("reset_timer", 129600000, pdFALSE, (void *)5, Reset_Timer_Callback); // 重启定时器
+    beacon_send_timer_handle = xTimerCreate("beacon_send_timer", beacon_send_period_ms, pdFALSE, (void *)4, Beacon_Send_Timer_Callback);
+    //reset_timer_handle = xTimerCreate("reset_timer", 129600000, pdFALSE, (void *)5, Reset_Timer_Callback); // 重启定时器
 #else
     beacon_send_timer_handle = xTimerCreate("beacon_send_timer", 900000, pdFALSE, (void *)1, Beacon_Send_Timer_Callback);
-    reset_timer_handle = xTimerCreate("reset_timer", 129600000, pdFALSE, (void *)5, Reset_Timer_Callback); // 重启定时器
+    //reset_timer_handle = xTimerCreate("reset_timer", 129600000, pdFALSE, (void *)5, Reset_Timer_Callback); // 重启定时器
 #endif    
     if(wait_comm_timer_handle != NULL)
 		{
 				printf("定时器创造成功!!\r\n");
 		}
-    RoutingTableInitial(routing_table); //初始化路由表
-    if((routing_table.node_addr.addr == NULL) || (routing_table.node_addr.addr & 0xffffffffffffffff))  //当前没有地址或地址全为f，则将标志位置1,若不然置0
+    RoutingTableInitial(&routing_table); //初始化路由表
+
+    /* 写入MAC层的地址（即使还未入网也需要初始化ADDR_MINE，避免后续逻辑使用默认0） */
+    ADDR_MINE = routing_table.node_addr.addr;
+
+    /* 路由层发送互斥：必须在任何可能发送/上报的任务运行前创建，否则xSemaphoreTake(NULL)会触发断言并进入HardFault */
+    if(is_sender_route_handle == NULL)
+    {
+        is_sender_route_handle = xSemaphoreCreateBinary();
+        if(is_sender_route_handle != NULL)
+        {
+            xSemaphoreGive(is_sender_route_handle); //初始置1：发送空闲
+        }
+        else
+        {
+            printf("Error: is_sender_route_handle create failed\r\n");
+        }
+    }
+
+    if((routing_table.node_addr.addr == NULL) || (routing_table.node_addr.addr == 0xffffffffffffffff))  //当前没有地址或地址全为f，则将标志位置1,若不然置0
     {
         xEventGroupSetBits(route_eventgroup_handle, IS_ADDR_NULL); 
     }
@@ -224,12 +265,19 @@ void start_task(void * pvParameters)
         xEventGroupClearBits(route_eventgroup_handle, IS_ADDR_NULL);
     }
     IWDG_Feed();
-    xTaskCreate((TaskFunction_t 				)   feed_dog,
-								(char *                 )   "feed_dog",
-								(configSTACK_DEPTH_TYPE )   FEED_DOG_STACK_SIZE,
+    xTaskCreate((TaskFunction_t 				)   feed_iwdog,
+								(char *                 )   "feed_iwdog",
+								(configSTACK_DEPTH_TYPE )   FEED_IWDOG_STACK_SIZE,
 								(void *                 )   NULL,
-								(UBaseType_t            )   FEED_DOG_PRIO,
-								(TaskHandle_t *         )   &feed_dog_handler );
+								(UBaseType_t            )   FEED_IWDOG_PRIO,
+								(TaskHandle_t *         )   &feed_iwdog_handler );
+
+    xTaskCreate((TaskFunction_t 				)   feed_ewdog,
+                (char *                 )   "feed_ewdog",
+                (configSTACK_DEPTH_TYPE )   FEED_EWDOG_STACK_SIZE,
+                (void *                 )   NULL,
+                (UBaseType_t            )   FEED_EWDOG_PRIO,
+                (TaskHandle_t *         )   &feed_ewdog_handler );
 
 		xTaskCreate((TaskFunction_t 				)   send_timer,
 								(char *                 )   "send_timer",
@@ -300,6 +348,12 @@ void start_task(void * pvParameters)
 								(void *                 )   NULL,
 								(UBaseType_t            )   NODE_CHECK_PRIO,                                      
 								(TaskHandle_t *         )   &node_check_handler );                   
+		xTaskCreate((TaskFunction_t 				)   AdaptiveReport_EnvTask,
+								(char *                 )   "env_sample",
+								(configSTACK_DEPTH_TYPE )   256,
+								(void *                 )   NULL,
+								(UBaseType_t            )   (tskIDLE_PRIORITY + 1),
+								(TaskHandle_t *         )   NULL );
                 
 		xEventGroupSetBits(recv_eventgroup_handle, INITIAL_OK);//将INITIAL_OK状态位初始化为1，表示初始化成功
     recv_eventgroup_bit = xEventGroupWaitBits(recv_eventgroup_handle, INITIAL_OK, pdFALSE, pdTRUE, 0);	
@@ -309,18 +363,35 @@ void start_task(void * pvParameters)
 }
 
 /**
-  * @brief  喂狗任务
+  * @brief  喂狗任务,内部看门狗
   * @param  None
   * @retval None
   */
-void feed_dog(void * pvParameters)
+void feed_iwdog(void * pvParameters)
 {
+    TickType_t xLastWakeTime = xTaskGetTickCount();
     while(1)
     {
         IWDG_Feed();
-        vTaskDelay(4000);
+        vTaskDelayUntil(&xLastWakeTime, feed_iwdog_period_ms);
     }
 }
+
+/**
+  * @brief  喂狗任务，外部看门狗
+  * @param  None
+  * @retval None
+  */
+void feed_ewdog(void * pvParameters)
+{
+    TickType_t xLastWakeTime = xTaskGetTickCount();
+    while(1)
+    {
+        EWDG_Feed();
+        vTaskDelayUntil(&xLastWakeTime, feed_ewdog_period_ms);
+    }
+}
+
 
 /**
   * @brief  调试信息打印任务
@@ -371,9 +442,12 @@ void debug_task(void * pvParameters)
         uxHighWaterMark = uxTaskGetStackHighWaterMark(data_relay_handler); 
         printf("data_relay任务使用情况：%ld\r\n",uxHighWaterMark);
         
-        uxHighWaterMark = uxTaskGetStackHighWaterMark(feed_dog_handler); 
-        printf("feed_dog_handler任务使用情况：%ld\r\n",uxHighWaterMark);
-        
+        uxHighWaterMark = uxTaskGetStackHighWaterMark(feed_iwdog_handler); 
+        printf("feed_iwdog_handler任务使用情况：%ld\r\n",uxHighWaterMark);
+
+        uxHighWaterMark = uxTaskGetStackHighWaterMark(feed_ewdog_handler); 
+        printf("feed_ewdog_handler任务使用情况：%ld\r\n",uxHighWaterMark);  
+
         printf("最小剩余栈空间大小 %d \r\n",(int32_t)uxTaskGetStackHighWaterMark(NULL));
         printf("历史剩余最小内存大小:%d 字节\r\n\r\n",xPortGetMinimumEverFreeHeapSize());//查询历史剩余最小内存大小
         printf("当前父节点：%llx\r\n", routing_table.parent_addr);
@@ -414,7 +488,7 @@ void node_check(void * pvParameters)
                 routing_table.neighbors[i].is_neighbors_alive = 0;
             }
         }
-        vTaskDelay(1800000);
+        vTaskDelay(node_check_period_ms);
 		}
 }
 
@@ -598,7 +672,7 @@ void Beacon_Send_Timer_Callback( TimerHandle_t pxTimer )
   * @retval None
   */
 void Reset_Timer_Callback(TimerHandle_t pxTimer){
-    printf("重启定时器时间到\r\n");
-    __set_FAULTMASK(1); //关闭总中断
-    NVIC_SystemReset(); //请求单片机重启
+    // printf("重启定时器时间到\r\n");
+    // __set_FAULTMASK(1); //关闭总中断
+    // NVIC_SystemReset(); //请求单片机重启
 }

@@ -16,32 +16,74 @@
 #include "tree_node.h"
 #include "routing.h"
 #include "iwdg.h"
-
-
+#include "ewdg.h"
+#include "myrtc.h"
+#include "ina226.h"
+#include "adaptive_report.h"
 
 int main(void)
 { 	
+		NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);//ÉèÖÃÏµÍ³ÖÐ¶ÏÓÅÏÈ¼¶·Ö×é4
+		delay_init(168);		//ÑÓÊ±³õÊ¼»¯ 
+		delay_xms(50);//¼ÓÕâ¸öÑÓÊ±£¬·ÀÖ¹ÍâÉè»¹Ã»À´µÃ¼°ÉÏµçµÄÊ±ºò¾ÍÒÑ¾­¿ªÊ¼³õÊ¼»¯ÁË
+		EWDG_Init();
+		TIM2_Init((u16)83999, (u16)299); // PSC=83999, ARR=299£¬¶¨Ê±Æ÷2Ã¿300msÖÐ¶ÏÒ»´ÎÀ´Î¹¹·
+		uart_init(115200);	//´®¿Ú³õÊ¼»¯²¨ÌØÂÊÎª115200
 
-		NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);//è®¾ç½®ç³»ç»Ÿä¸­æ–­ä¼˜å…ˆçº§åˆ†ç»„4
-		delay_init(168);		//å»¶æ—¶åˆå§‹åŒ– 
-		delay_xms(50);//åŠ è¿™ä¸ªå»¶æ—¶ï¼Œé˜²æ­¢å¤–è®¾è¿˜æ²¡æ¥å¾—åŠä¸Šç”µçš„æ—¶å€™å°±å·²ç»å¼€å§‹åˆå§‹åŒ–äº†
-		uart_init(115200);	//ä¸²å£åˆå§‹åŒ–æ³¢ç‰¹çŽ‡ä¸º115200
+        /* ´òÓ¡¸´Î»Ô­Òò±êÖ¾Î»£¨ÓÃÓÚÇø·ÖRTCÈí¼þ¸´Î»¡¢¿´ÃÅ¹·¸´Î»µÈ£© */
+        {
+            uint32_t csr = RCC->CSR;
+            printf("RCC_CSR=0x%08lx\r\n", csr);
+            if (csr & RCC_CSR_SFTRSTF)  printf("ResetFlag: SFTRSTF (software)\r\n");
+#if defined(RCC_CSR_WDGRSTF)
+            if (csr & RCC_CSR_WDGRSTF)  printf("ResetFlag: WDGRSTF (IWDG)\r\n");
+#elif defined(RCC_CSR_IWDGRSTF)
+            if (csr & RCC_CSR_IWDGRSTF) printf("ResetFlag: IWDGRSTF (IWDG)\r\n");
+#endif
+            if (csr & RCC_CSR_WWDGRSTF) printf("ResetFlag: WWDGRSTF\r\n");
+            if (csr & RCC_CSR_BORRSTF)  printf("ResetFlag: BORRSTF\r\n");
+            if (csr & RCC_CSR_PORRSTF)  printf("ResetFlag: PORRSTF\r\n");
+#if defined(RCC_CSR_PADRSTF)
+            if (csr & RCC_CSR_PADRSTF)  printf("ResetFlag: PADRSTF\r\n");
+#elif defined(RCC_CSR_PINRSTF)
+            if (csr & RCC_CSR_PINRSTF)  printf("ResetFlag: PINRSTF\r\n");
+#endif
+            if (csr & RCC_CSR_LPWRRSTF) printf("ResetFlag: LPWRRSTF\r\n");
+            RCC->CSR |= RCC_CSR_RMVF; /* Çå³ý¸´Î»±êÖ¾Î» */
+
+        }
+
 		Mdbus_CTRL_Init();
 		Usart3_init(4800);
-    PWR_sensor_CTRL();
+		PWR_sensor_CTRL();
 		LED_Init();
 		KEY_Init();
-	
-		SensorDataGet(); //æµ‹è¯•ä¼ æ„Ÿå™¨æ•°æ®
+		INA226_Init(INA226_I2C_ADDR_DEFAULT);
+		AdaptiveReport_Init();
+
+		SensorDataGet(); //²âÊÔ´«¸ÐÆ÷Êý¾Ý
+
 #if IS_GATWAY	
-    EC800_Init();
-    MqttConnect();
+		EC800_Init();
+		MqttConnect();
 #endif
 		lora_init(0x31415926);
-		IWDG_Init(IWDG_Prescaler_256,2000);//æ—¶é—´è®¡ç®—(å¤§æ¦‚):Tout=256 * rlr/32 (ms) = 8*rlr(ms) rlrå–å€¼èŒƒå›´0-2047
-
+		IWDG_Init(IWDG_Prescaler_256,2000);//Ê±¼ä¼ÆËã(´ó¸Å):Tout=256 * rlr/32 (ms) = 8*rlr(ms) rlrÈ¡Öµ·¶Î§0-2047
+		if(My_RTC_Init() == 0)
+        {
+            u16 wut_arr = (u16)RTC_WakeUpSecondsToArr(WAKE_UP_SECONDS);
+            printf("RTC BDCR=0x%08lx, LSI=%luHz, WAKE_UP_SECONDS=%lu, WUTR=%u\r\n",
+                   RCC->BDCR,
+                   (unsigned long)RTC_GetLSIFrequencyHz(),
+                   (unsigned long)WAKE_UP_SECONDS,
+                   (unsigned int)wut_arr);
+            RTC_Set_WakeUp(RTC_WakeUpClock_CK_SPRE_16bits, wut_arr);
+        }
+        else
+        {
+            printf("My_RTC_Init failed\r\n");
+        }
+		TIM_Cmd(TIM2, DISABLE);//¹Ø±ÕTIM2£¬ÔÚFreeRTOSÖÐÎ¹¹·
 		freertos_demo();
-
-    
 }
  

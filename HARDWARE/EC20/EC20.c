@@ -4,7 +4,7 @@
 #include "usart.h"	
 
 
-#define SERVERIP "47.109.93.42"  //EMQX服务器IP地址
+#define SERVERIP "47.109.185.56"  //EMQX服务器IP地址
 #define SERVERPORT 1883  //EMQX服务器端口
 
 
@@ -334,6 +334,7 @@ u8 EC20_CONNECT_MQTT_SERVER(u8 *CLIENTID,u8 *USERNAME,u8 *PASSWORD)
     else  return 1;
     Clear_Buffer_EC800();
     printf("设备已经连接到阿里云,准备发送数据 [..]\r\n");
+    //EC20_MQTT_SEND_AUTO("sensor/data"); //测试发送数据
     return 0;
 }
 
@@ -367,11 +368,13 @@ u8 EC20_MQTT_SEND_AUTO(u8 *TOPIC)
     memset(AtStrBuf_EC800,0,BUFLEN); //发送数据命令
     //AT+QMTPUB=0,0,0,0,"/sys/a18dtRetCT0/BC26TEST/thing/event/property/post"
     //AT+QMTPUB=0,0,0,0,"sensor/data"
-    sprintf(AtStrBuf_EC800,"AT+QMTPUB=0,0,0,0,\"%s\"\r\n",TOPIC);
+    char data_len_str[] = "{\"temp\":25.5}";
+    sprintf(AtStrBuf_EC800,"AT+QMTPUBEX=0,1,1,0,\"%s\",%d\r\n",TOPIC,strlen(data_len_str));
     Uart2_SendStr(AtStrBuf_EC800);
     delay_ms(1000);
     strx_EC800=strstr((const char*)AtRxBuffer_EC800,(const char*)">");//模块反馈的字符串
     errcount = 0;
+    Clear_Buffer_EC800();
     while(strx_EC800==NULL)
     {
         errcount++;
@@ -391,15 +394,15 @@ u8 EC20_MQTT_SEND_AUTO(u8 *TOPIC)
     if(MQTTVAL > 900)
         MQTTVAL = 0;
 
-    memset(AtStrBuf_EC800,0,BUFLEN); //发送数据命令
-    sprintf(AtStrBuf_EC800,"{params:{LightLuxValue:%d.0}}",MQTTVAL);
-    Uart2_SendStr(AtStrBuf_EC800);
+    // memset(AtStrBuf_EC800,0,BUFLEN); //发送数据命令
+    // sprintf(AtStrBuf_EC800,"",MQTTVAL);
+    Uart2_SendStr(data_len_str);
     delay_ms(300);
 
     while((USART2->SR&0X40)==0);//等待发送完成
     USART2->DR = (u8) 0x1a;
     delay_ms(300);
-	EC20Send_RecAccessMode();
+    EC20Send_RecAccessMode();
     Clear_Buffer_EC800();
     printf("系统数据发送成功  [OK]\r\n");
     return 0;
@@ -419,7 +422,7 @@ u8 EC20_MQTT_SEND_DATA(u8 *TOPIC,u8 *DATA)
 {
     memset(AtStrBuf_EC800,0,BUFLEN); //发送数据命令
     //AT+QMTPUB=0,0,0,0,"sensor/data"
-    sprintf(AtStrBuf_EC800,"AT+QMTPUB=0,0,0,0,\"%s\"\r\n",TOPIC);
+    sprintf(AtStrBuf_EC800,"AT+QMTPUBEX=0,1,1,0,\"%s\",%d\r\n",TOPIC,strlen((const char *)DATA));
     Uart2_SendStr(AtStrBuf_EC800);
     delay_ms(1000);
     strx_EC800=strstr((const char*)AtRxBuffer_EC800,(const char*)">");//模块反馈的字符串
@@ -428,7 +431,7 @@ u8 EC20_MQTT_SEND_DATA(u8 *TOPIC,u8 *DATA)
     {
         errcount++;
         delay_ms(300);
-		strx_EC800=strstr((const char*)AtRxBuffer_EC800,(const char*)">");//模块反馈的字符串
+        strx_EC800=strstr((const char*)AtRxBuffer_EC800,(const char*)">");//模块反馈的字符串
         if(errcount>100)     //防止死循环
         {
             errcount = 0;
