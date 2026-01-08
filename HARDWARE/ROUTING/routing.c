@@ -38,6 +38,25 @@ extern u8  recv_rssi;
 
 char send_data_4g[BUFLEN];  //4G模块发送缓存
 
+/* pdMS_TO_TICKS() will overflow on large milliseconds when configTICK_RATE_HZ=1000.
+ * Example: 180min = 10800000ms; 10800000*1000 overflows 32-bit, resulting in ~36.8min.
+ * Use 64-bit math here to keep long software-timer periods correct. */
+static TickType_t routing_ms_to_ticks_safe(uint32_t ms)
+{
+    uint64_t ticks = ((uint64_t)ms * (uint64_t)configTICK_RATE_HZ) / 1000ULL;
+    const uint64_t max_ticks = (uint64_t)((TickType_t)~(TickType_t)0);
+
+    if (ticks > max_ticks)
+    {
+        ticks = max_ticks;
+    }
+    if ((ticks == 0) && (ms > 0))
+    {
+        ticks = 1;
+    }
+    return (TickType_t)ticks;
+}
+
 extern TimerHandle_t send_timer_handle;				  /* 单次定时器 */
 extern TimerHandle_t beacon_send_timer_handle;  /* 单次定时器 */
 extern TaskHandle_t write_my_addr_handler;      //任务句柄
@@ -196,7 +215,7 @@ void data_report_route(void)
     {
         period_ms = AdaptiveReport_GetNextPeriodMs(routing_table.tree_depth);
     }
-    period_ticks = pdMS_TO_TICKS(period_ms);
+    period_ticks = routing_ms_to_ticks_safe(period_ms);
 
     xEventGroupClearBits(route_eventgroup_handle, TIMER_OK_4);
     xTimerChangePeriod(send_timer_handle, period_ticks, portMAX_DELAY);

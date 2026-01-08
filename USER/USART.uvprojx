@@ -147,7 +147,7 @@
             <RestoreSysVw>1</RestoreSysVw>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
-          <TargetSelection>12</TargetSelection>
+          <TargetSelection>6</TargetSelection>
           <SimDlls>
             <CpuDll></CpuDll>
             <CpuDllArguments></CpuDllArguments>
@@ -161,7 +161,7 @@
             <PeripheralDll></PeripheralDll>
             <PeripheralDllArguments></PeripheralDllArguments>
             <InitializationFile></InitializationFile>
-            <Driver>BIN\CMSIS_AGDI.dll</Driver>
+            <Driver>Segger\JL2CM3.dll</Driver>
           </TargetDlls>
         </DebugOption>
         <Utilities>
@@ -365,7 +365,7 @@
               <MiscControls>--locale=english</MiscControls>
               <Define>STM32F40_41xxx,USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\CORE;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\FWLIB\STM32F4xx_StdPeriph_Driver\inc;..\USER;..\HARDWARE\LED;..\HARDWARE\BEEP;..\HARDWARE\KEY;..\SYSTEM\mb_usart;..\FWLIB\inc;..\HARDWARE\timer;..\HARDWARE\CRC16;..\HARDWARE\MDBS_FUNC;..\FreeRTOS\include;..\FreeRTOS\portable\RVDS\ARM_CM4F;..\SYSTEM\freertos_demo;..\HARDWARE\EXTI;..\HARDWARE\MAC;..\HARDWARE\LORA;..\HARDWARE\ROUTING;..\HARDWARE\FLASH;..\HARDWARE\EC20;..\HARDWARE\IIC;..\HARDWARE\INA226;..\HARDWARE\SHT45;..\HARDWARE\BMP280;..\HARDWARE\IWDG</IncludePath>
+              <IncludePath>..\CORE;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\FWLIB\STM32F4xx_StdPeriph_Driver\inc;..\USER;..\HARDWARE\LED;..\HARDWARE\BEEP;..\HARDWARE\KEY;..\SYSTEM\mb_usart;..\FWLIB\inc;..\HARDWARE\timer;..\HARDWARE\CRC16;..\HARDWARE\MDBS_FUNC;..\FreeRTOS\include;..\FreeRTOS\portable\RVDS\ARM_CM4F;..\SYSTEM\freertos_demo;..\HARDWARE\EXTI;..\HARDWARE\MAC;..\HARDWARE\LORA;..\HARDWARE\ROUTING;..\HARDWARE\FLASH;..\HARDWARE\EC20;..\HARDWARE\IIC;..\HARDWARE\INA226;..\HARDWARE\SHT45;..\HARDWARE\BMP280;..\HARDWARE\IWDG;..\HARDWARE\MYRTC;..\HARDWARE\EWDG</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -422,6 +422,11 @@
               <FileName>system_stm32f4xx.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\system_stm32f4xx.c</FilePath>
+            </File>
+            <File>
+              <FileName>adaptive_report.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\adaptive_report.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -517,6 +522,16 @@
               <FileName>iwdg.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\IWDG\iwdg.c</FilePath>
+            </File>
+            <File>
+              <FileName>myrtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\MYRTC\myrtc.c</FilePath>
+            </File>
+            <File>
+              <FileName>ewdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\EWDG\ewdg.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -617,6 +632,16 @@
               <FileName>stm32f4xx_iwdg.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\FWLIB\src\stm32f4xx_iwdg.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\FWLIB\src\stm32f4xx_rtc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_pwr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\FWLIB\src\stm32f4xx_pwr.c</FilePath>
             </File>
           </Files>
         </Group>
