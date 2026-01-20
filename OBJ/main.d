@@ -62,10 +62,10 @@
 ..\obj\main.o: ..\HARDWARE\LORA\lora.h
 ..\obj\main.o: ..\HARDWARE\MAC\mac.h
 ..\obj\main.o: ..\HARDWARE\ROUTING\tree_node.h
+..\obj\main.o: ..\USER\adaptive_report.h
 ..\obj\main.o: ..\HARDWARE\ROUTING\routing.h
 ..\obj\main.o: ..\HARDWARE\IWDG\iwdg.h
 ..\obj\main.o: ..\HARDWARE\EWDG\ewdg.h
 ..\obj\main.o: ..\HARDWARE\MYRTC\myrtc.h
 ..\obj\main.o: ..\HARDWARE\INA226\ina226.h
 ..\obj\main.o: ..\HARDWARE\IIC\myiic.h
-..\obj\main.o: adaptive_report.h

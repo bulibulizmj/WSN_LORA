@@ -7,9 +7,9 @@
 #include <math.h>
 #include <string.h>
 #include "Mb_usart.h"
-extern u8 lora_serialRXbuf_st[200];				//串口接收缓存
+extern u8 lora_serialRXbuf_st[LORA_SERIAL_BUF_SIZE];				//串口接收缓存
 extern u16 lora_Rxcouter;									//串口接收字节个数
-u8 lora_serialTXbuf_st[200];							//串口发送缓存
+u8 lora_serialTXbuf_st[LORA_SERIAL_BUF_SIZE];							//串口发送缓存
 MACframe recv_frame;											//接收数据帧
 MACframe send_frame;							        //发送数据帧
 
@@ -115,20 +115,54 @@ float MAC_GetCsmaCongestionScore(void)
   */
 void lora_Send_MACFrame(MACframe* macframe)    
 {
-		u16 crc, i;
-		memset(lora_serialTXbuf_st, 0, sizeof(lora_serialTXbuf_st));//清空串口发送数组
-		//用这种方法节点地址会反转，低地址存的低位，也就是说lora_serialTXbuf_st[1]存的是源节点地址的低位，但是只要保证接收也是这种方法，接收到的recv_frame中的节点地址就不存在影响
-    memcpy(lora_serialTXbuf_st, macframe, sizeof(MACframe)-2);
-    crc = mc_check_crc16(lora_serialTXbuf_st, sizeof(MACframe) - 2);
-    lora_serialTXbuf_st[sizeof(MACframe) - 2] = crc >> 8;
-    lora_serialTXbuf_st[sizeof(MACframe) - 1] = crc;			 
-		
+    u16 crc = 0;
+    u16 i = 0;
+    u16 body_len = 0;
+    u8 data_len = 0;
+    u16 total_len = 0;
+
+    if (macframe == NULL)
+    {
+        return;
+    }
+
+    memset(lora_serialTXbuf_st, 0, sizeof(lora_serialTXbuf_st)); //清空串口发送数组
+
+    /* 控制帧裁剪：RTS/CTS/ACK 只发送 frame_type + src + dst */
+    if ((macframe->frame_type == 1) || (macframe->frame_type == 2) || (macframe->frame_type == 3))
+    {
+        body_len = (u16)(1u + (u16)sizeof(NodeAddr) + (u16)sizeof(NodeAddr));
+    }
+    else
+    {
+        /* 数据帧保持兼容：发送MACframe除checksum外的全部字段 */
+        body_len = (u16)(sizeof(MACframe) - 2u);
+    }
+
+    data_len = (u8)(body_len + 2u); /* LEN字段包含CRC16 */
+    if ((data_len < (u8)LORA_FRAME_DATA_MIN_LEN) || (data_len > (u8)LORA_FRAME_DATA_MAX_LEN))
+    {
+        return;
+    }
+
+    lora_serialTXbuf_st[0] = (u8)LORA_FRAME_SOF0;
+    lora_serialTXbuf_st[1] = (u8)LORA_FRAME_SOF1;
+    lora_serialTXbuf_st[2] = data_len;
+
+    memcpy(&lora_serialTXbuf_st[LORA_FRAME_HDR_LEN], macframe, body_len);
+    crc = mc_check_crc16(&lora_serialTXbuf_st[LORA_FRAME_HDR_LEN], body_len);
+    lora_serialTXbuf_st[LORA_FRAME_HDR_LEN + body_len] = (u8)(crc >> 8);
+    lora_serialTXbuf_st[LORA_FRAME_HDR_LEN + body_len + 1] = (u8)crc;
+
+    total_len = (u16)(LORA_FRAME_HDR_LEN + (u16)data_len);
     printf("要发送的MAC帧为：\r\n");
-    for(i = 0; i < sizeof(MACframe);i++) printf("%.2x ", lora_serialTXbuf_st[i]);
+    for (i = 0; i < total_len; i++)
+    {
+        printf("%.2x ", lora_serialTXbuf_st[i]);
+    }
     printf("\r\n");
-    
-//    printf("sizeof(macframe):%d\r\n",sizeof(MACframe));
-		myUSART_Sendarr(UART4,lora_serialTXbuf_st,sizeof(MACframe));
+
+    myUSART_Sendarr(UART4, lora_serialTXbuf_st, (u8)total_len);
 }
 
 
@@ -140,8 +174,7 @@ void lora_Send_MACFrame(MACframe* macframe)
   */
 bool RNG_Init(void)
 {
-		u16 i;
-		delay_init(168);
+		u16 i = 0;
 		RCC_AHB2PeriphClockCmd(RCC_AHB2Periph_RNG,ENABLE); //使能RNG时钟，在AHB2总线上
 		RNG_Cmd(ENABLE);//使能RNG
 		while(RNG_GetFlagStatus(RNG_FLAG_DRDY)==0)  //等待DRDY稳定，稳定之后不为0，返回1
@@ -163,7 +196,31 @@ bool RNG_Init(void)
   */
 u32 RNG_Get_RandomNum(void)
 {
-		while(RNG_GetFlagStatus(RNG_FLAG_DRDY)==0);  //等待稳定
+		if(xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED)
+		{
+				TickType_t start = xTaskGetTickCount();
+				while(RNG_GetFlagStatus(RNG_FLAG_DRDY)==0)  //等待稳定
+				{
+						// 防止硬件RNG异常导致死循环卡死系统
+						if((xTaskGetTickCount() - start) > pdMS_TO_TICKS(10))
+						{
+								return (u32)xTaskGetTickCount();
+						}
+						vTaskDelay(1);
+				}
+		}
+		else
+		{
+				u32 i = 0;
+				while(RNG_GetFlagStatus(RNG_FLAG_DRDY)==0)  //等待稳定
+				{
+						delay_us(10);
+						if(++i >= 100000)
+						{
+								return 0;
+						}
+				}
+		}
 		return RNG_GetRandomNumber();   //获取并返回数值
 }
 
@@ -487,23 +544,65 @@ u8 mac_send(mac_send_config config)
   */
 void packet_receive_mac(void)
 {
-		u16 crc_check, crc_recv;
-  	u16 i;
-//    printf("\r\n接收到数据并且CRC校验成功，MAC数据帧为：\r\n");
-    for(i = 0; i < lora_Rxcouter; i++)
+    u16 crc_check = 0;
+    u16 crc_recv = 0;
+    u16 i = 0;
+    u8 data_len = 0;
+    u16 body_len = 0;
+    u16 copy_len = 0;
+    const u16 data_offset = (u16)(LORA_FRAME_RSSI_LEN + LORA_FRAME_HDR_LEN);
+
+    for (i = 0; i < lora_Rxcouter; i++)
+    {
         printf("%.2x ", lora_serialRXbuf_st[i]);
+    }
     printf("\r\n");
-		crc_check=mc_check_crc16(lora_serialRXbuf_st + 1, lora_Rxcouter - 3);
-//    printf("crc_check = %x\r\n", crc_check);
-		crc_recv =(u16)(lora_serialRXbuf_st[lora_Rxcouter - 2] << 8) + lora_serialRXbuf_st[lora_Rxcouter - 1];
-//    printf("crc_recv = %x\r\n", crc_recv);
-		if(crc_check == crc_recv) //CRC校验成功则触发一个事件标志组的位
-		{
-				xEventGroupSetBits(recv_eventgroup_handle, CRC_CHECK_3);
-				mac_frame_clear(&recv_frame);		//先清空上一次的再赋值
-        recv_rssi = lora_serialRXbuf_st[0]; //信号强度赋值
-				memcpy(&recv_frame, lora_serialRXbuf_st + 1, sizeof(MACframe));	//
-		}
+
+    if (lora_Rxcouter < (u16)(LORA_FRAME_RSSI_LEN + LORA_FRAME_HDR_LEN + LORA_FRAME_DATA_MIN_LEN))
+    {
+        return;
+    }
+
+    /* Frame header check */
+    if ((lora_serialRXbuf_st[1] != (u8)LORA_FRAME_SOF0) || (lora_serialRXbuf_st[2] != (u8)LORA_FRAME_SOF1))
+    {
+        return;
+    }
+
+    recv_rssi = lora_serialRXbuf_st[0];
+    data_len = lora_serialRXbuf_st[3];
+    if ((data_len < (u8)LORA_FRAME_DATA_MIN_LEN) || (data_len > (u8)LORA_FRAME_DATA_MAX_LEN))
+    {
+        return;
+    }
+
+    if (lora_Rxcouter != (u16)(LORA_FRAME_RSSI_LEN + LORA_FRAME_HDR_LEN + (u16)data_len))
+    {
+        return;
+    }
+
+    body_len = (u16)((u16)data_len - 2u);
+    if (body_len == 0)
+    {
+        return;
+    }
+
+    crc_check = mc_check_crc16(&lora_serialRXbuf_st[data_offset], body_len);
+    crc_recv = (u16)(((u16)lora_serialRXbuf_st[data_offset + body_len] << 8) |
+                     (u16)lora_serialRXbuf_st[data_offset + body_len + 1]);
+    if (crc_check == crc_recv)
+    {
+        xEventGroupSetBits(recv_eventgroup_handle, CRC_CHECK_3);
+
+        mac_frame_clear(&recv_frame);
+        copy_len = body_len;
+        if (copy_len > (u16)(sizeof(MACframe) - 2u))
+        {
+            copy_len = (u16)(sizeof(MACframe) - 2u);
+        }
+        memcpy(&recv_frame, &lora_serialRXbuf_st[data_offset], copy_len);
+        recv_frame.checksum = crc_recv;
+    }
 }
 
 /**
@@ -533,7 +632,15 @@ void packet_process_mac(void)
 
 		while(1)
 		{
-				recv_eventgroup_bit = xEventGroupWaitBits(recv_eventgroup_handle, PACKET_RECV_2, pdTRUE, pdTRUE, portMAX_DELAY);
+				const TickType_t wait_ticks = pdMS_TO_TICKS(1000);
+				recv_eventgroup_bit = xEventGroupWaitBits(recv_eventgroup_handle, PACKET_RECV_2, pdTRUE, pdTRUE, wait_ticks);
+				if(!(recv_eventgroup_bit & PACKET_RECV_2))
+				{
+						WDG_Heartbeat(WDG_HB_ID_MAC);
+						vTaskDelay(10);
+						continue;
+				}
+
 				packet_receive_mac();
 				recv_eventgroup_bit = xEventGroupWaitBits(recv_eventgroup_handle, CRC_CHECK_3, pdTRUE, pdTRUE, 0);
 				if((recv_eventgroup_bit)&CRC_CHECK_3)
@@ -567,6 +674,7 @@ void packet_process_mac(void)
 //						printf("CRC校验不通过\r\n");
 				}
 				Clear_Buffer_LORA();
+				WDG_Heartbeat(WDG_HB_ID_MAC);
         vTaskDelay(10);
 		}
 

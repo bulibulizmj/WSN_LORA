@@ -1,5 +1,5 @@
 Dependencies for Project 'USART', Target 'USART': (DO NOT MODIFY !)
-F (.\main.c)(0x695CD87E)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I..\USER -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\SYSTEM\mb_usart -I..\FWLIB\inc -I..\HARDWARE\timer -I..\HARDWARE\CRC16 -I..\HARDWARE\MDBS_FUNC -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM4F -I..\SYSTEM\freertos_demo -I..\HARDWARE\EXTI -I..\HARDWARE\MAC -I..\HARDWARE\LORA -I..\HARDWARE\ROUTING -I..\HARDWARE\FLASH -I..\HARDWARE\EC20 -I..\HARDWARE\IIC -I..\HARDWARE\INA226 -I..\HARDWARE\SHT45 -I..\HARDWARE\BMP280 -I..\HARDWARE\IWDG -I..\HARDWARE\MYRTC -I..\HARDWARE\EWDG --locale=english-I C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\RTE-I G:\MDK5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I G:\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o ..\obj\main.o --omf_browse ..\obj\main.crf --depend ..\obj\main.d)
+F (.\main.c)(0x695F7D4A)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I..\USER -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\SYSTEM\mb_usart -I..\FWLIB\inc -I..\HARDWARE\timer -I..\HARDWARE\CRC16 -I..\HARDWARE\MDBS_FUNC -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM4F -I..\SYSTEM\freertos_demo -I..\HARDWARE\EXTI -I..\HARDWARE\MAC -I..\HARDWARE\LORA -I..\HARDWARE\ROUTING -I..\HARDWARE\FLASH -I..\HARDWARE\EC20 -I..\HARDWARE\IIC -I..\HARDWARE\INA226 -I..\HARDWARE\SHT45 -I..\HARDWARE\BMP280 -I..\HARDWARE\IWDG -I..\HARDWARE\MYRTC -I..\HARDWARE\EWDG --locale=english-I C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\RTE-I G:\MDK5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I G:\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o ..\obj\main.o --omf_browse ..\obj\main.crf --depend ..\obj\main.d)
 I (..\SYSTEM\sys\sys.h)(0x67BC21EE)
 I (..\USER\stm32f4xx.h)(0x67B83C32)
 I (..\CORE\core_cm4.h)(0x66719A44)
@@ -50,7 +50,7 @@ I (..\HARDWARE\timer\timer.h)(0x678631AA)
 I (..\FreeRTOS\include\FreeRTOS.h)(0x677B7A4C)
 I (G:\MDK5\ARM\ARMCC\include\stddef.h)(0x5475F300)
 I (..\FreeRTOS\include\FreeRTOSConfig.h)(0x695A4070)
-I (..\SYSTEM\freertos_demo\freertos_demo.h)(0x67A85CA4)
+I (..\SYSTEM\freertos_demo\freertos_demo.h)(0x69676570)
 I (..\FreeRTOS\include\projdefs.h)(0x677B7A4C)
 I (..\FreeRTOS\include\portable.h)(0x677B7A4C)
 I (..\FreeRTOS\include\deprecated_definitions.h)(0x677B7A4C)
@@ -58,16 +58,16 @@ I (..\FreeRTOS\portable\RVDS\ARM_CM4F\portmacro.h)(0x677B7A4C)
 I (..\FreeRTOS\include\mpu_wrappers.h)(0x677B7A4C)
 I (..\FreeRTOS\include\task.h)(0x677B7A4C)
 I (..\FreeRTOS\include\list.h)(0x677B7A4C)
-I (..\HARDWARE\MAC\mac.h)(0x695CD87E)
+I (..\HARDWARE\MAC\mac.h)(0x696D1D82)
 I (..\HARDWARE\LORA\lora.h)(0x67E01210)
-I (..\HARDWARE\ROUTING\tree_node.h)(0x67DAC8C0)
-I (..\HARDWARE\ROUTING\routing.h)(0x695E1A52)
+I (..\HARDWARE\ROUTING\tree_node.h)(0x6968AD5A)
+I (..\USER\adaptive_report.h)(0x695F7D4A)
+I (..\HARDWARE\ROUTING\routing.h)(0x696E0D51)
 I (..\HARDWARE\IWDG\iwdg.h)(0x67E281FE)
-I (..\HARDWARE\EWDG\ewdg.h)(0x695CD733)
-I (..\HARDWARE\MYRTC\myrtc.h)(0x695CD87E)
-I (..\HARDWARE\INA226\ina226.h)(0x695CD733)
-I (..\HARDWARE\IIC\myiic.h)(0x695CD733)
-I (adaptive_report.h)(0x695CD87E)
+I (..\HARDWARE\EWDG\ewdg.h)(0x695F7D4A)
+I (..\HARDWARE\MYRTC\myrtc.h)(0x695F7D4A)
+I (..\HARDWARE\INA226\ina226.h)(0x695F7D4A)
+I (..\HARDWARE\IIC\myiic.h)(0x695F7D4A)
 F (.\stm32f4xx_it.c)(0x677B9016)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I..\USER -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\SYSTEM\mb_usart -I..\FWLIB\inc -I..\HARDWARE\timer -I..\HARDWARE\CRC16 -I..\HARDWARE\MDBS_FUNC -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM4F -I..\SYSTEM\freertos_demo -I..\HARDWARE\EXTI -I..\HARDWARE\MAC -I..\HARDWARE\LORA -I..\HARDWARE\ROUTING -I..\HARDWARE\FLASH -I..\HARDWARE\EC20 -I..\HARDWARE\IIC -I..\HARDWARE\INA226 -I..\HARDWARE\SHT45 -I..\HARDWARE\BMP280 -I..\HARDWARE\IWDG -I..\HARDWARE\MYRTC -I..\HARDWARE\EWDG --locale=english-I C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\RTE-I G:\MDK5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I G:\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o ..\obj\stm32f4xx_it.o --omf_browse ..\obj\stm32f4xx_it.crf --depend ..\obj\stm32f4xx_it.d)
 I (stm32f4xx_it.h)(0x66719A44)
 I (stm32f4xx.h)(0x67B83C32)
@@ -141,8 +141,8 @@ I (..\FWLIB\inc\stm32f4xx_can.h)(0x66719A44)
 I (..\FWLIB\inc\stm32f4xx_dac.h)(0x66719A44)
 I (..\FWLIB\inc\stm32f4xx_dcmi.h)(0x66719A44)
 I (..\FWLIB\inc\stm32f4xx_fsmc.h)(0x66719A44)
-F (.\adaptive_report.c)(0x695CD87E)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I..\USER -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\SYSTEM\mb_usart -I..\FWLIB\inc -I..\HARDWARE\timer -I..\HARDWARE\CRC16 -I..\HARDWARE\MDBS_FUNC -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM4F -I..\SYSTEM\freertos_demo -I..\HARDWARE\EXTI -I..\HARDWARE\MAC -I..\HARDWARE\LORA -I..\HARDWARE\ROUTING -I..\HARDWARE\FLASH -I..\HARDWARE\EC20 -I..\HARDWARE\IIC -I..\HARDWARE\INA226 -I..\HARDWARE\SHT45 -I..\HARDWARE\BMP280 -I..\HARDWARE\IWDG -I..\HARDWARE\MYRTC -I..\HARDWARE\EWDG --locale=english-I C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\RTE-I G:\MDK5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I G:\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o ..\obj\adaptive_report.o --omf_browse ..\obj\adaptive_report.crf --depend ..\obj\adaptive_report.d)
-I (adaptive_report.h)(0x695CD87E)
+F (.\adaptive_report.c)(0x695F7D4A)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I..\USER -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\SYSTEM\mb_usart -I..\FWLIB\inc -I..\HARDWARE\timer -I..\HARDWARE\CRC16 -I..\HARDWARE\MDBS_FUNC -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM4F -I..\SYSTEM\freertos_demo -I..\HARDWARE\EXTI -I..\HARDWARE\MAC -I..\HARDWARE\LORA -I..\HARDWARE\ROUTING -I..\HARDWARE\FLASH -I..\HARDWARE\EC20 -I..\HARDWARE\IIC -I..\HARDWARE\INA226 -I..\HARDWARE\SHT45 -I..\HARDWARE\BMP280 -I..\HARDWARE\IWDG -I..\HARDWARE\MYRTC -I..\HARDWARE\EWDG --locale=english-I C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\RTE-I G:\MDK5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I G:\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o ..\obj\adaptive_report.o --omf_browse ..\obj\adaptive_report.crf --depend ..\obj\adaptive_report.d)
+I (adaptive_report.h)(0x695F7D4A)
 I (G:\MDK5\ARM\ARMCC\include\stdint.h)(0x5475F300)
 I (G:\MDK5\ARM\ARMCC\include\math.h)(0x5475F2FE)
 I (G:\MDK5\ARM\ARMCC\include\stdio.h)(0x5475F300)
@@ -187,7 +187,7 @@ I (..\SYSTEM\sys\sys.h)(0x67BC21EE)
 I (..\HARDWARE\timer\timer.h)(0x678631AA)
 I (..\SYSTEM\mb_usart\Mb_usart.h)(0x66A274E6)
 I (G:\MDK5\ARM\ARMCC\include\stdbool.h)(0x5475F300)
-I (..\SYSTEM\freertos_demo\freertos_demo.h)(0x67A85CA4)
+I (..\SYSTEM\freertos_demo\freertos_demo.h)(0x69676570)
 I (..\FreeRTOS\include\projdefs.h)(0x677B7A4C)
 I (..\FreeRTOS\include\portable.h)(0x677B7A4C)
 I (..\FreeRTOS\include\deprecated_definitions.h)(0x677B7A4C)
@@ -199,9 +199,9 @@ I (..\FreeRTOS\include\semphr.h)(0x677B7A4C)
 I (..\FreeRTOS\include\queue.h)(0x67874538)
 I (..\SYSTEM\delay\delay.h)(0x677BA112)
 I (..\HARDWARE\LED\led.h)(0x695CD733)
-I (..\HARDWARE\INA226\ina226.h)(0x695CD733)
-I (..\HARDWARE\IIC\myiic.h)(0x695CD733)
-I (..\HARDWARE\MAC\mac.h)(0x695CD87E)
+I (..\HARDWARE\INA226\ina226.h)(0x695F7D4A)
+I (..\HARDWARE\IIC\myiic.h)(0x695F7D4A)
+I (..\HARDWARE\MAC\mac.h)(0x696D1D82)
 I (..\HARDWARE\CRC16\crc16.h)(0x66719A44)
 I (..\HARDWARE\LORA\lora.h)(0x67E01210)
 I (..\HARDWARE\MDBS_FUNC\mdbs_func.h)(0x672CA38C)
@@ -319,7 +319,7 @@ I (..\FWLIB\inc\stm32f4xx_dac.h)(0x66719A44)
 I (..\FWLIB\inc\stm32f4xx_dcmi.h)(0x66719A44)
 I (..\FWLIB\inc\stm32f4xx_fsmc.h)(0x66719A44)
 I (..\SYSTEM\delay\delay.h)(0x677BA112)
-F (..\HARDWARE\timer\timer.c)(0x695CD733)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I..\USER -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\SYSTEM\mb_usart -I..\FWLIB\inc -I..\HARDWARE\timer -I..\HARDWARE\CRC16 -I..\HARDWARE\MDBS_FUNC -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM4F -I..\SYSTEM\freertos_demo -I..\HARDWARE\EXTI -I..\HARDWARE\MAC -I..\HARDWARE\LORA -I..\HARDWARE\ROUTING -I..\HARDWARE\FLASH -I..\HARDWARE\EC20 -I..\HARDWARE\IIC -I..\HARDWARE\INA226 -I..\HARDWARE\SHT45 -I..\HARDWARE\BMP280 -I..\HARDWARE\IWDG -I..\HARDWARE\MYRTC -I..\HARDWARE\EWDG --locale=english-I C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\RTE-I G:\MDK5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I G:\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o ..\obj\timer.o --omf_browse ..\obj\timer.crf --depend ..\obj\timer.d)
+F (..\HARDWARE\timer\timer.c)(0x695F7D4A)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I..\USER -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\SYSTEM\mb_usart -I..\FWLIB\inc -I..\HARDWARE\timer -I..\HARDWARE\CRC16 -I..\HARDWARE\MDBS_FUNC -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM4F -I..\SYSTEM\freertos_demo -I..\HARDWARE\EXTI -I..\HARDWARE\MAC -I..\HARDWARE\LORA -I..\HARDWARE\ROUTING -I..\HARDWARE\FLASH -I..\HARDWARE\EC20 -I..\HARDWARE\IIC -I..\HARDWARE\INA226 -I..\HARDWARE\SHT45 -I..\HARDWARE\BMP280 -I..\HARDWARE\IWDG -I..\HARDWARE\MYRTC -I..\HARDWARE\EWDG --locale=english-I C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\RTE-I G:\MDK5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I G:\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o ..\obj\timer.o --omf_browse ..\obj\timer.crf --depend ..\obj\timer.d)
 I (..\HARDWARE\timer\timer.h)(0x678631AA)
 I (..\SYSTEM\sys\sys.h)(0x67BC21EE)
 I (..\USER\stm32f4xx.h)(0x67B83C32)
@@ -359,7 +359,7 @@ I (..\FWLIB\inc\stm32f4xx_fsmc.h)(0x66719A44)
 I (G:\MDK5\ARM\ARMCC\include\stdio.h)(0x5475F300)
 I (..\SYSTEM\mb_usart\Mb_usart.h)(0x66A274E6)
 I (G:\MDK5\ARM\ARMCC\include\stdbool.h)(0x5475F300)
-I (..\HARDWARE\EWDG\ewdg.h)(0x695CD733)
+I (..\HARDWARE\EWDG\ewdg.h)(0x695F7D4A)
 F (..\HARDWARE\CRC16\crc16.c)(0x66719A44)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I..\USER -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\SYSTEM\mb_usart -I..\FWLIB\inc -I..\HARDWARE\timer -I..\HARDWARE\CRC16 -I..\HARDWARE\MDBS_FUNC -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM4F -I..\SYSTEM\freertos_demo -I..\HARDWARE\EXTI -I..\HARDWARE\MAC -I..\HARDWARE\LORA -I..\HARDWARE\ROUTING -I..\HARDWARE\FLASH -I..\HARDWARE\EC20 -I..\HARDWARE\IIC -I..\HARDWARE\INA226 -I..\HARDWARE\SHT45 -I..\HARDWARE\BMP280 -I..\HARDWARE\IWDG -I..\HARDWARE\MYRTC -I..\HARDWARE\EWDG --locale=english-I C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\RTE-I G:\MDK5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I G:\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o ..\obj\crc16.o --omf_browse ..\obj\crc16.crf --depend ..\obj\crc16.d)
 I (..\HARDWARE\CRC16\crc16.h)(0x66719A44)
 I (G:\MDK5\ARM\ARMCC\include\stdio.h)(0x5475F300)
@@ -487,7 +487,7 @@ I (G:\MDK5\ARM\ARMCC\include\stdio.h)(0x5475F300)
 I (..\HARDWARE\timer\timer.h)(0x678631AA)
 I (..\SYSTEM\mb_usart\Mb_usart.h)(0x66A274E6)
 I (G:\MDK5\ARM\ARMCC\include\stdbool.h)(0x5475F300)
-I (..\SYSTEM\freertos_demo\freertos_demo.h)(0x67A85CA4)
+I (..\SYSTEM\freertos_demo\freertos_demo.h)(0x69676570)
 I (..\FreeRTOS\include\projdefs.h)(0x677B7A4C)
 I (..\FreeRTOS\include\portable.h)(0x677B7A4C)
 I (..\FreeRTOS\include\deprecated_definitions.h)(0x677B7A4C)
@@ -495,8 +495,8 @@ I (..\FreeRTOS\portable\RVDS\ARM_CM4F\portmacro.h)(0x677B7A4C)
 I (..\FreeRTOS\include\mpu_wrappers.h)(0x677B7A4C)
 I (..\FreeRTOS\include\task.h)(0x677B7A4C)
 I (..\FreeRTOS\include\list.h)(0x677B7A4C)
-F (..\HARDWARE\MAC\mac.c)(0x695CD87E)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I..\USER -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\SYSTEM\mb_usart -I..\FWLIB\inc -I..\HARDWARE\timer -I..\HARDWARE\CRC16 -I..\HARDWARE\MDBS_FUNC -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM4F -I..\SYSTEM\freertos_demo -I..\HARDWARE\EXTI -I..\HARDWARE\MAC -I..\HARDWARE\LORA -I..\HARDWARE\ROUTING -I..\HARDWARE\FLASH -I..\HARDWARE\EC20 -I..\HARDWARE\IIC -I..\HARDWARE\INA226 -I..\HARDWARE\SHT45 -I..\HARDWARE\BMP280 -I..\HARDWARE\IWDG -I..\HARDWARE\MYRTC -I..\HARDWARE\EWDG --locale=english-I C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\RTE-I G:\MDK5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I G:\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o ..\obj\mac.o --omf_browse ..\obj\mac.crf --depend ..\obj\mac.d)
-I (..\HARDWARE\MAC\mac.h)(0x695CD87E)
+F (..\HARDWARE\MAC\mac.c)(0x696D09FD)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I..\USER -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\SYSTEM\mb_usart -I..\FWLIB\inc -I..\HARDWARE\timer -I..\HARDWARE\CRC16 -I..\HARDWARE\MDBS_FUNC -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM4F -I..\SYSTEM\freertos_demo -I..\HARDWARE\EXTI -I..\HARDWARE\MAC -I..\HARDWARE\LORA -I..\HARDWARE\ROUTING -I..\HARDWARE\FLASH -I..\HARDWARE\EC20 -I..\HARDWARE\IIC -I..\HARDWARE\INA226 -I..\HARDWARE\SHT45 -I..\HARDWARE\BMP280 -I..\HARDWARE\IWDG -I..\HARDWARE\MYRTC -I..\HARDWARE\EWDG --locale=english-I C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\RTE-I G:\MDK5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I G:\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o ..\obj\mac.o --omf_browse ..\obj\mac.crf --depend ..\obj\mac.d)
+I (..\HARDWARE\MAC\mac.h)(0x696D1D82)
 I (G:\MDK5\ARM\ARMCC\include\stdio.h)(0x5475F300)
 I (..\USER\stm32f4xx_conf.h)(0x66719A44)
 I (..\FWLIB\inc\stm32f4xx_adc.h)(0x66719A44)
@@ -538,7 +538,7 @@ I (G:\MDK5\ARM\ARMCC\include\stdbool.h)(0x5475F300)
 I (..\SYSTEM\usart\usart.h)(0x67E26910)
 I (..\HARDWARE\LORA\lora.h)(0x67E01210)
 I (..\SYSTEM\delay\delay.h)(0x677BA112)
-I (..\SYSTEM\freertos_demo\freertos_demo.h)(0x67A85CA4)
+I (..\SYSTEM\freertos_demo\freertos_demo.h)(0x69676570)
 I (..\FreeRTOS\include\FreeRTOS.h)(0x677B7A4C)
 I (G:\MDK5\ARM\ARMCC\include\stddef.h)(0x5475F300)
 I (..\FreeRTOS\include\FreeRTOSConfig.h)(0x695A4070)
@@ -555,7 +555,7 @@ I (..\FreeRTOS\include\task.h)(0x677B7A4C)
 I (..\FreeRTOS\include\list.h)(0x677B7A4C)
 I (G:\MDK5\ARM\ARMCC\include\math.h)(0x5475F2FE)
 I (G:\MDK5\ARM\ARMCC\include\string.h)(0x5475F300)
-F (..\HARDWARE\LORA\lora.c)(0x67E10DE8)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I..\USER -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\SYSTEM\mb_usart -I..\FWLIB\inc -I..\HARDWARE\timer -I..\HARDWARE\CRC16 -I..\HARDWARE\MDBS_FUNC -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM4F -I..\SYSTEM\freertos_demo -I..\HARDWARE\EXTI -I..\HARDWARE\MAC -I..\HARDWARE\LORA -I..\HARDWARE\ROUTING -I..\HARDWARE\FLASH -I..\HARDWARE\EC20 -I..\HARDWARE\IIC -I..\HARDWARE\INA226 -I..\HARDWARE\SHT45 -I..\HARDWARE\BMP280 -I..\HARDWARE\IWDG -I..\HARDWARE\MYRTC -I..\HARDWARE\EWDG --locale=english-I C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\RTE-I G:\MDK5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I G:\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o ..\obj\lora.o --omf_browse ..\obj\lora.crf --depend ..\obj\lora.d)
+F (..\HARDWARE\LORA\lora.c)(0x696D07D0)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I..\USER -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\SYSTEM\mb_usart -I..\FWLIB\inc -I..\HARDWARE\timer -I..\HARDWARE\CRC16 -I..\HARDWARE\MDBS_FUNC -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM4F -I..\SYSTEM\freertos_demo -I..\HARDWARE\EXTI -I..\HARDWARE\MAC -I..\HARDWARE\LORA -I..\HARDWARE\ROUTING -I..\HARDWARE\FLASH -I..\HARDWARE\EC20 -I..\HARDWARE\IIC -I..\HARDWARE\INA226 -I..\HARDWARE\SHT45 -I..\HARDWARE\BMP280 -I..\HARDWARE\IWDG -I..\HARDWARE\MYRTC -I..\HARDWARE\EWDG --locale=english-I C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\RTE-I G:\MDK5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I G:\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o ..\obj\lora.o --omf_browse ..\obj\lora.crf --depend ..\obj\lora.d)
 I (..\HARDWARE\LORA\lora.h)(0x67E01210)
 I (..\SYSTEM\sys\sys.h)(0x67BC21EE)
 I (..\USER\stm32f4xx.h)(0x67B83C32)
@@ -595,13 +595,13 @@ I (..\FWLIB\inc\stm32f4xx_fsmc.h)(0x66719A44)
 I (G:\MDK5\ARM\ARMCC\include\stdio.h)(0x5475F300)
 I (..\SYSTEM\delay\delay.h)(0x677BA112)
 I (..\SYSTEM\usart\usart.h)(0x67E26910)
-I (..\HARDWARE\MAC\mac.h)(0x695CD87E)
+I (..\HARDWARE\MAC\mac.h)(0x696D1D82)
 I (..\HARDWARE\CRC16\crc16.h)(0x66719A44)
 I (G:\MDK5\ARM\ARMCC\include\stdbool.h)(0x5475F300)
 I (G:\MDK5\ARM\ARMCC\include\stdlib.h)(0x5475F300)
 I (G:\MDK5\ARM\ARMCC\include\string.h)(0x5475F300)
-F (..\HARDWARE\ROUTING\routing.c)(0x695E1A3B)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I..\USER -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\SYSTEM\mb_usart -I..\FWLIB\inc -I..\HARDWARE\timer -I..\HARDWARE\CRC16 -I..\HARDWARE\MDBS_FUNC -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM4F -I..\SYSTEM\freertos_demo -I..\HARDWARE\EXTI -I..\HARDWARE\MAC -I..\HARDWARE\LORA -I..\HARDWARE\ROUTING -I..\HARDWARE\FLASH -I..\HARDWARE\EC20 -I..\HARDWARE\IIC -I..\HARDWARE\INA226 -I..\HARDWARE\SHT45 -I..\HARDWARE\BMP280 -I..\HARDWARE\IWDG -I..\HARDWARE\MYRTC -I..\HARDWARE\EWDG --locale=english-I C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\RTE-I G:\MDK5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I G:\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o ..\obj\routing.o --omf_browse ..\obj\routing.crf --depend ..\obj\routing.d)
-I (..\HARDWARE\ROUTING\routing.h)(0x695E1A52)
+F (..\HARDWARE\ROUTING\routing.c)(0x69676B00)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I..\USER -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\SYSTEM\mb_usart -I..\FWLIB\inc -I..\HARDWARE\timer -I..\HARDWARE\CRC16 -I..\HARDWARE\MDBS_FUNC -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM4F -I..\SYSTEM\freertos_demo -I..\HARDWARE\EXTI -I..\HARDWARE\MAC -I..\HARDWARE\LORA -I..\HARDWARE\ROUTING -I..\HARDWARE\FLASH -I..\HARDWARE\EC20 -I..\HARDWARE\IIC -I..\HARDWARE\INA226 -I..\HARDWARE\SHT45 -I..\HARDWARE\BMP280 -I..\HARDWARE\IWDG -I..\HARDWARE\MYRTC -I..\HARDWARE\EWDG --locale=english-I C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\RTE-I G:\MDK5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I G:\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o ..\obj\routing.o --omf_browse ..\obj\routing.crf --depend ..\obj\routing.d)
+I (..\HARDWARE\ROUTING\routing.h)(0x696E0D51)
 I (G:\MDK5\ARM\ARMCC\include\stdio.h)(0x5475F300)
 I (..\USER\stm32f4xx_conf.h)(0x66719A44)
 I (..\FWLIB\inc\stm32f4xx_adc.h)(0x66719A44)
@@ -638,14 +638,15 @@ I (..\FWLIB\inc\stm32f4xx_dac.h)(0x66719A44)
 I (..\FWLIB\inc\stm32f4xx_dcmi.h)(0x66719A44)
 I (..\FWLIB\inc\stm32f4xx_fsmc.h)(0x66719A44)
 I (..\SYSTEM\sys\sys.h)(0x67BC21EE)
-I (..\HARDWARE\MAC\mac.h)(0x695CD87E)
+I (..\HARDWARE\MAC\mac.h)(0x696D1D82)
 I (..\HARDWARE\CRC16\crc16.h)(0x66719A44)
 I (G:\MDK5\ARM\ARMCC\include\stdbool.h)(0x5475F300)
 I (..\SYSTEM\usart\usart.h)(0x67E26910)
 I (..\HARDWARE\LORA\lora.h)(0x67E01210)
 I (..\SYSTEM\delay\delay.h)(0x677BA112)
-I (..\HARDWARE\ROUTING\tree_node.h)(0x67DAC8C0)
-I (..\SYSTEM\freertos_demo\freertos_demo.h)(0x67A85CA4)
+I (..\HARDWARE\ROUTING\tree_node.h)(0x6968AD5A)
+I (..\USER\adaptive_report.h)(0x695F7D4A)
+I (..\SYSTEM\freertos_demo\freertos_demo.h)(0x69676570)
 I (..\FreeRTOS\include\FreeRTOS.h)(0x677B7A4C)
 I (G:\MDK5\ARM\ARMCC\include\stddef.h)(0x5475F300)
 I (..\FreeRTOS\include\FreeRTOSConfig.h)(0x695A4070)
@@ -662,21 +663,20 @@ I (..\FreeRTOS\include\task.h)(0x677B7A4C)
 I (..\FreeRTOS\include\list.h)(0x677B7A4C)
 I (..\FreeRTOS\include\event_groups.h)(0x677B7A4C)
 I (..\FreeRTOS\include\timers.h)(0x677B7A4C)
-I (..\HARDWARE\FLASH\flash.h)(0x695CD87E)
+I (..\HARDWARE\FLASH\flash.h)(0x695F7D4A)
 I (G:\MDK5\ARM\ARMCC\include\string.h)(0x5475F300)
 I (..\HARDWARE\SHT45\sht45.h)(0x67E0D03E)
-I (..\HARDWARE\IIC\myiic.h)(0x695CD733)
+I (..\HARDWARE\IIC\myiic.h)(0x695F7D4A)
 I (..\HARDWARE\BMP280\bmp280.h)(0x69398257)
 I (..\HARDWARE\EC20\ec20.h)(0x695CD733)
 I (..\HARDWARE\MDBS_FUNC\mdbs_func.h)(0x672CA38C)
 I (..\HARDWARE\LED\led.h)(0x695CD733)
-I (..\USER\adaptive_report.h)(0x695CD87E)
-F (..\HARDWARE\ROUTING\tree_node.c)(0x67E223FA)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I..\USER -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\SYSTEM\mb_usart -I..\FWLIB\inc -I..\HARDWARE\timer -I..\HARDWARE\CRC16 -I..\HARDWARE\MDBS_FUNC -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM4F -I..\SYSTEM\freertos_demo -I..\HARDWARE\EXTI -I..\HARDWARE\MAC -I..\HARDWARE\LORA -I..\HARDWARE\ROUTING -I..\HARDWARE\FLASH -I..\HARDWARE\EC20 -I..\HARDWARE\IIC -I..\HARDWARE\INA226 -I..\HARDWARE\SHT45 -I..\HARDWARE\BMP280 -I..\HARDWARE\IWDG -I..\HARDWARE\MYRTC -I..\HARDWARE\EWDG --locale=english-I C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\RTE-I G:\MDK5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I G:\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o ..\obj\tree_node.o --omf_browse ..\obj\tree_node.crf --depend ..\obj\tree_node.d)
-I (..\HARDWARE\ROUTING\tree_node.h)(0x67DAC8C0)
+F (..\HARDWARE\ROUTING\tree_node.c)(0x6968ABB1)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I..\USER -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\SYSTEM\mb_usart -I..\FWLIB\inc -I..\HARDWARE\timer -I..\HARDWARE\CRC16 -I..\HARDWARE\MDBS_FUNC -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM4F -I..\SYSTEM\freertos_demo -I..\HARDWARE\EXTI -I..\HARDWARE\MAC -I..\HARDWARE\LORA -I..\HARDWARE\ROUTING -I..\HARDWARE\FLASH -I..\HARDWARE\EC20 -I..\HARDWARE\IIC -I..\HARDWARE\INA226 -I..\HARDWARE\SHT45 -I..\HARDWARE\BMP280 -I..\HARDWARE\IWDG -I..\HARDWARE\MYRTC -I..\HARDWARE\EWDG --locale=english-I C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\RTE-I G:\MDK5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I G:\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o ..\obj\tree_node.o --omf_browse ..\obj\tree_node.crf --depend ..\obj\tree_node.d)
+I (..\HARDWARE\ROUTING\tree_node.h)(0x6968AD5A)
+I (G:\MDK5\ARM\ARMCC\include\stdint.h)(0x5475F300)
 I (..\SYSTEM\sys\sys.h)(0x67BC21EE)
 I (..\USER\stm32f4xx.h)(0x67B83C32)
 I (..\CORE\core_cm4.h)(0x66719A44)
-I (G:\MDK5\ARM\ARMCC\include\stdint.h)(0x5475F300)
 I (..\CORE\core_cmInstr.h)(0x66719A44)
 I (..\CORE\core_cmFunc.h)(0x66719A44)
 I (..\CORE\core_cm4_simd.h)(0x66719A44)
@@ -708,26 +708,29 @@ I (..\FWLIB\inc\stm32f4xx_can.h)(0x66719A44)
 I (..\FWLIB\inc\stm32f4xx_dac.h)(0x66719A44)
 I (..\FWLIB\inc\stm32f4xx_dcmi.h)(0x66719A44)
 I (..\FWLIB\inc\stm32f4xx_fsmc.h)(0x66719A44)
-I (..\HARDWARE\MAC\mac.h)(0x695CD87E)
+I (..\HARDWARE\MAC\mac.h)(0x696D1D82)
 I (G:\MDK5\ARM\ARMCC\include\stdio.h)(0x5475F300)
 I (..\HARDWARE\CRC16\crc16.h)(0x66719A44)
 I (G:\MDK5\ARM\ARMCC\include\stdbool.h)(0x5475F300)
 I (..\SYSTEM\usart\usart.h)(0x67E26910)
 I (..\HARDWARE\LORA\lora.h)(0x67E01210)
 I (..\SYSTEM\delay\delay.h)(0x677BA112)
+I (..\USER\adaptive_report.h)(0x695F7D4A)
 I (..\FreeRTOS\include\FreeRTOS.h)(0x677B7A4C)
 I (G:\MDK5\ARM\ARMCC\include\stddef.h)(0x5475F300)
 I (..\FreeRTOS\include\FreeRTOSConfig.h)(0x695A4070)
 I (..\HARDWARE\timer\timer.h)(0x678631AA)
 I (..\SYSTEM\mb_usart\Mb_usart.h)(0x66A274E6)
-I (..\SYSTEM\freertos_demo\freertos_demo.h)(0x67A85CA4)
+I (..\SYSTEM\freertos_demo\freertos_demo.h)(0x69676570)
 I (..\FreeRTOS\include\projdefs.h)(0x677B7A4C)
 I (..\FreeRTOS\include\portable.h)(0x677B7A4C)
 I (..\FreeRTOS\include\deprecated_definitions.h)(0x677B7A4C)
 I (..\FreeRTOS\portable\RVDS\ARM_CM4F\portmacro.h)(0x677B7A4C)
 I (..\FreeRTOS\include\mpu_wrappers.h)(0x677B7A4C)
+I (..\FreeRTOS\include\task.h)(0x677B7A4C)
+I (..\FreeRTOS\include\list.h)(0x677B7A4C)
 F (..\HARDWARE\FLASH\flash.c)(0x67CAB02C)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I..\USER -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\SYSTEM\mb_usart -I..\FWLIB\inc -I..\HARDWARE\timer -I..\HARDWARE\CRC16 -I..\HARDWARE\MDBS_FUNC -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM4F -I..\SYSTEM\freertos_demo -I..\HARDWARE\EXTI -I..\HARDWARE\MAC -I..\HARDWARE\LORA -I..\HARDWARE\ROUTING -I..\HARDWARE\FLASH -I..\HARDWARE\EC20 -I..\HARDWARE\IIC -I..\HARDWARE\INA226 -I..\HARDWARE\SHT45 -I..\HARDWARE\BMP280 -I..\HARDWARE\IWDG -I..\HARDWARE\MYRTC -I..\HARDWARE\EWDG --locale=english-I C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\RTE-I G:\MDK5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I G:\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o ..\obj\flash.o --omf_browse ..\obj\flash.crf --depend ..\obj\flash.d)
-I (..\HARDWARE\FLASH\flash.h)(0x695CD87E)
+I (..\HARDWARE\FLASH\flash.h)(0x695F7D4A)
 I (..\USER\stm32f4xx.h)(0x67B83C32)
 I (..\CORE\core_cm4.h)(0x66719A44)
 I (G:\MDK5\ARM\ARMCC\include\stdint.h)(0x5475F300)
@@ -762,7 +765,7 @@ I (..\FWLIB\inc\stm32f4xx_can.h)(0x66719A44)
 I (..\FWLIB\inc\stm32f4xx_dac.h)(0x66719A44)
 I (..\FWLIB\inc\stm32f4xx_dcmi.h)(0x66719A44)
 I (..\FWLIB\inc\stm32f4xx_fsmc.h)(0x66719A44)
-I (..\HARDWARE\MAC\mac.h)(0x695CD87E)
+I (..\HARDWARE\MAC\mac.h)(0x696D1D82)
 I (G:\MDK5\ARM\ARMCC\include\stdio.h)(0x5475F300)
 I (..\SYSTEM\sys\sys.h)(0x67BC21EE)
 I (..\HARDWARE\CRC16\crc16.h)(0x66719A44)
@@ -771,7 +774,7 @@ I (..\SYSTEM\usart\usart.h)(0x67E26910)
 I (..\HARDWARE\LORA\lora.h)(0x67E01210)
 I (..\SYSTEM\delay\delay.h)(0x677BA112)
 I (G:\MDK5\ARM\ARMCC\include\string.h)(0x5475F300)
-F (..\HARDWARE\EC20\EC20.c)(0x695CD733)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I..\USER -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\SYSTEM\mb_usart -I..\FWLIB\inc -I..\HARDWARE\timer -I..\HARDWARE\CRC16 -I..\HARDWARE\MDBS_FUNC -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM4F -I..\SYSTEM\freertos_demo -I..\HARDWARE\EXTI -I..\HARDWARE\MAC -I..\HARDWARE\LORA -I..\HARDWARE\ROUTING -I..\HARDWARE\FLASH -I..\HARDWARE\EC20 -I..\HARDWARE\IIC -I..\HARDWARE\INA226 -I..\HARDWARE\SHT45 -I..\HARDWARE\BMP280 -I..\HARDWARE\IWDG -I..\HARDWARE\MYRTC -I..\HARDWARE\EWDG --locale=english-I C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\RTE-I G:\MDK5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I G:\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o ..\obj\ec20.o --omf_browse ..\obj\ec20.crf --depend ..\obj\ec20.d)
+F (..\HARDWARE\EC20\EC20.c)(0x695F7D4A)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I..\USER -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\SYSTEM\mb_usart -I..\FWLIB\inc -I..\HARDWARE\timer -I..\HARDWARE\CRC16 -I..\HARDWARE\MDBS_FUNC -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM4F -I..\SYSTEM\freertos_demo -I..\HARDWARE\EXTI -I..\HARDWARE\MAC -I..\HARDWARE\LORA -I..\HARDWARE\ROUTING -I..\HARDWARE\FLASH -I..\HARDWARE\EC20 -I..\HARDWARE\IIC -I..\HARDWARE\INA226 -I..\HARDWARE\SHT45 -I..\HARDWARE\BMP280 -I..\HARDWARE\IWDG -I..\HARDWARE\MYRTC -I..\HARDWARE\EWDG --locale=english-I C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\RTE-I G:\MDK5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I G:\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o ..\obj\ec20.o --omf_browse ..\obj\ec20.crf --depend ..\obj\ec20.d)
 I (..\HARDWARE\EC20\ec20.h)(0x695CD733)
 I (..\SYSTEM\sys\sys.h)(0x67BC21EE)
 I (..\USER\stm32f4xx.h)(0x67B83C32)
@@ -814,7 +817,7 @@ I (G:\MDK5\ARM\ARMCC\include\stdio.h)(0x5475F300)
 I (G:\MDK5\ARM\ARMCC\include\stdlib.h)(0x5475F300)
 I (G:\MDK5\ARM\ARMCC\include\string.h)(0x5475F300)
 F (..\HARDWARE\IIC\myiic.c)(0x695CD733)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I..\USER -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\SYSTEM\mb_usart -I..\FWLIB\inc -I..\HARDWARE\timer -I..\HARDWARE\CRC16 -I..\HARDWARE\MDBS_FUNC -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM4F -I..\SYSTEM\freertos_demo -I..\HARDWARE\EXTI -I..\HARDWARE\MAC -I..\HARDWARE\LORA -I..\HARDWARE\ROUTING -I..\HARDWARE\FLASH -I..\HARDWARE\EC20 -I..\HARDWARE\IIC -I..\HARDWARE\INA226 -I..\HARDWARE\SHT45 -I..\HARDWARE\BMP280 -I..\HARDWARE\IWDG -I..\HARDWARE\MYRTC -I..\HARDWARE\EWDG --locale=english-I C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\RTE-I G:\MDK5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I G:\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o ..\obj\myiic.o --omf_browse ..\obj\myiic.crf --depend ..\obj\myiic.d)
-I (..\HARDWARE\IIC\myiic.h)(0x695CD733)
+I (..\HARDWARE\IIC\myiic.h)(0x695F7D4A)
 I (..\SYSTEM\sys\sys.h)(0x67BC21EE)
 I (..\USER\stm32f4xx.h)(0x67B83C32)
 I (..\CORE\core_cm4.h)(0x66719A44)
@@ -853,8 +856,8 @@ I (..\FWLIB\inc\stm32f4xx_fsmc.h)(0x66719A44)
 I (..\SYSTEM\delay\delay.h)(0x677BA112)
 I (..\SYSTEM\usart\usart.h)(0x67E26910)
 I (G:\MDK5\ARM\ARMCC\include\stdio.h)(0x5475F300)
-F (..\HARDWARE\INA226\ina226.c)(0x695CD733)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I..\USER -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\SYSTEM\mb_usart -I..\FWLIB\inc -I..\HARDWARE\timer -I..\HARDWARE\CRC16 -I..\HARDWARE\MDBS_FUNC -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM4F -I..\SYSTEM\freertos_demo -I..\HARDWARE\EXTI -I..\HARDWARE\MAC -I..\HARDWARE\LORA -I..\HARDWARE\ROUTING -I..\HARDWARE\FLASH -I..\HARDWARE\EC20 -I..\HARDWARE\IIC -I..\HARDWARE\INA226 -I..\HARDWARE\SHT45 -I..\HARDWARE\BMP280 -I..\HARDWARE\IWDG -I..\HARDWARE\MYRTC -I..\HARDWARE\EWDG --locale=english-I C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\RTE-I G:\MDK5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I G:\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o ..\obj\ina226.o --omf_browse ..\obj\ina226.crf --depend ..\obj\ina226.d)
-I (..\HARDWARE\INA226\ina226.h)(0x695CD733)
+F (..\HARDWARE\INA226\ina226.c)(0x695F7D4A)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I..\USER -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\SYSTEM\mb_usart -I..\FWLIB\inc -I..\HARDWARE\timer -I..\HARDWARE\CRC16 -I..\HARDWARE\MDBS_FUNC -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM4F -I..\SYSTEM\freertos_demo -I..\HARDWARE\EXTI -I..\HARDWARE\MAC -I..\HARDWARE\LORA -I..\HARDWARE\ROUTING -I..\HARDWARE\FLASH -I..\HARDWARE\EC20 -I..\HARDWARE\IIC -I..\HARDWARE\INA226 -I..\HARDWARE\SHT45 -I..\HARDWARE\BMP280 -I..\HARDWARE\IWDG -I..\HARDWARE\MYRTC -I..\HARDWARE\EWDG --locale=english-I C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\RTE-I G:\MDK5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I G:\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o ..\obj\ina226.o --omf_browse ..\obj\ina226.crf --depend ..\obj\ina226.d)
+I (..\HARDWARE\INA226\ina226.h)(0x695F7D4A)
 I (..\SYSTEM\sys\sys.h)(0x67BC21EE)
 I (..\USER\stm32f4xx.h)(0x67B83C32)
 I (..\CORE\core_cm4.h)(0x66719A44)
@@ -890,7 +893,7 @@ I (..\FWLIB\inc\stm32f4xx_can.h)(0x66719A44)
 I (..\FWLIB\inc\stm32f4xx_dac.h)(0x66719A44)
 I (..\FWLIB\inc\stm32f4xx_dcmi.h)(0x66719A44)
 I (..\FWLIB\inc\stm32f4xx_fsmc.h)(0x66719A44)
-I (..\HARDWARE\IIC\myiic.h)(0x695CD733)
+I (..\HARDWARE\IIC\myiic.h)(0x695F7D4A)
 I (G:\MDK5\ARM\ARMCC\include\stddef.h)(0x5475F300)
 F (..\HARDWARE\SHT45\sht45.c)(0x67E0D052)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I..\USER -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\SYSTEM\mb_usart -I..\FWLIB\inc -I..\HARDWARE\timer -I..\HARDWARE\CRC16 -I..\HARDWARE\MDBS_FUNC -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM4F -I..\SYSTEM\freertos_demo -I..\HARDWARE\EXTI -I..\HARDWARE\MAC -I..\HARDWARE\LORA -I..\HARDWARE\ROUTING -I..\HARDWARE\FLASH -I..\HARDWARE\EC20 -I..\HARDWARE\IIC -I..\HARDWARE\INA226 -I..\HARDWARE\SHT45 -I..\HARDWARE\BMP280 -I..\HARDWARE\IWDG -I..\HARDWARE\MYRTC -I..\HARDWARE\EWDG --locale=english-I C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\RTE-I G:\MDK5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I G:\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o ..\obj\sht45.o --omf_browse ..\obj\sht45.crf --depend ..\obj\sht45.d)
 I (G:\MDK5\ARM\ARMCC\include\math.h)(0x5475F2FE)
@@ -932,7 +935,7 @@ I (..\FWLIB\inc\stm32f4xx_dac.h)(0x66719A44)
 I (..\FWLIB\inc\stm32f4xx_dcmi.h)(0x66719A44)
 I (..\FWLIB\inc\stm32f4xx_fsmc.h)(0x66719A44)
 I (..\HARDWARE\SHT45\sht45.h)(0x67E0D03E)
-I (..\HARDWARE\IIC\myiic.h)(0x695CD733)
+I (..\HARDWARE\IIC\myiic.h)(0x695F7D4A)
 I (..\SYSTEM\usart\usart.h)(0x67E26910)
 I (G:\MDK5\ARM\ARMCC\include\stdio.h)(0x5475F300)
 F (..\HARDWARE\BMP280\bmp280.c)(0x69398257)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I..\USER -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\SYSTEM\mb_usart -I..\FWLIB\inc -I..\HARDWARE\timer -I..\HARDWARE\CRC16 -I..\HARDWARE\MDBS_FUNC -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM4F -I..\SYSTEM\freertos_demo -I..\HARDWARE\EXTI -I..\HARDWARE\MAC -I..\HARDWARE\LORA -I..\HARDWARE\ROUTING -I..\HARDWARE\FLASH -I..\HARDWARE\EC20 -I..\HARDWARE\IIC -I..\HARDWARE\INA226 -I..\HARDWARE\SHT45 -I..\HARDWARE\BMP280 -I..\HARDWARE\IWDG -I..\HARDWARE\MYRTC -I..\HARDWARE\EWDG --locale=english-I C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\RTE-I G:\MDK5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I G:\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o ..\obj\bmp280.o --omf_browse ..\obj\bmp280.crf --depend ..\obj\bmp280.d)
@@ -975,7 +978,7 @@ I (..\FWLIB\inc\stm32f4xx_dac.h)(0x66719A44)
 I (..\FWLIB\inc\stm32f4xx_dcmi.h)(0x66719A44)
 I (..\FWLIB\inc\stm32f4xx_fsmc.h)(0x66719A44)
 I (..\HARDWARE\BMP280\bmp280.h)(0x69398257)
-I (..\HARDWARE\IIC\myiic.h)(0x695CD733)
+I (..\HARDWARE\IIC\myiic.h)(0x695F7D4A)
 I (..\SYSTEM\usart\usart.h)(0x67E26910)
 I (G:\MDK5\ARM\ARMCC\include\stdio.h)(0x5475F300)
 F (..\HARDWARE\IWDG\iwdg.c)(0x67E281FE)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I..\USER -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\SYSTEM\mb_usart -I..\FWLIB\inc -I..\HARDWARE\timer -I..\HARDWARE\CRC16 -I..\HARDWARE\MDBS_FUNC -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM4F -I..\SYSTEM\freertos_demo -I..\HARDWARE\EXTI -I..\HARDWARE\MAC -I..\HARDWARE\LORA -I..\HARDWARE\ROUTING -I..\HARDWARE\FLASH -I..\HARDWARE\EC20 -I..\HARDWARE\IIC -I..\HARDWARE\INA226 -I..\HARDWARE\SHT45 -I..\HARDWARE\BMP280 -I..\HARDWARE\IWDG -I..\HARDWARE\MYRTC -I..\HARDWARE\EWDG --locale=english-I C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\RTE-I G:\MDK5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I G:\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o ..\obj\iwdg.o --omf_browse ..\obj\iwdg.crf --depend ..\obj\iwdg.d)
@@ -1016,7 +1019,7 @@ I (..\FWLIB\inc\stm32f4xx_dac.h)(0x66719A44)
 I (..\FWLIB\inc\stm32f4xx_dcmi.h)(0x66719A44)
 I (..\FWLIB\inc\stm32f4xx_fsmc.h)(0x66719A44)
 I (..\SYSTEM\delay\delay.h)(0x677BA112)
-F (..\HARDWARE\MYRTC\myrtc.c)(0x695E118B)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I..\USER -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\SYSTEM\mb_usart -I..\FWLIB\inc -I..\HARDWARE\timer -I..\HARDWARE\CRC16 -I..\HARDWARE\MDBS_FUNC -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM4F -I..\SYSTEM\freertos_demo -I..\HARDWARE\EXTI -I..\HARDWARE\MAC -I..\HARDWARE\LORA -I..\HARDWARE\ROUTING -I..\HARDWARE\FLASH -I..\HARDWARE\EC20 -I..\HARDWARE\IIC -I..\HARDWARE\INA226 -I..\HARDWARE\SHT45 -I..\HARDWARE\BMP280 -I..\HARDWARE\IWDG -I..\HARDWARE\MYRTC -I..\HARDWARE\EWDG --locale=english-I C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\RTE-I G:\MDK5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I G:\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o ..\obj\myrtc.o --omf_browse ..\obj\myrtc.crf --depend ..\obj\myrtc.d)
+F (..\HARDWARE\MYRTC\myrtc.c)(0x695F7D4A)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I..\USER -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\SYSTEM\mb_usart -I..\FWLIB\inc -I..\HARDWARE\timer -I..\HARDWARE\CRC16 -I..\HARDWARE\MDBS_FUNC -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM4F -I..\SYSTEM\freertos_demo -I..\HARDWARE\EXTI -I..\HARDWARE\MAC -I..\HARDWARE\LORA -I..\HARDWARE\ROUTING -I..\HARDWARE\FLASH -I..\HARDWARE\EC20 -I..\HARDWARE\IIC -I..\HARDWARE\INA226 -I..\HARDWARE\SHT45 -I..\HARDWARE\BMP280 -I..\HARDWARE\IWDG -I..\HARDWARE\MYRTC -I..\HARDWARE\EWDG --locale=english-I C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\RTE-I G:\MDK5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I G:\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o ..\obj\myrtc.o --omf_browse ..\obj\myrtc.crf --depend ..\obj\myrtc.d)
 I (..\USER\stm32f4xx.h)(0x67B83C32)
 I (..\CORE\core_cm4.h)(0x66719A44)
 I (G:\MDK5\ARM\ARMCC\include\stdint.h)(0x5475F300)
@@ -1051,14 +1054,14 @@ I (..\FWLIB\inc\stm32f4xx_can.h)(0x66719A44)
 I (..\FWLIB\inc\stm32f4xx_dac.h)(0x66719A44)
 I (..\FWLIB\inc\stm32f4xx_dcmi.h)(0x66719A44)
 I (..\FWLIB\inc\stm32f4xx_fsmc.h)(0x66719A44)
-I (..\HARDWARE\MYRTC\myrtc.h)(0x695CD87E)
+I (..\HARDWARE\MYRTC\myrtc.h)(0x695F7D4A)
 I (..\SYSTEM\delay\delay.h)(0x677BA112)
 I (..\SYSTEM\sys\sys.h)(0x67BC21EE)
 I (..\SYSTEM\usart\usart.h)(0x67E26910)
 I (G:\MDK5\ARM\ARMCC\include\stdio.h)(0x5475F300)
 I (..\HARDWARE\LED\LED.h)(0x695CD733)
-F (..\HARDWARE\EWDG\ewdg.c)(0x695CD733)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I..\USER -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\SYSTEM\mb_usart -I..\FWLIB\inc -I..\HARDWARE\timer -I..\HARDWARE\CRC16 -I..\HARDWARE\MDBS_FUNC -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM4F -I..\SYSTEM\freertos_demo -I..\HARDWARE\EXTI -I..\HARDWARE\MAC -I..\HARDWARE\LORA -I..\HARDWARE\ROUTING -I..\HARDWARE\FLASH -I..\HARDWARE\EC20 -I..\HARDWARE\IIC -I..\HARDWARE\INA226 -I..\HARDWARE\SHT45 -I..\HARDWARE\BMP280 -I..\HARDWARE\IWDG -I..\HARDWARE\MYRTC -I..\HARDWARE\EWDG --locale=english-I C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\RTE-I G:\MDK5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I G:\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o ..\obj\ewdg.o --omf_browse ..\obj\ewdg.crf --depend ..\obj\ewdg.d)
-I (..\HARDWARE\EWDG\ewdg.h)(0x695CD733)
+F (..\HARDWARE\EWDG\ewdg.c)(0x695F7D4A)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I..\USER -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\SYSTEM\mb_usart -I..\FWLIB\inc -I..\HARDWARE\timer -I..\HARDWARE\CRC16 -I..\HARDWARE\MDBS_FUNC -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM4F -I..\SYSTEM\freertos_demo -I..\HARDWARE\EXTI -I..\HARDWARE\MAC -I..\HARDWARE\LORA -I..\HARDWARE\ROUTING -I..\HARDWARE\FLASH -I..\HARDWARE\EC20 -I..\HARDWARE\IIC -I..\HARDWARE\INA226 -I..\HARDWARE\SHT45 -I..\HARDWARE\BMP280 -I..\HARDWARE\IWDG -I..\HARDWARE\MYRTC -I..\HARDWARE\EWDG --locale=english-I C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\RTE-I G:\MDK5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I G:\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o ..\obj\ewdg.o --omf_browse ..\obj\ewdg.crf --depend ..\obj\ewdg.d)
+I (..\HARDWARE\EWDG\ewdg.h)(0x695F7D4A)
 I (..\USER\stm32f4xx.h)(0x67B83C32)
 I (..\CORE\core_cm4.h)(0x66719A44)
 I (G:\MDK5\ARM\ARMCC\include\stdint.h)(0x5475F300)
@@ -1138,7 +1141,7 @@ I (G:\MDK5\ARM\ARMCC\include\stdio.h)(0x5475F300)
 I (..\HARDWARE\timer\timer.h)(0x678631AA)
 I (..\SYSTEM\mb_usart\Mb_usart.h)(0x66A274E6)
 I (G:\MDK5\ARM\ARMCC\include\stdbool.h)(0x5475F300)
-I (..\SYSTEM\freertos_demo\freertos_demo.h)(0x67A85CA4)
+I (..\SYSTEM\freertos_demo\freertos_demo.h)(0x69676570)
 I (..\FreeRTOS\include\projdefs.h)(0x677B7A4C)
 I (..\FreeRTOS\include\portable.h)(0x677B7A4C)
 I (..\FreeRTOS\include\deprecated_definitions.h)(0x677B7A4C)
@@ -1182,7 +1185,7 @@ I (..\FWLIB\inc\stm32f4xx_can.h)(0x66719A44)
 I (..\FWLIB\inc\stm32f4xx_dac.h)(0x66719A44)
 I (..\FWLIB\inc\stm32f4xx_dcmi.h)(0x66719A44)
 I (..\FWLIB\inc\stm32f4xx_fsmc.h)(0x66719A44)
-F (..\SYSTEM\usart\usart.c)(0x695CD734)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I..\USER -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\SYSTEM\mb_usart -I..\FWLIB\inc -I..\HARDWARE\timer -I..\HARDWARE\CRC16 -I..\HARDWARE\MDBS_FUNC -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM4F -I..\SYSTEM\freertos_demo -I..\HARDWARE\EXTI -I..\HARDWARE\MAC -I..\HARDWARE\LORA -I..\HARDWARE\ROUTING -I..\HARDWARE\FLASH -I..\HARDWARE\EC20 -I..\HARDWARE\IIC -I..\HARDWARE\INA226 -I..\HARDWARE\SHT45 -I..\HARDWARE\BMP280 -I..\HARDWARE\IWDG -I..\HARDWARE\MYRTC -I..\HARDWARE\EWDG --locale=english-I C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\RTE-I G:\MDK5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I G:\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o ..\obj\usart.o --omf_browse ..\obj\usart.crf --depend ..\obj\usart.d)
+F (..\SYSTEM\usart\usart.c)(0x696D0A62)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I..\USER -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\SYSTEM\mb_usart -I..\FWLIB\inc -I..\HARDWARE\timer -I..\HARDWARE\CRC16 -I..\HARDWARE\MDBS_FUNC -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM4F -I..\SYSTEM\freertos_demo -I..\HARDWARE\EXTI -I..\HARDWARE\MAC -I..\HARDWARE\LORA -I..\HARDWARE\ROUTING -I..\HARDWARE\FLASH -I..\HARDWARE\EC20 -I..\HARDWARE\IIC -I..\HARDWARE\INA226 -I..\HARDWARE\SHT45 -I..\HARDWARE\BMP280 -I..\HARDWARE\IWDG -I..\HARDWARE\MYRTC -I..\HARDWARE\EWDG --locale=english-I C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\RTE-I G:\MDK5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I G:\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o ..\obj\usart.o --omf_browse ..\obj\usart.crf --depend ..\obj\usart.d)
 I (..\SYSTEM\sys\sys.h)(0x67BC21EE)
 I (..\USER\stm32f4xx.h)(0x67B83C32)
 I (..\CORE\core_cm4.h)(0x66719A44)
@@ -1220,19 +1223,20 @@ I (..\FWLIB\inc\stm32f4xx_dcmi.h)(0x66719A44)
 I (..\FWLIB\inc\stm32f4xx_fsmc.h)(0x66719A44)
 I (..\SYSTEM\usart\usart.h)(0x67E26910)
 I (G:\MDK5\ARM\ARMCC\include\stdio.h)(0x5475F300)
-I (..\HARDWARE\MAC\mac.h)(0x695CD87E)
+I (..\HARDWARE\MAC\mac.h)(0x696D1D82)
 I (..\HARDWARE\CRC16\crc16.h)(0x66719A44)
 I (G:\MDK5\ARM\ARMCC\include\stdbool.h)(0x5475F300)
 I (..\HARDWARE\LORA\lora.h)(0x67E01210)
 I (..\SYSTEM\delay\delay.h)(0x677BA112)
-I (..\HARDWARE\ROUTING\routing.h)(0x695E1A52)
-I (..\HARDWARE\ROUTING\tree_node.h)(0x67DAC8C0)
+I (..\HARDWARE\ROUTING\routing.h)(0x696E0D51)
+I (..\HARDWARE\ROUTING\tree_node.h)(0x6968AD5A)
+I (..\USER\adaptive_report.h)(0x695F7D4A)
 I (..\FreeRTOS\include\FreeRTOS.h)(0x677B7A4C)
 I (G:\MDK5\ARM\ARMCC\include\stddef.h)(0x5475F300)
 I (..\FreeRTOS\include\FreeRTOSConfig.h)(0x695A4070)
 I (..\HARDWARE\timer\timer.h)(0x678631AA)
 I (..\SYSTEM\mb_usart\Mb_usart.h)(0x66A274E6)
-I (..\SYSTEM\freertos_demo\freertos_demo.h)(0x67A85CA4)
+I (..\SYSTEM\freertos_demo\freertos_demo.h)(0x69676570)
 I (..\FreeRTOS\include\projdefs.h)(0x677B7A4C)
 I (..\FreeRTOS\include\portable.h)(0x677B7A4C)
 I (..\FreeRTOS\include\deprecated_definitions.h)(0x677B7A4C)
@@ -1281,13 +1285,13 @@ I (..\FWLIB\inc\stm32f4xx_dcmi.h)(0x66719A44)
 I (..\FWLIB\inc\stm32f4xx_fsmc.h)(0x66719A44)
 I (..\SYSTEM\sys\sys.h)(0x67BC21EE)
 I (G:\MDK5\ARM\ARMCC\include\string.h)(0x5475F300)
-F (..\SYSTEM\freertos_demo\freertos_demo.c)(0x695CD87E)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I..\USER -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\SYSTEM\mb_usart -I..\FWLIB\inc -I..\HARDWARE\timer -I..\HARDWARE\CRC16 -I..\HARDWARE\MDBS_FUNC -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM4F -I..\SYSTEM\freertos_demo -I..\HARDWARE\EXTI -I..\HARDWARE\MAC -I..\HARDWARE\LORA -I..\HARDWARE\ROUTING -I..\HARDWARE\FLASH -I..\HARDWARE\EC20 -I..\HARDWARE\IIC -I..\HARDWARE\INA226 -I..\HARDWARE\SHT45 -I..\HARDWARE\BMP280 -I..\HARDWARE\IWDG -I..\HARDWARE\MYRTC -I..\HARDWARE\EWDG --locale=english-I C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\RTE-I G:\MDK5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I G:\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o ..\obj\freertos_demo.o --omf_browse ..\obj\freertos_demo.crf --depend ..\obj\freertos_demo.d)
-I (..\SYSTEM\freertos_demo\freertos_demo.h)(0x67A85CA4)
+F (..\SYSTEM\freertos_demo\freertos_demo.c)(0x69676B00)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I..\USER -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\SYSTEM\mb_usart -I..\FWLIB\inc -I..\HARDWARE\timer -I..\HARDWARE\CRC16 -I..\HARDWARE\MDBS_FUNC -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM4F -I..\SYSTEM\freertos_demo -I..\HARDWARE\EXTI -I..\HARDWARE\MAC -I..\HARDWARE\LORA -I..\HARDWARE\ROUTING -I..\HARDWARE\FLASH -I..\HARDWARE\EC20 -I..\HARDWARE\IIC -I..\HARDWARE\INA226 -I..\HARDWARE\SHT45 -I..\HARDWARE\BMP280 -I..\HARDWARE\IWDG -I..\HARDWARE\MYRTC -I..\HARDWARE\EWDG --locale=english-I C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\RTE-I G:\MDK5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I G:\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o ..\obj\freertos_demo.o --omf_browse ..\obj\freertos_demo.crf --depend ..\obj\freertos_demo.d)
+I (..\SYSTEM\freertos_demo\freertos_demo.h)(0x69676570)
+I (G:\MDK5\ARM\ARMCC\include\stdint.h)(0x5475F300)
 I (..\HARDWARE\LED\led.h)(0x695CD733)
 I (..\SYSTEM\sys\sys.h)(0x67BC21EE)
 I (..\USER\stm32f4xx.h)(0x67B83C32)
 I (..\CORE\core_cm4.h)(0x66719A44)
-I (G:\MDK5\ARM\ARMCC\include\stdint.h)(0x5475F300)
 I (..\CORE\core_cmInstr.h)(0x66719A44)
 I (..\CORE\core_cmFunc.h)(0x66719A44)
 I (..\CORE\core_cm4_simd.h)(0x66719A44)
@@ -1340,15 +1344,15 @@ I (..\FreeRTOS\include\task.h)(0x677B7A4C)
 I (..\FreeRTOS\include\list.h)(0x677B7A4C)
 I (..\FreeRTOS\include\event_groups.h)(0x677B7A4C)
 I (..\FreeRTOS\include\timers.h)(0x677B7A4C)
-I (..\HARDWARE\MAC\mac.h)(0x695CD87E)
+I (..\HARDWARE\MAC\mac.h)(0x696D1D82)
 I (..\HARDWARE\CRC16\crc16.h)(0x66719A44)
 I (..\HARDWARE\LORA\lora.h)(0x67E01210)
-I (..\HARDWARE\ROUTING\routing.h)(0x695E1A52)
-I (..\HARDWARE\ROUTING\tree_node.h)(0x67DAC8C0)
-I (..\USER\adaptive_report.h)(0x695CD87E)
-I (..\HARDWARE\FLASH\flash.h)(0x695CD87E)
+I (..\HARDWARE\ROUTING\routing.h)(0x696E0D51)
+I (..\HARDWARE\ROUTING\tree_node.h)(0x6968AD5A)
+I (..\USER\adaptive_report.h)(0x695F7D4A)
+I (..\HARDWARE\FLASH\flash.h)(0x695F7D4A)
 I (..\HARDWARE\IWDG\iwdg.h)(0x67E281FE)
-I (..\HARDWARE\EWDG\ewdg.h)(0x695CD733)
+I (..\HARDWARE\EWDG\ewdg.h)(0x695F7D4A)
 F (..\CORE\startup_stm32f40_41xxx.s)(0x67E00E7A)(--cpu Cortex-M4.fp -g --apcs=interwork -I C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\RTE-I G:\MDK5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I G:\MDK5\ARM\CMSIS\Include--pd "__UVISION_VERSION SETA 514" --pd "STM32F40_41xxx SETA 1"--list ..\obj\startup_stm32f40_41xxx.lst --xref -o ..\obj\startup_stm32f40_41xxx.o --depend ..\obj\startup_stm32f40_41xxx.d)
 F (..\FWLIB\src\misc.c)(0x66719A44)(--c99 -c --cpu Cortex-M4.fp -g -O0 --apcs=interwork --split_sections -I..\CORE -I..\SYSTEM\delay -I..\SYSTEM\sys -I..\SYSTEM\usart -I..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I..\USER -I..\HARDWARE\LED -I..\HARDWARE\BEEP -I..\HARDWARE\KEY -I..\SYSTEM\mb_usart -I..\FWLIB\inc -I..\HARDWARE\timer -I..\HARDWARE\CRC16 -I..\HARDWARE\MDBS_FUNC -I..\FreeRTOS\include -I..\FreeRTOS\portable\RVDS\ARM_CM4F -I..\SYSTEM\freertos_demo -I..\HARDWARE\EXTI -I..\HARDWARE\MAC -I..\HARDWARE\LORA -I..\HARDWARE\ROUTING -I..\HARDWARE\FLASH -I..\HARDWARE\EC20 -I..\HARDWARE\IIC -I..\HARDWARE\INA226 -I..\HARDWARE\SHT45 -I..\HARDWARE\BMP280 -I..\HARDWARE\IWDG -I..\HARDWARE\MYRTC -I..\HARDWARE\EWDG --locale=english-I C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\RTE-I G:\MDK5\ARM\PACK\Keil\STM32F4xx_DFP\1.0.8\Device\Include-I G:\MDK5\ARM\CMSIS\Include-D__UVISION_VERSION="514" -DSTM32F40_41xxx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER-o ..\obj\misc.o --omf_browse ..\obj\misc.crf --depend ..\obj\misc.d)
 I (..\FWLIB\inc\misc.h)(0x66719A44)
@@ -1850,7 +1854,7 @@ I (..\SYSTEM\sys\sys.h)(0x67BC21EE)
 I (..\HARDWARE\timer\timer.h)(0x678631AA)
 I (..\SYSTEM\mb_usart\Mb_usart.h)(0x66A274E6)
 I (G:\MDK5\ARM\ARMCC\include\stdbool.h)(0x5475F300)
-I (..\SYSTEM\freertos_demo\freertos_demo.h)(0x67A85CA4)
+I (..\SYSTEM\freertos_demo\freertos_demo.h)(0x69676570)
 I (..\FreeRTOS\include\projdefs.h)(0x677B7A4C)
 I (..\FreeRTOS\include\portable.h)(0x677B7A4C)
 I (..\FreeRTOS\include\deprecated_definitions.h)(0x677B7A4C)
@@ -1903,7 +1907,7 @@ I (..\SYSTEM\sys\sys.h)(0x67BC21EE)
 I (..\HARDWARE\timer\timer.h)(0x678631AA)
 I (..\SYSTEM\mb_usart\Mb_usart.h)(0x66A274E6)
 I (G:\MDK5\ARM\ARMCC\include\stdbool.h)(0x5475F300)
-I (..\SYSTEM\freertos_demo\freertos_demo.h)(0x67A85CA4)
+I (..\SYSTEM\freertos_demo\freertos_demo.h)(0x69676570)
 I (..\FreeRTOS\include\projdefs.h)(0x677B7A4C)
 I (..\FreeRTOS\include\portable.h)(0x677B7A4C)
 I (..\FreeRTOS\include\deprecated_definitions.h)(0x677B7A4C)
@@ -1958,7 +1962,7 @@ I (..\SYSTEM\sys\sys.h)(0x67BC21EE)
 I (..\HARDWARE\timer\timer.h)(0x678631AA)
 I (..\SYSTEM\mb_usart\Mb_usart.h)(0x66A274E6)
 I (G:\MDK5\ARM\ARMCC\include\stdbool.h)(0x5475F300)
-I (..\SYSTEM\freertos_demo\freertos_demo.h)(0x67A85CA4)
+I (..\SYSTEM\freertos_demo\freertos_demo.h)(0x69676570)
 I (..\FreeRTOS\include\projdefs.h)(0x677B7A4C)
 I (..\FreeRTOS\include\portable.h)(0x677B7A4C)
 I (..\FreeRTOS\include\deprecated_definitions.h)(0x677B7A4C)
@@ -2013,7 +2017,7 @@ I (..\SYSTEM\sys\sys.h)(0x67BC21EE)
 I (..\HARDWARE\timer\timer.h)(0x678631AA)
 I (..\SYSTEM\mb_usart\Mb_usart.h)(0x66A274E6)
 I (G:\MDK5\ARM\ARMCC\include\stdbool.h)(0x5475F300)
-I (..\SYSTEM\freertos_demo\freertos_demo.h)(0x67A85CA4)
+I (..\SYSTEM\freertos_demo\freertos_demo.h)(0x69676570)
 I (..\FreeRTOS\include\projdefs.h)(0x677B7A4C)
 I (..\FreeRTOS\include\portable.h)(0x677B7A4C)
 I (..\FreeRTOS\include\deprecated_definitions.h)(0x677B7A4C)
@@ -2068,7 +2072,7 @@ I (..\SYSTEM\sys\sys.h)(0x67BC21EE)
 I (..\HARDWARE\timer\timer.h)(0x678631AA)
 I (..\SYSTEM\mb_usart\Mb_usart.h)(0x66A274E6)
 I (G:\MDK5\ARM\ARMCC\include\stdbool.h)(0x5475F300)
-I (..\SYSTEM\freertos_demo\freertos_demo.h)(0x67A85CA4)
+I (..\SYSTEM\freertos_demo\freertos_demo.h)(0x69676570)
 I (..\FreeRTOS\include\projdefs.h)(0x677B7A4C)
 I (..\FreeRTOS\include\portable.h)(0x677B7A4C)
 I (..\FreeRTOS\include\deprecated_definitions.h)(0x677B7A4C)
@@ -2122,7 +2126,7 @@ I (..\SYSTEM\sys\sys.h)(0x67BC21EE)
 I (..\HARDWARE\timer\timer.h)(0x678631AA)
 I (..\SYSTEM\mb_usart\Mb_usart.h)(0x66A274E6)
 I (G:\MDK5\ARM\ARMCC\include\stdbool.h)(0x5475F300)
-I (..\SYSTEM\freertos_demo\freertos_demo.h)(0x67A85CA4)
+I (..\SYSTEM\freertos_demo\freertos_demo.h)(0x69676570)
 I (..\FreeRTOS\include\projdefs.h)(0x677B7A4C)
 I (..\FreeRTOS\include\portable.h)(0x677B7A4C)
 I (..\FreeRTOS\include\deprecated_definitions.h)(0x677B7A4C)
@@ -2177,7 +2181,7 @@ I (..\SYSTEM\sys\sys.h)(0x67BC21EE)
 I (..\HARDWARE\timer\timer.h)(0x678631AA)
 I (..\SYSTEM\mb_usart\Mb_usart.h)(0x66A274E6)
 I (G:\MDK5\ARM\ARMCC\include\stdbool.h)(0x5475F300)
-I (..\SYSTEM\freertos_demo\freertos_demo.h)(0x67A85CA4)
+I (..\SYSTEM\freertos_demo\freertos_demo.h)(0x69676570)
 I (..\FreeRTOS\include\projdefs.h)(0x677B7A4C)
 I (..\FreeRTOS\include\portable.h)(0x677B7A4C)
 I (..\FreeRTOS\include\deprecated_definitions.h)(0x677B7A4C)
@@ -2229,7 +2233,7 @@ I (..\SYSTEM\sys\sys.h)(0x67BC21EE)
 I (..\HARDWARE\timer\timer.h)(0x678631AA)
 I (..\SYSTEM\mb_usart\Mb_usart.h)(0x66A274E6)
 I (G:\MDK5\ARM\ARMCC\include\stdbool.h)(0x5475F300)
-I (..\SYSTEM\freertos_demo\freertos_demo.h)(0x67A85CA4)
+I (..\SYSTEM\freertos_demo\freertos_demo.h)(0x69676570)
 I (..\FreeRTOS\include\projdefs.h)(0x677B7A4C)
 I (..\FreeRTOS\include\portable.h)(0x677B7A4C)
 I (..\FreeRTOS\include\deprecated_definitions.h)(0x677B7A4C)

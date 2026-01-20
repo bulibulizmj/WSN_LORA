@@ -1,10 +1,10 @@
 ..\obj\freertos_demo.o: ..\SYSTEM\freertos_demo\freertos_demo.c
 ..\obj\freertos_demo.o: ..\SYSTEM\freertos_demo\freertos_demo.h
+..\obj\freertos_demo.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdint.h
 ..\obj\freertos_demo.o: ..\HARDWARE\LED\led.h
 ..\obj\freertos_demo.o: ..\SYSTEM\sys\sys.h
 ..\obj\freertos_demo.o: ..\USER\stm32f4xx.h
 ..\obj\freertos_demo.o: ..\CORE\core_cm4.h
-..\obj\freertos_demo.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdint.h
 ..\obj\freertos_demo.o: ..\CORE\core_cmInstr.h
 ..\obj\freertos_demo.o: ..\CORE\core_cmFunc.h
 ..\obj\freertos_demo.o: ..\CORE\core_cm4_simd.h

@@ -82,8 +82,8 @@
 #define ADAPT_REPORT_STEP_UP_RATIO             1.5f
 
 /* Hop count fallback */
-#define ADAPT_REPORT_HOP_COUNT_DEFAULT         4
-#define ADAPT_REPORT_HOP_COUNT_MAX             4
+#define ADAPT_REPORT_HOP_COUNT_DEFAULT         5
+#define ADAPT_REPORT_HOP_COUNT_MAX             5
 
 /* Congestion window */
 #define ADAPT_REPORT_TX_WINDOW_SIZE            100

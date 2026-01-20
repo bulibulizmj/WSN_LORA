@@ -7,7 +7,9 @@
 #include "mac.h"
 #include "tree_node.h"
 
-#define IS_GATWAY                          0          //网关标志，为1为网关（根节点），为0为其他节点
+#ifndef IS_GATWAY
+#define IS_GATWAY                          1          //网关标志，为1为网关（根节点），为0为其他节点
+#endif
 
 
 #define IS_JOIN_WAN                       (1 << 0)    //入网标志位，该位为0表示入网，为1表示未入网
@@ -24,6 +26,18 @@
 
 #define MAX_CHILDREN  64        //最大子节点的数量
 #define MAX_NEIGHBORS 4         //最大邻居节点（隐藏父节点）的数量
+
+/* 失败触发快速换父（基于mac_send_without_data_recv返回值）
+ * RTS_FAIL: 未收到CTS（返回0）
+ * ACK_FAIL: 未收到ACK（返回1）
+ */
+#ifndef ROUTING_FAST_SWITCH_RTS_FAIL_LIMIT
+#define ROUTING_FAST_SWITCH_RTS_FAIL_LIMIT 1u
+#endif
+
+#ifndef ROUTING_FAST_SWITCH_ACK_FAIL_LIMIT
+#define ROUTING_FAST_SWITCH_ACK_FAIL_LIMIT 2u
+#endif
 typedef struct {
   // 基础信息
   union{
@@ -79,6 +93,7 @@ typedef struct {
       uint16_t  windspeed;
       uint16_t  wind_direction;
       uint16_t  radiation;
+      uint32_t  next_report_ms;     //源节点声明：距离下一次上报的时间(ms)，用于父节点动态超时判活
       } routing_sensor_data;
       struct {
           uint8_t  control_code; // 路由更新有效，为0表示子节点的删除，为1表示子节点的添加

@@ -43,6 +43,25 @@
 
 typedef uint64_t NodeAddr;
 
+/* ---------------- LoRa UART wire format (SOF + LEN) ----------------
+ * RX from module: [RSSI][SOF0][SOF1][LEN][DATA...]
+ * TX to module:   [SOF0][SOF1][LEN][DATA...]
+ * DATA length (LEN) includes CRC16 bytes at the end.
+ */
+#define LORA_SERIAL_BUF_SIZE                  200u
+#define LORA_FRAME_SOF0                       0xA5u
+#define LORA_FRAME_SOF1                       0x5Au
+#define LORA_FRAME_HDR_LEN                    3u   /* SOF0, SOF1, LEN */
+#define LORA_FRAME_RSSI_LEN                   1u
+#define LORA_FRAME_DATA_MIN_LEN               3u   /* at least: frame_type + CRC16 */
+#define LORA_FRAME_DATA_MAX_LEN               (LORA_SERIAL_BUF_SIZE - 4u) /* 4 = RSSI + SOF0 + SOF1 + LEN */
+
+/* LoRa UART4 RX mode:
+ * 0 = raw stream (AT responses/config mode)
+ * 1 = SOF+LEN framed packets (data mode)
+ */
+extern volatile u8 g_lora_rx_framing_enable;
+
 ///* 串口接收数据缓存大小 */
 //#define UART_RX_SIZE 0xff
 #define ROUT_FRAME_LEN        56          //路由协议帧长度，也就是MAC帧payload的长度

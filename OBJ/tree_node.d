@@ -1,9 +1,9 @@
 ..\obj\tree_node.o: ..\HARDWARE\ROUTING\tree_node.c
 ..\obj\tree_node.o: ..\HARDWARE\ROUTING\tree_node.h
+..\obj\tree_node.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdint.h
 ..\obj\tree_node.o: ..\SYSTEM\sys\sys.h
 ..\obj\tree_node.o: ..\USER\stm32f4xx.h
 ..\obj\tree_node.o: ..\CORE\core_cm4.h
-..\obj\tree_node.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdint.h
 ..\obj\tree_node.o: ..\CORE\core_cmInstr.h
 ..\obj\tree_node.o: ..\CORE\core_cmFunc.h
 ..\obj\tree_node.o: ..\CORE\core_cm4_simd.h
@@ -44,6 +44,7 @@
 ..\obj\tree_node.o: ..\HARDWARE\LORA\lora.h
 ..\obj\tree_node.o: ..\SYSTEM\delay\delay.h
 ..\obj\tree_node.o: ..\HARDWARE\MAC\mac.h
+..\obj\tree_node.o: ..\USER\adaptive_report.h
 ..\obj\tree_node.o: ..\FreeRTOS\include\FreeRTOS.h
 ..\obj\tree_node.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stddef.h
 ..\obj\tree_node.o: ..\FreeRTOS\include\FreeRTOSConfig.h
@@ -55,3 +56,5 @@
 ..\obj\tree_node.o: ..\FreeRTOS\include\deprecated_definitions.h
 ..\obj\tree_node.o: ..\FreeRTOS\portable\RVDS\ARM_CM4F\portmacro.h
 ..\obj\tree_node.o: ..\FreeRTOS\include\mpu_wrappers.h
+..\obj\tree_node.o: ..\FreeRTOS\include\task.h
+..\obj\tree_node.o: ..\FreeRTOS\include\list.h

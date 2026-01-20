@@ -45,6 +45,7 @@
 ..\obj\routing.o: ..\SYSTEM\delay\delay.h
 ..\obj\routing.o: ..\HARDWARE\MAC\mac.h
 ..\obj\routing.o: ..\HARDWARE\ROUTING\tree_node.h
+..\obj\routing.o: ..\USER\adaptive_report.h
 ..\obj\routing.o: ..\SYSTEM\freertos_demo\freertos_demo.h
 ..\obj\routing.o: ..\FreeRTOS\include\FreeRTOS.h
 ..\obj\routing.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stddef.h
@@ -70,4 +71,3 @@
 ..\obj\routing.o: ..\HARDWARE\EC20\ec20.h
 ..\obj\routing.o: ..\HARDWARE\MDBS_FUNC\mdbs_func.h
 ..\obj\routing.o: ..\HARDWARE\LED\led.h
-..\obj\routing.o: ..\USER\adaptive_report.h

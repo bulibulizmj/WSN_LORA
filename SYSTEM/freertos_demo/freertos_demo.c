@@ -16,6 +16,66 @@
 #include "ewdg.h"
 /******************************************************************************************************/
 
+/* ---------------- Watchdog supervisor (heartbeat) ----------------
+ * Background:
+ * - feed_iwdog/feed_ewdog are high priority and can keep feeding even if most
+ *   business tasks are starved (a "fake hang").
+ * - We add task heartbeats; if key tasks stop beating, stop feeding so the MCU
+ *   will reset.
+ */
+static volatile uint32_t g_wdg_supervisor_start_tick = 0;
+static volatile uint32_t g_wdg_heartbeat_tick[WDG_HB_ID_MAX];
+
+static void WDG_SupervisorInit(void)
+{
+#if WDG_SUPERVISOR_ENABLE
+    uint32_t now = (uint32_t)xTaskGetTickCount();
+    uint8_t i = 0;
+
+    g_wdg_supervisor_start_tick = now;
+    for (i = 0; i < (uint8_t)WDG_HB_ID_MAX; i++)
+    {
+        g_wdg_heartbeat_tick[i] = now;
+    }
+#endif
+}
+
+void WDG_Heartbeat(uint8_t id)
+{
+#if WDG_SUPERVISOR_ENABLE
+    if (id < (uint8_t)WDG_HB_ID_MAX)
+    {
+        g_wdg_heartbeat_tick[id] = (uint32_t)xTaskGetTickCount();
+    }
+#else
+    (void)id;
+#endif
+}
+
+static uint8_t WDG_SupervisorIsHealthy(void)
+{
+#if !WDG_SUPERVISOR_ENABLE
+    return 1;
+#else
+    const uint32_t now = (uint32_t)xTaskGetTickCount();
+
+    if ((now - g_wdg_supervisor_start_tick) < (uint32_t)pdMS_TO_TICKS(WDG_SUPERVISOR_GRACE_MS))
+    {
+        return 1;
+    }
+
+    if ((now - g_wdg_heartbeat_tick[WDG_HB_ID_MAC]) > (uint32_t)pdMS_TO_TICKS(WDG_SUPERVISOR_MAC_TIMEOUT_MS))
+    {
+        return 0;
+    }
+    if ((now - g_wdg_heartbeat_tick[WDG_HB_ID_ROUTE]) > (uint32_t)pdMS_TO_TICKS(WDG_SUPERVISOR_ROUTE_TIMEOUT_MS))
+    {
+        return 0;
+    }
+    return 1;
+#endif
+}
+
 /* start_task任务配置
  * 包括：任务句柄 任务优先级 堆栈大小 创建任务
  */
@@ -124,7 +184,10 @@ void feed_ewdog(void * pvParameters);
 
 /***************************  各任务和定时器周期配置 *********************************/
 #define send_timer_period_ms         120*1000           //数据上报与计时任务周期，单位ms
-#define node_check_period_ms         4800*1000          //邻居节点与子节点检查任务
+#ifndef NODE_CHECK_PERIOD_MS
+#define NODE_CHECK_PERIOD_MS         (5u * 60u * 1000u)  //默认5分钟检查一次
+#endif
+#define node_check_period_ms         (NODE_CHECK_PERIOD_MS)          //邻居节点与子节点检查任务
 #define feed_iwdog_period_ms         4*1000             //喂内部看门狗任务周期，单位ms
 #define feed_ewdog_period_ms         300                //喂外部看门狗任务周期，单位ms
 #define debug_task_period_ms         600*1000           //调试信息打印任务周期，单位ms
@@ -264,6 +327,10 @@ void start_task(void * pvParameters)
     {
         xEventGroupClearBits(route_eventgroup_handle, IS_ADDR_NULL);
     }
+
+    /* Initialize watchdog supervisor before feed tasks start running. */
+    WDG_SupervisorInit();
+
     IWDG_Feed();
     xTaskCreate((TaskFunction_t 				)   feed_iwdog,
 								(char *                 )   "feed_iwdog",
@@ -372,7 +439,10 @@ void feed_iwdog(void * pvParameters)
     TickType_t xLastWakeTime = xTaskGetTickCount();
     while(1)
     {
-        IWDG_Feed();
+        if (WDG_SupervisorIsHealthy())
+        {
+            IWDG_Feed();
+        }
         vTaskDelayUntil(&xLastWakeTime, feed_iwdog_period_ms);
     }
 }
@@ -387,7 +457,10 @@ void feed_ewdog(void * pvParameters)
     TickType_t xLastWakeTime = xTaskGetTickCount();
     while(1)
     {
-        EWDG_Feed();
+        if (WDG_SupervisorIsHealthy())
+        {
+            EWDG_Feed();
+        }
         vTaskDelayUntil(&xLastWakeTime, feed_ewdog_period_ms);
     }
 }

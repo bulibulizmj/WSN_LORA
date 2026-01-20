@@ -45,6 +45,7 @@
 ..\obj\usart.o: ..\HARDWARE\MAC\mac.h
 ..\obj\usart.o: ..\HARDWARE\ROUTING\routing.h
 ..\obj\usart.o: ..\HARDWARE\ROUTING\tree_node.h
+..\obj\usart.o: ..\USER\adaptive_report.h
 ..\obj\usart.o: ..\FreeRTOS\include\FreeRTOS.h
 ..\obj\usart.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stddef.h
 ..\obj\usart.o: ..\FreeRTOS\include\FreeRTOSConfig.h
