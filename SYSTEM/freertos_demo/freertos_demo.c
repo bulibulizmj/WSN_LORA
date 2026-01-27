@@ -89,10 +89,19 @@ void start_task(void * pvParameters);
 /* 调试信息打印任务配置
  * 包括：任务句柄 任务优先级 堆栈大小 创建任务 
  */
+#ifndef DEBUG_TASK_ENABLE
+#define DEBUG_TASK_ENABLE 1
+#endif
+
+#if DEBUG_TASK_ENABLE
 #define DEBUG_TASK_PRIO 				  4
 #define DEBUG_TASK_STACK_SIZE		156 
+#define ROUTING_ADDR_COORD_MAX    100000000u
+#define ROUTING_PTR_MIN           0x20000000u
+#define ROUTING_PTR_MAX           0x20040000u
 TaskHandle_t debug_task_handler;//任务句柄
 void debug_task(void * pvParameters);
+#endif
  
 /* 数据上报与计时任务配置
  * 包括：任务句柄 任务优先级 堆栈大小 创建任务
@@ -105,16 +114,17 @@ void send_timer(void * pvParameters);
 /* MAC数据包处理任务配置
  * 包括：任务句柄 任务优先级 堆栈大小 创建任务
  */
-#define MAC_PACKET_PROCESS_PRIO 				23
-#define MAC_PACKET_PROCESS_STACK_SIZE		256 
+#define MAC_PACKET_PROCESS_PRIO 			23
+#define MAC_PACKET_PROCESS_STACK_SIZE	    192 
 TaskHandle_t mac_packet_process_handler;//任务句柄
 void mac_packet_process(void * pvParameters);
 
 /* ROUTE数据包处理任务配置
  * 包括：任务句柄 任务优先级 堆栈大小 创建任务
  */
+ */
 #define ROUTE_PACKET_PROCESS_PRIO 				24
-#define ROUTE_PACKET_PROCESS_STACK_SIZE		256 
+#define ROUTE_PACKET_PROCESS_STACK_SIZE\t\t192 
 TaskHandle_t route_packet_process_handler;//任务句柄
 void route_packet_process(void * pvParameters);
 
@@ -122,7 +132,7 @@ void route_packet_process(void * pvParameters);
  * 包括：任务句柄 任务优先级 堆栈大小 创建任务
  */
 #define JOIN_WAN_PRIO 				22
-#define JOIN_WAN_STACK_SIZE		256 
+#define JOIN_WAN_STACK_SIZE\t\t224 
 TaskHandle_t join_wan_handler;//任务句柄
 void join_wan(void * pvParameters);
 
@@ -138,7 +148,7 @@ void write_my_addr(void * pvParameters);
  * 包括：任务句柄 任务优先级 堆栈大小 创建任务
  */
 #define BEACON_SEND_PRIO 					19
-#define BEACON_SEND_STACK_SIZE		256 
+#define BEACON_SEND_STACK_SIZE\t\t192 
 TaskHandle_t beacon_send_handler;//任务句柄
 void beacon_send(void * pvParameters);
 
@@ -146,7 +156,7 @@ void beacon_send(void * pvParameters);
  * 包括：任务句柄 任务优先级 堆栈大小 创建任务
  */
 #define DATA_RELAY_PRIO 				21
-#define DATA_RELAY_STACK_SIZE		128 
+#define DATA_RELAY_STACK_SIZE		512 
 TaskHandle_t data_relay_handler;//任务句柄
 void data_relay(void * pvParameters);
 
@@ -154,7 +164,7 @@ void data_relay(void * pvParameters);
  * 包括：任务句柄 任务优先级 堆栈大小 创建任务
  */
 #define ROUTING_UPDATE_PRIO 				18
-#define ROUTING_UPDATE_STACK_SIZE		128 
+#define ROUTING_UPDATE_STACK_SIZE		384 
 TaskHandle_t routing_update_handler;//任务句柄
 void routing_update(void * pvParameters);
 
@@ -164,6 +174,7 @@ void routing_update(void * pvParameters);
 #define NODE_CHECK_PRIO 				15
 #define NODE_CHECK_STACK_SIZE		128 
 TaskHandle_t node_check_handler;//任务句柄
+TaskHandle_t env_sample_handler;//任务句柄
 void node_check(void * pvParameters);
 
 /* 喂内部看门狗任务配置
@@ -219,6 +230,8 @@ extern EventGroupHandle_t route_eventgroup_handle;		//路由层事件标志组句柄
 extern EventBits_t route_eventgroup_bit;
 extern RoutingTable routing_table;                    //定义路由表
 extern QueueHandle_t is_sender_route_handle;          //路由层发送互斥信号量
+extern QueueHandle_t route_relay_queue;          // route relay queue
+extern QueueHandle_t route_update_queue;         // route update queue
 
 extern NodeAddr ADDR_CURRENT;		
 extern NodeAddr ADDR_MINE;		
@@ -304,7 +317,6 @@ void start_task(void * pvParameters)
 
     /* 写入MAC层的地址（即使还未入网也需要初始化ADDR_MINE，避免后续逻辑使用默认0） */
     ADDR_MINE = routing_table.node_addr.addr;
-
     /* 路由层发送互斥：必须在任何可能发送/上报的任务运行前创建，否则xSemaphoreTake(NULL)会触发断言并进入HardFault */
     if(is_sender_route_handle == NULL)
     {
@@ -316,6 +328,24 @@ void start_task(void * pvParameters)
         else
         {
             printf("Error: is_sender_route_handle create failed\r\n");
+        }
+    }
+
+    if (route_relay_queue == NULL)
+    {
+        route_relay_queue = xQueueCreate(ROUTING_RELAY_QUEUE_LEN, sizeof(RoutingFrame));
+        if (route_relay_queue == NULL)
+        {
+            printf("Error: route_relay_queue create failed\r\n");
+        }
+    }
+
+    if (route_update_queue == NULL)
+    {
+        route_update_queue = xQueueCreate(ROUTING_UPDATE_QUEUE_LEN, sizeof(RoutingFrame));
+        if (route_update_queue == NULL)
+        {
+            printf("Error: route_update_queue create failed\r\n");
         }
     }
 
@@ -401,14 +431,15 @@ void start_task(void * pvParameters)
 								(void *                 )   NULL,
 								(UBaseType_t            )   ROUTING_UPDATE_PRIO,                                      
 								(TaskHandle_t *         )   &routing_update_handler );
-                
-    xTaskCreate((TaskFunction_t 				)   debug_task,
+#if DEBUG_TASK_ENABLE
+    xTaskCreate((TaskFunction_t                 )   debug_task,
 								(char *                 )   "debug_task",
 								(configSTACK_DEPTH_TYPE )   DEBUG_TASK_STACK_SIZE,
 								(void *                 )   NULL,
 								(UBaseType_t            )   DEBUG_TASK_PRIO,                                      
-								(TaskHandle_t *         )   &debug_task_handler );   
-                
+								(TaskHandle_t *         )   &debug_task_handler );
+#endif
+
     xTaskCreate((TaskFunction_t 				)   node_check,
 								(char *                 )   "node_check",
 								(configSTACK_DEPTH_TYPE )   NODE_CHECK_STACK_SIZE,
@@ -420,7 +451,7 @@ void start_task(void * pvParameters)
 								(configSTACK_DEPTH_TYPE )   256,
 								(void *                 )   NULL,
 								(UBaseType_t            )   (tskIDLE_PRIORITY + 1),
-								(TaskHandle_t *         )   NULL );
+								(TaskHandle_t *         )   &env_sample_handler );
                 
 		xEventGroupSetBits(recv_eventgroup_handle, INITIAL_OK);//将INITIAL_OK状态位初始化为1，表示初始化成功
     recv_eventgroup_bit = xEventGroupWaitBits(recv_eventgroup_handle, INITIAL_OK, pdFALSE, pdTRUE, 0);	
@@ -471,6 +502,7 @@ void feed_ewdog(void * pvParameters)
   * @param  None
   * @retval None
   */
+#if DEBUG_TASK_ENABLE
 char time_statictic[500];
 void debug_task(void * pvParameters)
 {
@@ -509,6 +541,9 @@ void debug_task(void * pvParameters)
         uxHighWaterMark = uxTaskGetStackHighWaterMark(node_check_handler); 
         printf("node_check任务使用情况：%ld\r\n",uxHighWaterMark);
         
+        uxHighWaterMark = uxTaskGetStackHighWaterMark(env_sample_handler); 
+        printf("env_sample任务使用情况：%ld\r\n",uxHighWaterMark);
+        
         uxHighWaterMark = uxTaskGetStackHighWaterMark(beacon_send_handler); 
         printf("beacon_send任务使用情况：%ld\r\n",uxHighWaterMark); 
         
@@ -522,17 +557,92 @@ void debug_task(void * pvParameters)
         printf("feed_ewdog_handler任务使用情况：%ld\r\n",uxHighWaterMark);  
 
         printf("最小剩余栈空间大小 %d \r\n",(int32_t)uxTaskGetStackHighWaterMark(NULL));
-        printf("历史剩余最小内存大小:%d 字节\r\n\r\n",xPortGetMinimumEverFreeHeapSize());//查询历史剩余最小内存大小
-        printf("当前父节点：%llx\r\n", routing_table.parent_addr);
-        printf("当前地址：%llx\r\n", routing_table.tree_pointer->addr);
-        printf("当前邻居有：");
+        printf("堆总大小:%lu 字节\r\n", (unsigned long)configTOTAL_HEAP_SIZE);
+printf("当前剩余堆大小:%lu 字节\r\n", (unsigned long)xPortGetFreeHeapSize());
+printf("历史剩余最小内存大小:%lu 字节\r\n\r\n", (unsigned long)xPortGetMinimumEverFreeHeapSize());//查询历史剩余最小内存大小
+        printf("USART1_RX_OVERFLOW:%lu, USART2_RX_OVERFLOW:%lu, UART4_RX_OVERFLOW:%lu\r\n",
+               (unsigned long)g_usart1_rx_overflow,
+               (unsigned long)g_usart2_rx_overflow,
+               (unsigned long)g_uart4_rx_overflow);
+
+        {
+            NodeAddr self_addr = routing_table.node_addr.addr;
+            u32 self_lon = (u32)(self_addr & 0xFFFFFFFFu);
+            u32 self_lat = (u32)(self_addr >> 32);
+            u8 addr_abnormal = 0;
+            u32 tree_ptr_val = (u32)routing_table.tree_pointer;
+            u8 tree_ptr_ok = 0;
+
+            if ((self_addr == 0ULL) || (self_addr == 0xFFFFFFFFFFFFFFFFULL))
+            {
+                addr_abnormal = 1;
+            }
+            if ((self_lon > ROUTING_ADDR_COORD_MAX) || (self_lat > ROUTING_ADDR_COORD_MAX))
+            {
+                addr_abnormal = 1;
+            }
+            if (addr_abnormal)
+            {
+                printf("WARN: 节点地址异常 addr=%llx lon=%lu lat=%lu\r\n",
+                       self_addr, (unsigned long)self_lon, (unsigned long)self_lat);
+            }
+
+            if (IS_GATWAY)
+            {
+                if (routing_table.parent_addr != 0xFFFFFFFFFFFFFFFFULL)
+                {
+                    printf("WARN: 网关父节点异常 %llx\r\n", routing_table.parent_addr);
+                }
+            }
+            else if (!(route_eventgroup_bit & IS_JOIN_WAN))
+            {
+                if ((routing_table.parent_addr == 0ULL) || (routing_table.parent_addr == 0xFFFFFFFFFFFFFFFFULL))
+                {
+                    printf("WARN: 父节点异常 %llx\r\n", routing_table.parent_addr);
+                }
+            }
+
+            if ((routing_table.tree_pointer != NULL) && (tree_ptr_val >= ROUTING_PTR_MIN) && (tree_ptr_val <= ROUTING_PTR_MAX))
+            {
+                tree_ptr_ok = 1;
+            }
+            else
+            {
+                printf("WARN: tree_pointer异常 0x%08lx\r\n", (unsigned long)tree_ptr_val);
+            }
+
+            printf("当前父节点：%llx\r\n", routing_table.parent_addr);
+            if (tree_ptr_ok)
+            {
+                printf("当前地址：%llx\r\n", routing_table.tree_pointer->addr);
+                if (routing_table.tree_pointer->addr != self_addr)
+                {
+                    printf("WARN: tree_pointer地址与node_addr不一致 tree=%llx node=%llx\r\n",
+                           routing_table.tree_pointer->addr, self_addr);
+                }
+            }
+            else
+            {
+                printf("当前地址：%llx\r\n", self_addr);
+            }
+            printf("当前邻居有：");
+        }
         for(i =0; i < routing_table.neighbor_count; i ++)
         {
             printf("%llx, ", routing_table.neighbors[i].addr);
         }
         printf("\r\n\r\n");
         printf("当前子节点有：\r\n");
-        TraverseTree(routing_table.tree_pointer);
+        if ((routing_table.tree_pointer != NULL) &&
+            ((u32)routing_table.tree_pointer >= ROUTING_PTR_MIN) &&
+            ((u32)routing_table.tree_pointer <= ROUTING_PTR_MAX))
+        {
+            TraverseTree(routing_table.tree_pointer);
+        }
+        else
+        {
+            printf("tree_pointer异常，跳过遍历\r\n");
+        }
         printf("\r\n\r\n");
         uxHighWaterMark = uxTaskGetStackHighWaterMark(NULL); 
         printf("debug_task任务使用情况：%ld\r\n",uxHighWaterMark);
@@ -540,6 +650,7 @@ void debug_task(void * pvParameters)
 		}
 }
 
+#endif
 /**
   * @brief  邻居节点与子节点检查任务配置
   * @param  None
@@ -547,7 +658,6 @@ void debug_task(void * pvParameters)
   */
 void node_check(void * pvParameters)
 {
-    u8 i;
 		while(1)
 		{
         route_eventgroup_bit = xEventGroupWaitBits(route_eventgroup_handle, IS_JOIN_WAN, pdFALSE, pdTRUE, 0);	//判断是否入网,IS_JOIN_WAN位为1表示未入网
@@ -556,10 +666,6 @@ void node_check(void * pvParameters)
             printf("检查邻居节点与子节点任务启动！\r\n");
             node_check_route();
             ReSetNode(routing_table.tree_pointer);
-            for(i = 0; i < routing_table.neighbor_count; i++)
-            {
-                routing_table.neighbors[i].is_neighbors_alive = 0;
-            }
         }
         vTaskDelay(node_check_period_ms);
 		}
@@ -749,3 +855,24 @@ void Reset_Timer_Callback(TimerHandle_t pxTimer){
     // __set_FAULTMASK(1); //关闭总中断
     // NVIC_SystemReset(); //请求单片机重启
 }
+
+void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
+{
+    const char *name = (pcTaskName != NULL) ? pcTaskName : "NULL";
+    printf("\r\n[STACK OVERFLOW] task=%s handle=0x%08lx\r\n", name, (unsigned long)xTask);
+    taskDISABLE_INTERRUPTS();
+    while (1)
+    {
+    }
+}
+
+
+
+
+
+
+
+
+
+
+

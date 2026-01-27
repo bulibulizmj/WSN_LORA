@@ -64,8 +64,7 @@ extern volatile u8 g_lora_rx_framing_enable;
 
 ///* 串口接收数据缓存大小 */
 //#define UART_RX_SIZE 0xff
-#define ROUT_FRAME_LEN        56          //路由协议帧长度，也就是MAC帧payload的长度
-
+#define ROUT_FRAME_LEN        42          //路由协议帧长度，也就是MAC帧payload的长度
 #pragma pack(push, 1)                     //1字节对齐
 // MAC层数据包直接使用NodeAddr作为源地址和目的地址
 typedef struct {
@@ -115,6 +114,8 @@ void CTS_PACKET_PROCESS(void);
 void ACK_PACKET_PROCESS(void);
 void DATA_PACKET_PROCESS(void);
 #endif
+
+
 
 
 

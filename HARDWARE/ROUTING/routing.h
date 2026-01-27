@@ -23,9 +23,12 @@
 #define RELAY_TASK_START                  (1 << 8)    //开启数据转发任务标志，为1启动数据转发任务
 #define UPDATE_TASK_START                 (1 << 9)    //开启路由更新发送任务标志，为1启动路由更新发送任务
 
-
+    
 #define MAX_CHILDREN  64        //最大子节点的数量
-#define MAX_NEIGHBORS 4         //最大邻居节点（隐藏父节点）的数量
+#define MAX_NEIGHBORS 8         //最大邻居节点（隐藏父节点）的数量
+
+#define ROUTING_RELAY_QUEUE_LEN           4u
+#define ROUTING_UPDATE_QUEUE_LEN          4u
 
 /* 失败触发快速换父（基于mac_send_without_data_recv返回值）
  * RTS_FAIL: 未收到CTS（返回0）
@@ -38,6 +41,13 @@
 #ifndef ROUTING_FAST_SWITCH_ACK_FAIL_LIMIT
 #define ROUTING_FAST_SWITCH_ACK_FAIL_LIMIT 2u
 #endif
+
+/* Neighbor liveness timeout (ms). Use a long timeout to match sparse reports. */
+#ifndef ROUTING_NEIGHBOR_TIMEOUT_MS
+#define ROUTING_NEIGHBOR_TIMEOUT_MS \
+    ((uint32_t)ADAPT_REPORT_TMAX_MINUTES * 60u * 1000u * 2u + (uint32_t)ROUTING_CHILD_TIMEOUT_SLACK_MS)
+#endif
+
 typedef struct {
   // 基础信息
   union{
@@ -58,7 +68,8 @@ typedef struct {
       NodeAddr addr;                  // 潜在父节点地址
       uint8_t  rssi;                  // 信号强度,rssi越小，信号强度越大
       uint8_t  depth;                 // 邻居的tree_depth
-      uint32_t is_neighbors_alive;    // 该潜在父节点存活的标志，默认为1存活，如果在一定时间内没有接收到来自该节点的数据包则置0
+      uint32_t is_neighbors_alive;    // seen flag (set when a packet is received)
+      uint32_t last_seen_tick;        // last seen tick
   } neighbors[MAX_NEIGHBORS];         // 每次更新该邻居节点列表后都要进入判定当前父节点是否可以更换
   
   uint8_t neighbor_count; // 邻居数量
@@ -128,6 +139,11 @@ void SensorDataGet(void);
 u8 MqttReport(RoutingFrame report_data_frame);
 void MqttConnect(void);
 #endif
+
+
+
+
+
 
 
 

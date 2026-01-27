@@ -8,6 +8,9 @@ u16 Rxcouter_EC800;
 
 u8 lora_serialRXbuf_st[LORA_SERIAL_BUF_SIZE];
 u16 lora_Rxcouter;
+volatile u32 g_usart1_rx_overflow = 0;
+volatile u32 g_usart2_rx_overflow = 0;
+volatile u32 g_uart4_rx_overflow = 0;
 volatile u8 lora_frame_locked = 0; // LoRa frame lock (1=ready, stop writing RX buffer)
 volatile u8 g_lora_rx_framing_enable = 0; // 0=raw stream (AT), 1=SOF+LEN framed packets
 
@@ -203,7 +206,17 @@ void USART1_IRQHandler(void)                	//串口1中断服务程序，  * @note   RX
     if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)  //接收中断
     {
         Res = USART_ReceiveData(USART1);  //读取接收到的数据
-        USART_RX_BUF[USART_RX_STA++]=Res;//
+        if (USART_RX_STA < (USART_REC_LEN - 1u))
+        {
+            USART_RX_BUF[USART_RX_STA++] = Res;
+            USART_RX_BUF[USART_RX_STA] = 0;
+        }
+        else
+        {
+            g_usart1_rx_overflow++;
+            USART_RX_STA = 0;
+            USART_RX_BUF[0] = 0;
+        }
     }
     xResult = xEventGroupSetBitsFromISR(route_eventgroup_handle, WRITE_ADDR_ORDER, &xHigherPriorityTaskWoken);
     if(xResult == pdPASS)//是否导致有高优先级任务就绪？如果有则进行任务切换
@@ -220,7 +233,17 @@ void USART2_IRQHandler(void)                                //串口2中断服务程序
     if(USART_GetITStatus(USART2, USART_IT_RXNE) != RESET)  //接收中断
     {
         Res = USART_ReceiveData(USART2);//(USART1->DR);      //读取接收到的数据
-        AtRxBuffer_EC800[Rxcouter_EC800++]=Res;//
+        if (Rxcouter_EC800 < (u16)(sizeof(AtRxBuffer_EC800) - 1u))
+        {
+            AtRxBuffer_EC800[Rxcouter_EC800++] = Res;
+            AtRxBuffer_EC800[Rxcouter_EC800] = 0;
+        }
+        else
+        {
+            g_usart2_rx_overflow++;
+            Rxcouter_EC800 = 0;
+            AtRxBuffer_EC800[0] = 0;
+        }
     } 
 
 }
@@ -308,7 +331,9 @@ void UART4_IRQHandler(void)
             }
             else
             {
+                g_uart4_rx_overflow++;
                 lora_Rxcouter = 0;
+                lora_serialRXbuf_st[0] = 0;
             }
         }
         else
@@ -397,6 +422,7 @@ void UART4_IRQHandler(void)
                         else
                         {
                             /* Overflow, restart. */
+                            g_uart4_rx_overflow++;
                             lora_Rxcouter = 0;
                             g_lora_rx_expected_total = 0;
                             g_lora_rx_state = LORA_RX_WAIT_RSSI;
@@ -441,6 +467,11 @@ void Uart4_SendStr(char* SendBuf)    //串口2打印数据
 #endif	
 
  
+
+
+
+
+
 
 
 

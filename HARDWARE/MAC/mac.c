@@ -243,8 +243,8 @@ int RNG_Get_RandnomRange(int min, int max)
   */
 bool is_channel_idle(void)								
 {
-		u8 NB = 0, CW = 2, BE = 0;//NB：监听次数，初始值为0;CW：在传输数据前需要连续侦测的频道空闲次数;BE：决定随机延迟时间的大小
-		u8 macBE[3] = {4, 4, 6};	//BE的取值范围
+		u8 NB = 0, CW = 1, BE = 0;//NB：监听次数，初始值为0;CW：在传输数据前需要连续侦测的频道空闲次数;BE：决定随机延迟时间的大小
+		u8 macBE[3] = {1, 2, 3};	//BE的取值范围
 //    u8 macBE[3] = {2, 3, 4};	//BE的取值范围
 		u8 backoff = 0, cnt = 0;
 		RNG_Init();
@@ -254,7 +254,7 @@ bool is_channel_idle(void)
 				xEventGroupClearBits(recv_eventgroup_handle, CSMA_BUSY_7);//重置CSMA接收的事件标志位
 				BE = macBE[cnt];
 //        printf("pow(2,BE)= %lf\r\n", pow(2,BE));//会触发硬件错误
-				backoff = RNG_Get_RandnomRange(2, (int)pow(2,BE)-1);//延迟的时间 = backoff*4 秒
+				backoff = RNG_Get_RandnomRange(1, (int)pow(2,BE)-1);//延迟的时间 = backoff*4 秒
 //        backoff = RNG_Get_RandnomRange(1, pow(2,BE)-1);//延迟的时间 = backoff*4 秒
 				printf("CSMA随机时延：%d秒\r\n", 4 * backoff);
 				recv_eventgroup_bit = xEventGroupWaitBits(recv_eventgroup_handle, CSMA_BUSY_7, pdTRUE, pdTRUE, 4000 * backoff);
@@ -269,9 +269,9 @@ bool is_channel_idle(void)
             MAC_CSMA_RecordListenWindow(1);
 						NB ++;
 						cnt ++;
-						CW = 2;
+						CW = 1;
 						if(cnt >= 2) cnt = 2;
-						if(NB > 1) return 0;//最多监听1+1次
+						if(NB > 0) return 0;//最多监听1次
 				}
 		}
 }
@@ -829,6 +829,8 @@ void RTS_PACKET_PROCESS(void)
     //如果是别的节点发送了目的地不为自身的数据包或目的地为自身但自己当前正在强制休眠的数据包，则监听并处理。
 
 }
+
+
 
 
 
