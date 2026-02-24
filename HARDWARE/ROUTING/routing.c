@@ -16,6 +16,7 @@
 #include "led.h"
 
 #include "adaptive_report.h"
+#include "eeprom_24c02.h"
 //MQTT接入信息
 #define  CLIENTID       "WSN_GW_001"
 #define  USERNAME       "test_client"
@@ -124,10 +125,88 @@ static void routing_update_enqueue(const RoutingFrame *frame)
     }
 }
 
-//如果接收到的数据包的源节点不是自己的子节点且该数据包也不是入网请求，那么会直接将该节点加入到自己的子节点列表中
-//同理，如果接收到的数据包的源节点是自己的子节点但目的地不是自己，则会直接将该节点从自己的子节点列表中删除
+/* Address storage uses external EEPROM (24C02) to avoid runtime flash erase. */
+#define ROUTING_EEPROM_ADDR_BASE         0x00u
+#define ROUTING_EEPROM_MAGIC_ADDR        0x08u
+#define ROUTING_EEPROM_MAGIC0            0xA5u
+#define ROUTING_EEPROM_MAGIC1            0x5Au
+#define ROUTING_ADDR_INVALID             0xFFFFFFFFFFFFFFFFULL
 
+static void routing_addr_storage_write(uint64_t value)
+{
+    u8 i;
+    u8 b;
+    u8 err;
+    static u8 ioerr_printed = 0;
 
+    AdaptiveReport_SensorLock();
+    EEPROM24C02_Init();
+
+    for (i = 0; i < 8; i++)
+    {
+        b = (u8)(value >> (8u * i));
+        err = EEPROM24C02_WriteByte((u8)(ROUTING_EEPROM_ADDR_BASE + i), b);
+        if (err)
+        {
+            if (ioerr_printed == 0)
+            {
+                printf("WARN: EEPROM write failed\r\n");
+                ioerr_printed = 1;
+            }
+            AdaptiveReport_SensorUnlock();
+            return;
+        }
+    }
+
+    (void)EEPROM24C02_WriteByte(ROUTING_EEPROM_MAGIC_ADDR, ROUTING_EEPROM_MAGIC0);
+    (void)EEPROM24C02_WriteByte((u8)(ROUTING_EEPROM_MAGIC_ADDR + 1u), ROUTING_EEPROM_MAGIC1);
+
+    AdaptiveReport_SensorUnlock();
+}
+static uint64_t routing_addr_storage_read(void)
+{
+    uint64_t value = ROUTING_ADDR_INVALID;
+    uint64_t flash_value = ROUTING_ADDR_INVALID;
+    u8 magic0 = 0;
+    u8 magic1 = 0;
+    u8 b = 0;
+    u8 err;
+    u8 i;
+
+    AdaptiveReport_SensorLock();
+    EEPROM24C02_Init();
+
+    if ((EEPROM24C02_ReadByte(ROUTING_EEPROM_MAGIC_ADDR, &magic0) == 0) &&
+        (EEPROM24C02_ReadByte((u8)(ROUTING_EEPROM_MAGIC_ADDR + 1u), &magic1) == 0) &&
+        (magic0 == ROUTING_EEPROM_MAGIC0) && (magic1 == ROUTING_EEPROM_MAGIC1))
+    {
+        value = 0;
+        for (i = 0; i < 8; i++)
+        {
+            err = EEPROM24C02_ReadByte((u8)(ROUTING_EEPROM_ADDR_BASE + i), &b);
+            if (err)
+            {
+                value = ROUTING_ADDR_INVALID;
+                break;
+            }
+            value |= ((uint64_t)b) << (8u * i);
+        }
+    }
+
+    AdaptiveReport_SensorUnlock();
+
+    if ((value == ROUTING_ADDR_INVALID) || (value == 0))
+    {
+        flash_value = read_from_flash();
+        if ((flash_value != ROUTING_ADDR_INVALID) && (flash_value != 0))
+        {
+            routing_addr_storage_write(flash_value);
+            value = flash_value;
+        }
+    }
+
+    return value;
+}
 RoutingTable routing_table; //定义路由表
 
 /* 上报调度：保存“下一次上报间隔”，并在上报包中携带，用于父节点动态超时判活 */
@@ -159,7 +238,7 @@ void RoutingTableInitial(RoutingTable *table)
     }
 
     table->tree_pointer = NULL;
-    table->node_addr.addr = read_from_flash();
+    table->node_addr.addr = routing_addr_storage_read();
     table->parent_addr = 0;
     table->parent_rssi = 0xff;
     table->child_count = 0;
@@ -179,11 +258,11 @@ void write_my_addr_route(void)
     u8 i = 0;
     while(1)
     {
-        route_eventgroup_bit = xEventGroupWaitBits(route_eventgroup_handle, IS_ADDR_NULL | WRITE_ADDR_ORDER, pdTRUE, pdFALSE, portMAX_DELAY);
+        route_eventgroup_bit = xEventGroupWaitBits(route_eventgroup_handle, IS_ADDR_NULL | WRITE_ADDR_ORDER, pdFALSE, pdFALSE, portMAX_DELAY);
         while((routing_table.node_addr.addr == NULL) || (routing_table.node_addr.addr == 0xffffffffffffffff)) //当前没有写入过地址
         {
             printf("请输入经纬度，默认北纬东经，先经度后纬度，示例：1025027;314544\r\n");
-            delay_xms(2000);
+            delay_ms(2000);
             if(USART_RX_STA != 0)
             {
                 routing_table.node_addr.long_latitude[0] = 0;
@@ -208,17 +287,19 @@ void write_my_addr_route(void)
                     }
                     i++;
                 }
-                write_to_flash(((uint64_t)routing_table.node_addr.long_latitude[1] << 32) + routing_table.node_addr.long_latitude[0]);
+                routing_addr_storage_write(((uint64_t)routing_table.node_addr.long_latitude[1] << 32) + routing_table.node_addr.long_latitude[0]);
                 
                 for(i=0;i<USART_RX_STA;i++)
                     USART_RX_BUF[i]=0;//缓存
                 USART_RX_STA=0;
             }
             printf("\r\nlongtitude:%d,latitude:%d\r\n", routing_table.node_addr.long_latitude[0], routing_table.node_addr.long_latitude[1]);
-            routing_table.node_addr.addr = read_from_flash();
+            routing_table.node_addr.addr = routing_addr_storage_read();
             xEventGroupClearBits(route_eventgroup_handle, WRITE_ADDR_ORDER);
         }
         
+        xEventGroupClearBits(route_eventgroup_handle, IS_ADDR_NULL);
+
         if((route_eventgroup_bit & WRITE_ADDR_ORDER) && (USART_RX_BUF[0] != ';')) //已经写入过地址了，但需要修改当前地址
         {
             printf((char *)USART_RX_BUF);
@@ -246,7 +327,9 @@ void write_my_addr_route(void)
                     }
                     i++;
                 }
-                write_to_flash(((uint64_t)routing_table.node_addr.long_latitude[1] << 32) + routing_table.node_addr.long_latitude[0]);
+                routing_addr_storage_write(((uint64_t)routing_table.node_addr.long_latitude[1] << 32) + routing_table.node_addr.long_latitude[0]);
+                routing_table.node_addr.addr = routing_addr_storage_read();
+                xEventGroupClearBits(route_eventgroup_handle, IS_ADDR_NULL);
                 xEventGroupClearBits(route_eventgroup_handle, WRITE_ADDR_ORDER);
                 for(i=0;i<USART_RX_STA;i++)
                     USART_RX_BUF[i]=0;//缓存
@@ -1308,6 +1391,9 @@ void route_update_process(void)
         }
     }
 }
+
+
+
 
 
 

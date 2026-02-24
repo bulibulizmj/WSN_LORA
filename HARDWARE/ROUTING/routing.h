@@ -8,7 +8,7 @@
 #include "tree_node.h"
 
 #ifndef IS_GATWAY
-#define IS_GATWAY                          1          //网关标志，为1为网关（根节点），为0为其他节点
+#define IS_GATWAY                          0          //网关标志，为1为网关（根节点），为0为其他节点
 #endif
 
 

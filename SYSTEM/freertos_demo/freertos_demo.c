@@ -121,10 +121,10 @@ void mac_packet_process(void * pvParameters);
 
 /* ROUTE数据包处理任务配置
  * 包括：任务句柄 任务优先级 堆栈大小 创建任务
- */
- */
+ *
+ */                                        
 #define ROUTE_PACKET_PROCESS_PRIO 				24
-#define ROUTE_PACKET_PROCESS_STACK_SIZE\t\t192 
+#define ROUTE_PACKET_PROCESS_STACK_SIZE   192 
 TaskHandle_t route_packet_process_handler;//任务句柄
 void route_packet_process(void * pvParameters);
 
@@ -132,15 +132,15 @@ void route_packet_process(void * pvParameters);
  * 包括：任务句柄 任务优先级 堆栈大小 创建任务
  */
 #define JOIN_WAN_PRIO 				22
-#define JOIN_WAN_STACK_SIZE\t\t224 
+#define JOIN_WAN_STACK_SIZE        224 
 TaskHandle_t join_wan_handler;//任务句柄
 void join_wan(void * pvParameters);
 
 /* 本节点地址写入任务配置
  * 包括：任务句柄 任务优先级 堆栈大小 创建任务
  */
-#define WRITE_MY_ADDR_PRIO 				  26
-#define WRITE_MY_ADDR_STACK_SIZE		128 
+#define WRITE_MY_ADDR_PRIO 				26
+#define WRITE_MY_ADDR_STACK_SIZE	    	128 
 TaskHandle_t write_my_addr_handler;//任务句柄
 void write_my_addr(void * pvParameters);
 
@@ -148,7 +148,7 @@ void write_my_addr(void * pvParameters);
  * 包括：任务句柄 任务优先级 堆栈大小 创建任务
  */
 #define BEACON_SEND_PRIO 					19
-#define BEACON_SEND_STACK_SIZE\t\t192 
+#define BEACON_SEND_STACK_SIZE              192 
 TaskHandle_t beacon_send_handler;//任务句柄
 void beacon_send(void * pvParameters);
 
@@ -156,7 +156,7 @@ void beacon_send(void * pvParameters);
  * 包括：任务句柄 任务优先级 堆栈大小 创建任务
  */
 #define DATA_RELAY_PRIO 				21
-#define DATA_RELAY_STACK_SIZE		512 
+#define DATA_RELAY_STACK_SIZE		    512 
 TaskHandle_t data_relay_handler;//任务句柄
 void data_relay(void * pvParameters);
 
@@ -164,7 +164,7 @@ void data_relay(void * pvParameters);
  * 包括：任务句柄 任务优先级 堆栈大小 创建任务
  */
 #define ROUTING_UPDATE_PRIO 				18
-#define ROUTING_UPDATE_STACK_SIZE		384 
+#define ROUTING_UPDATE_STACK_SIZE		    384 
 TaskHandle_t routing_update_handler;//任务句柄
 void routing_update(void * pvParameters);
 
@@ -172,7 +172,7 @@ void routing_update(void * pvParameters);
  * 包括：任务句柄 任务优先级 堆栈大小 创建任务
  */
 #define NODE_CHECK_PRIO 				15
-#define NODE_CHECK_STACK_SIZE		128 
+#define NODE_CHECK_STACK_SIZE		    128 
 TaskHandle_t node_check_handler;//任务句柄
 TaskHandle_t env_sample_handler;//任务句柄
 void node_check(void * pvParameters);
@@ -181,7 +181,7 @@ void node_check(void * pvParameters);
  * 包括：任务句柄 任务优先级 堆栈大小 创建任务
  */
 #define FEED_IWDOG_PRIO 				29
-#define FEED_IWDOG_STACK_SIZE		128 
+#define FEED_IWDOG_STACK_SIZE		    128 
 TaskHandle_t feed_iwdog_handler;//任务句柄
 void feed_iwdog(void * pvParameters);
 
@@ -189,7 +189,7 @@ void feed_iwdog(void * pvParameters);
  * 包括：任务句柄 任务优先级 堆栈大小 创建任务
  */
 #define FEED_EWDOG_PRIO 				30
-#define FEED_EWDOG_STACK_SIZE		128 
+#define FEED_EWDOG_STACK_SIZE		    128 
 TaskHandle_t feed_ewdog_handler;//任务句柄
 void feed_ewdog(void * pvParameters);
 

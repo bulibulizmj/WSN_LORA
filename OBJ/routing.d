@@ -71,3 +71,4 @@
 ..\obj\routing.o: ..\HARDWARE\EC20\ec20.h
 ..\obj\routing.o: ..\HARDWARE\MDBS_FUNC\mdbs_func.h
 ..\obj\routing.o: ..\HARDWARE\LED\led.h
+..\obj\routing.o: ..\HARDWARE\EEPROM\eeprom_24c02.h

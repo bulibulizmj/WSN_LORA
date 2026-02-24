@@ -17,6 +17,7 @@
 "..\obj\flash.o"
 "..\obj\ec20.o"
 "..\obj\myiic.o"
+"..\obj\eeprom_24c02.o"
 "..\obj\ina226.o"
 "..\obj\sht45.o"
 "..\obj\bmp280.o"
