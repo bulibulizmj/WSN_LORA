@@ -36,7 +36,7 @@
 
 /* ------------------------ Sensor Test Sequence ------------------------ */
 /* Enable test sequence when SHT45/radiation sensor is not installed. */
-#define ADAPT_REPORT_SENSOR_TESTSEQ_ENABLE     1
+#define ADAPT_REPORT_SENSOR_TESTSEQ_ENABLE     0
 
 /* CurrentRadiation() returns 0xFFFF on error in this project. */
 #define ADAPT_REPORT_RADIATION_INVALID_RAW     0xFFFFu
@@ -82,16 +82,16 @@
 #define ADAPT_REPORT_STEP_UP_RATIO             1.5f
 
 /* Hop count fallback */
-#define ADAPT_REPORT_HOP_COUNT_DEFAULT         4
-#define ADAPT_REPORT_HOP_COUNT_MAX             4
+#define ADAPT_REPORT_HOP_COUNT_DEFAULT         5
+#define ADAPT_REPORT_HOP_COUNT_MAX             5
 
 /* Congestion window */
 #define ADAPT_REPORT_TX_WINDOW_SIZE            100
 
 /* Debug prints */
-#define ADAPT_REPORT_DEBUG                     1
+#define ADAPT_REPORT_DEBUG                     0
 /* Extra debug prints for validation (prev/calc/smooth/clamps). */
-#define ADAPT_REPORT_DEBUG_VERBOSE             1
+#define ADAPT_REPORT_DEBUG_VERBOSE             0
 
 /* ------------------------ API ------------------------ */
 void AdaptiveReport_Init(void);

@@ -7,7 +7,9 @@
 #include "mac.h"
 #include "tree_node.h"
 
-#define IS_GATWAY                          0          //网关标志，为1为网关（根节点），为0为其他节点
+#ifndef IS_GATWAY
+#define IS_GATWAY                          1          //网关标志，为1为网关（根节点），为0为其他节点
+#endif
 
 
 #define IS_JOIN_WAN                       (1 << 0)    //入网标志位，该位为0表示入网，为1表示未入网
@@ -21,9 +23,31 @@
 #define RELAY_TASK_START                  (1 << 8)    //开启数据转发任务标志，为1启动数据转发任务
 #define UPDATE_TASK_START                 (1 << 9)    //开启路由更新发送任务标志，为1启动路由更新发送任务
 
-
+    
 #define MAX_CHILDREN  64        //最大子节点的数量
-#define MAX_NEIGHBORS 4         //最大邻居节点（隐藏父节点）的数量
+#define MAX_NEIGHBORS 8         //最大邻居节点（隐藏父节点）的数量
+
+#define ROUTING_RELAY_QUEUE_LEN           4u
+#define ROUTING_UPDATE_QUEUE_LEN          4u
+
+/* 失败触发快速换父（基于mac_send_without_data_recv返回值）
+ * RTS_FAIL: 未收到CTS（返回0）
+ * ACK_FAIL: 未收到ACK（返回1）
+ */
+#ifndef ROUTING_FAST_SWITCH_RTS_FAIL_LIMIT
+#define ROUTING_FAST_SWITCH_RTS_FAIL_LIMIT 1u
+#endif
+
+#ifndef ROUTING_FAST_SWITCH_ACK_FAIL_LIMIT
+#define ROUTING_FAST_SWITCH_ACK_FAIL_LIMIT 2u
+#endif
+
+/* Neighbor liveness timeout (ms). Use a long timeout to match sparse reports. */
+#ifndef ROUTING_NEIGHBOR_TIMEOUT_MS
+#define ROUTING_NEIGHBOR_TIMEOUT_MS \
+    ((uint32_t)ADAPT_REPORT_TMAX_MINUTES * 60u * 1000u * 2u + (uint32_t)ROUTING_CHILD_TIMEOUT_SLACK_MS)
+#endif
+
 typedef struct {
   // 基础信息
   union{
@@ -44,7 +68,8 @@ typedef struct {
       NodeAddr addr;                  // 潜在父节点地址
       uint8_t  rssi;                  // 信号强度,rssi越小，信号强度越大
       uint8_t  depth;                 // 邻居的tree_depth
-      uint32_t is_neighbors_alive;    // 该潜在父节点存活的标志，默认为1存活，如果在一定时间内没有接收到来自该节点的数据包则置0
+      uint32_t is_neighbors_alive;    // seen flag (set when a packet is received)
+      uint32_t last_seen_tick;        // last seen tick
   } neighbors[MAX_NEIGHBORS];         // 每次更新该邻居节点列表后都要进入判定当前父节点是否可以更换
   
   uint8_t neighbor_count; // 邻居数量
@@ -79,6 +104,7 @@ typedef struct {
       uint16_t  windspeed;
       uint16_t  wind_direction;
       uint16_t  radiation;
+      uint32_t  next_report_ms;     //源节点声明：距离下一次上报的时间(ms)，用于父节点动态超时判活
       } routing_sensor_data;
       struct {
           uint8_t  control_code; // 路由更新有效，为0表示子节点的删除，为1表示子节点的添加
@@ -113,6 +139,11 @@ void SensorDataGet(void);
 u8 MqttReport(RoutingFrame report_data_frame);
 void MqttConnect(void);
 #endif
+
+
+
+
+
 
 
 

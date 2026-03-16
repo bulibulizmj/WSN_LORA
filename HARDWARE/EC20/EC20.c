@@ -304,6 +304,12 @@ u8 EC20_CONNECT_MQTT_SERVER(u8 *CLIENTID,u8 *USERNAME,u8 *PASSWORD)
     }
     Clear_Buffer_EC800();
 
+    memset(AtStrBuf_EC800,0,BUFLEN);
+    sprintf(AtStrBuf_EC800,"AT+QMTCFG=\"keepalive\",0,600\r\n");
+    Uart2_SendStr(AtStrBuf_EC800);
+    delay_ms(200);
+    Clear_Buffer_EC800();
+
     //连接到EMQX服务器
     memset(AtStrBuf_EC800,0,BUFLEN);
     sprintf(AtStrBuf_EC800,"AT+QMTCONN=0,\"%s\",\"%s\",\"%s\"\r\n",CLIENTID,USERNAME,PASSWORD);
@@ -369,7 +375,7 @@ u8 EC20_MQTT_SEND_AUTO(u8 *TOPIC)
     //AT+QMTPUB=0,0,0,0,"/sys/a18dtRetCT0/BC26TEST/thing/event/property/post"
     //AT+QMTPUB=0,0,0,0,"sensor/data"
     char data_len_str[] = "{\"temp\":25.5}";
-    sprintf(AtStrBuf_EC800,"AT+QMTPUBEX=0,1,1,0,\"%s\",%d\r\n",TOPIC,strlen(data_len_str));
+    sprintf(AtStrBuf_EC800,"AT+QMTPUBEX=0,0,0,0,\"%s\",%d\r\n",TOPIC,strlen(data_len_str));
     Uart2_SendStr(AtStrBuf_EC800);
     delay_ms(1000);
     strx_EC800=strstr((const char*)AtRxBuffer_EC800,(const char*)">");//模块反馈的字符串
@@ -422,7 +428,7 @@ u8 EC20_MQTT_SEND_DATA(u8 *TOPIC,u8 *DATA)
 {
     memset(AtStrBuf_EC800,0,BUFLEN); //发送数据命令
     //AT+QMTPUB=0,0,0,0,"sensor/data"
-    sprintf(AtStrBuf_EC800,"AT+QMTPUBEX=0,1,1,0,\"%s\",%d\r\n",TOPIC,strlen((const char *)DATA));
+    sprintf(AtStrBuf_EC800,"AT+QMTPUBEX=0,0,0,0,\"%s\",%d\r\n",TOPIC,strlen((const char *)DATA));
     Uart2_SendStr(AtStrBuf_EC800);
     delay_ms(1000);
     strx_EC800=strstr((const char*)AtRxBuffer_EC800,(const char*)">");//模块反馈的字符串

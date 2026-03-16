@@ -1,6 +1,7 @@
 
 #include "tree_node.h" 
 #include "FreeRTOS.h"
+#include "task.h"
 
 
 /**
@@ -17,8 +18,79 @@ TreeNode* createNode(NodeAddr addr)
         newNode->firstChild = NULL;
         newNode->nextBrother = NULL;
         newNode->is_node_alive = 1; //默认创建时节点存活
+        newNode->expected_next_report_ms = 0;
+        if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED) {
+            newNode->last_seen_tick = (uint32_t)xTaskGetTickCount();
+        } else {
+            newNode->last_seen_tick = 0;
+        }
     }
     return newNode;
+}
+
+/* pdMS_TO_TICKS() will overflow on large milliseconds when configTICK_RATE_HZ=1000.
+ * Example: 180min = 10800000ms; 10800000*1000 overflows 32-bit, resulting in ~36.8min.
+ * Use 64-bit math here to keep long timeout periods correct. */
+static TickType_t treenode_ms_to_ticks_safe(uint32_t ms)
+{
+    uint64_t ticks = ((uint64_t)ms * (uint64_t)configTICK_RATE_HZ) / 1000ULL;
+    const uint64_t max_ticks = (uint64_t)((TickType_t)~(TickType_t)0);
+
+    if (ticks > max_ticks)
+    {
+        ticks = max_ticks;
+    }
+    if ((ticks == 0) && (ms > 0))
+    {
+        ticks = 1;
+    }
+    return (TickType_t)ticks;
+}
+
+static uint8_t treenode_is_timed_out(const TreeNode* node, uint32_t now_tick)
+{
+    uint64_t timeout_ms64 = 0;
+    TickType_t timeout_ticks = 0;
+
+    if (node == NULL)
+    {
+        return 0;
+    }
+
+    /* last_seen_tick为0通常意味着尚未被更新；避免误删 */
+    if (node->last_seen_tick == 0)
+    {
+        return 0;
+    }
+
+    /* 尚未第一次上报(next_report_ms未知)时：按固定超时保护，避免在第一次上报前被误删 */
+    if (node->expected_next_report_ms == 0)
+    {
+        timeout_ms64 = (uint64_t)ROUTING_CHILD_FIRST_REPORT_TIMEOUT_MS;
+        if (timeout_ms64 > 0xFFFFFFFFu)
+        {
+            timeout_ms64 = 0xFFFFFFFFu;
+        }
+        timeout_ticks = treenode_ms_to_ticks_safe((uint32_t)timeout_ms64);
+        return ((uint32_t)(now_tick - node->last_seen_tick) > (uint32_t)timeout_ticks) ? 1 : 0;
+    }
+
+    if (ROUTING_CHILD_TIMEOUT_FACTOR_DEN == 0u)
+    {
+        return 0;
+    }
+
+    timeout_ms64 = ((uint64_t)node->expected_next_report_ms * (uint64_t)ROUTING_CHILD_TIMEOUT_FACTOR_NUM) /
+                   (uint64_t)ROUTING_CHILD_TIMEOUT_FACTOR_DEN;
+    timeout_ms64 += (uint64_t)ROUTING_CHILD_TIMEOUT_SLACK_MS;
+
+    if (timeout_ms64 > 0xFFFFFFFFu)
+    {
+        timeout_ms64 = 0xFFFFFFFFu;
+    }
+
+    timeout_ticks = treenode_ms_to_ticks_safe((uint32_t)timeout_ms64);
+    return ((uint32_t)(now_tick - node->last_seen_tick) > (uint32_t)timeout_ticks) ? 1 : 0;
 }
 
 
@@ -84,8 +156,12 @@ void DelSubtree(TreeNode* t, TreeNode* p) {
         return; // 未找到父亲节点
     }
 
+    // 先缓存兄弟节点指针并断开，防止freeTree误把兄弟节点一并释放掉
+    TreeNode* next = p->nextBrother;
+    p->nextBrother = NULL;
+
     if (result->firstChild == p) {
-        result->firstChild = p->nextBrother;
+        result->firstChild = next;
         freeTree(p);
         return;
     }
@@ -97,7 +173,7 @@ void DelSubtree(TreeNode* t, TreeNode* p) {
     }
 
     if (q != NULL) {
-        q->nextBrother = p->nextBrother;
+        q->nextBrother = next;
         freeTree(p);
     }
 }
@@ -143,16 +219,43 @@ void FindTarget(TreeNode* t, NodeAddr addr, TreeNode** result) {
 void AddChild(TreeNode* father, TreeNode* child)
 {
     TreeNode* p;
+    uint16_t guard = 0;
+    if (father == NULL || child == NULL || father == child) {
+        return;
+    }
     if(father->firstChild == NULL)//如果父节点没有子节点
     {
+        child->nextBrother = NULL;
         father->firstChild = child;  
         return;
     }
     p = father->firstChild;
-    while (p->nextBrother)//退出循环时p指向最右边的子节点
+    while (p != NULL)//退出循环时p指向最右边的子节点
     {
+        if (p == child) { // 已经挂载过，避免形成环
+            return;
+        }
+        if (p->addr == child->addr) { // 同地址重复添加，释放新节点避免链表越来越长
+            child->nextBrother = NULL;
+            freeTree(child);
+            return;
+        }
+        if (p->nextBrother == NULL) {
+            break;
+        }
         p = p->nextBrother;
+        if (++guard > 512) { // 兄弟链表异常(可能成环)，避免死循环
+            child->nextBrother = NULL;
+            freeTree(child);
+            return;
+        }
     }
+    if (p == NULL) {
+        child->nextBrother = NULL;
+        father->firstChild = child;
+        return;
+    }
+    child->nextBrother = NULL;
     p->nextBrother = child;
 }
 
@@ -221,11 +324,20 @@ void TraverseTree(TreeNode* root) {
     }
 
     TreeNode* p = root->firstChild;
+    uint16_t guard = 0;
 
     while (p != NULL) {
         TraverseTree(p);
         printf("Child Node ADDR: %llx, is alive? %x\r\n", p->addr, p->is_node_alive);
+        if (p->nextBrother == p) {
+            printf("TraverseTree error: nextBrother loop at %llx\r\n", p->addr);
+            break;
+        }
         p = p->nextBrother;
+        if (++guard > 1024) {
+            printf("TraverseTree aborted: too many brothers(loop?)\r\n");
+            break;
+        }
     }
 }
 
@@ -237,28 +349,39 @@ void TraverseTree(TreeNode* root) {
   */
  TreeNode *wait_del[64]; //死亡的子节点指针列表
  uint8_t del_number = 0; //死亡的子节点个数
- void ScanDeadNode(TreeNode* root_itera, TreeNode* root_r) {
-     if (root_itera == NULL) {
-         return;
-     }
- 
+
+static void ScanDeadNodeInternal(TreeNode* root_itera, TreeNode* root_r, uint32_t now_tick) {
+      if (root_itera == NULL) {
+          return;
+      }
+  
      TreeNode* p = root_itera->firstChild;
      while (p != NULL) {
-        ScanDeadNode(p, root_r);
-        if(p->is_node_alive == 0)
-        {
-            printf("node %llx is dead\r\n", p->addr);
-            wait_del[del_number] = p;
-            del_number ++;
+         ScanDeadNodeInternal(p, root_r, now_tick);
+          if(treenode_is_timed_out(p, now_tick))
+          {
+              printf("node %llx is dead\r\n", p->addr);
+              if (del_number < (uint8_t)(sizeof(wait_del) / sizeof(wait_del[0]))) {
+                  wait_del[del_number] = p;
+                  del_number ++;
+             }
+             p = p->nextBrother;
+         }
+         else 
+         {
             p = p->nextBrother;
-        }
-        else 
-        {
-            p = p->nextBrother;
-        }
+         }
+     }
+  }
+
+void ScanDeadNode(TreeNode* root_itera, TreeNode* root_r) {
+    uint32_t now_tick = 0;
+    if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED) {
+        now_tick = (uint32_t)xTaskGetTickCount();
     }
- }
- 
+    ScanDeadNodeInternal(root_itera, root_r, now_tick);
+}
+  
 /**
   * @brief  删除死掉的子节点
   * @param  root_itera：整棵树的根节点,用于迭代；

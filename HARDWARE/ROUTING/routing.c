@@ -3,6 +3,7 @@
 #include "freertos_demo.h"
 #include "FreeRTOS.h"
 #include "semphr.h"
+#include "queue.h"
 #include "event_groups.h" 
 #include "task.h"
 #include "flash.h"
@@ -15,6 +16,7 @@
 #include "led.h"
 
 #include "adaptive_report.h"
+#include "eeprom_24c02.h"
 //MQTT接入信息
 #define  CLIENTID       "WSN_GW_001"
 #define  USERNAME       "test_client"
@@ -36,8 +38,18 @@ RoutingFrame update_frame_route;              //路由更新路由帧缓存
 RoutingFrame send_in_recv_frame_route;        //接收时发送的路由帧缓存
 extern u8  recv_rssi;
 
-char send_data_4g[BUFLEN];  //4G模块发送缓存
+char send_data_4g[255];  //4G模块发送缓存
 
+extern TimerHandle_t send_timer_handle;				  /* 单次定时器 */
+extern TimerHandle_t beacon_send_timer_handle;  /* 单次定时器 */
+extern TaskHandle_t write_my_addr_handler;      //任务句柄
+
+EventGroupHandle_t route_eventgroup_handle;		//路由层事件标志组句柄
+EventBits_t route_eventgroup_bit;
+
+QueueHandle_t is_sender_route_handle;  //路由层作为发送者的标志，为0表示正在作为发送者发送数据区，为1表示发送空闲
+QueueHandle_t route_relay_queue = NULL;
+QueueHandle_t route_update_queue = NULL;
 /* pdMS_TO_TICKS() will overflow on large milliseconds when configTICK_RATE_HZ=1000.
  * Example: 180min = 10800000ms; 10800000*1000 overflows 32-bit, resulting in ~36.8min.
  * Use 64-bit math here to keep long software-timer periods correct. */
@@ -57,19 +69,161 @@ static TickType_t routing_ms_to_ticks_safe(uint32_t ms)
     return (TickType_t)ticks;
 }
 
-extern TimerHandle_t send_timer_handle;				  /* 单次定时器 */
-extern TimerHandle_t beacon_send_timer_handle;  /* 单次定时器 */
-extern TaskHandle_t write_my_addr_handler;      //任务句柄
 
-EventGroupHandle_t route_eventgroup_handle;		//路由层事件标志组句柄
-EventBits_t route_eventgroup_bit;
+static uint32_t routing_get_now_tick(void)
+{
+    if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED)
+    {
+        return (uint32_t)xTaskGetTickCount();
+    }
+    return 0;
+}
 
-QueueHandle_t is_sender_route_handle;  //路由层作为发送者的标志，为0表示正在作为发送者发送数据区，为1表示发送空闲
-//如果接收到的数据包的源节点不是自己的子节点且该数据包也不是入网请求，那么会直接将该节点加入到自己的子节点列表中
-//同理，如果接收到的数据包的源节点是自己的子节点但目的地不是自己，则会直接将该节点从自己的子节点列表中删除
+
+static uint8_t routing_neighbor_is_timed_out(uint32_t last_seen_tick, uint32_t now_tick)
+{
+    uint32_t elapsed;
+    uint32_t timeout_ticks = (uint32_t)routing_ms_to_ticks_safe(ROUTING_NEIGHBOR_TIMEOUT_MS);
+
+    if (last_seen_tick == 0)
+    {
+        return 0;
+    }
+    if (now_tick >= last_seen_tick)
+    {
+        elapsed = now_tick - last_seen_tick;
+    }
+    else
+    {
+        elapsed = (uint32_t)(~0u - last_seen_tick + 1u + now_tick);
+    }
+    return (elapsed >= timeout_ticks) ? 1u : 0u;
+}
 
 
+static void routing_relay_enqueue(const RoutingFrame *frame)
+{
+    if ((route_relay_queue == NULL) || (frame == NULL))
+    {
+        return;
+    }
+    if (xQueueSend(route_relay_queue, frame, 0) != pdPASS)
+    {
+        printf("Relay queue full, drop frame\r\n");
+    }
+}
+
+static void routing_update_enqueue(const RoutingFrame *frame)
+{
+    if ((route_update_queue == NULL) || (frame == NULL))
+    {
+        return;
+    }
+    if (xQueueSend(route_update_queue, frame, 0) != pdPASS)
+    {
+        printf("Update queue full, drop frame\r\n");
+    }
+}
+
+/* Address storage uses external EEPROM (24C02) to avoid runtime flash erase. */
+#define ROUTING_EEPROM_ADDR_BASE         0x00u
+#define ROUTING_EEPROM_MAGIC_ADDR        0x08u
+#define ROUTING_EEPROM_MAGIC0            0xA5u
+#define ROUTING_EEPROM_MAGIC1            0x5Au
+#define ROUTING_ADDR_INVALID             0xFFFFFFFFFFFFFFFFULL
+
+static void routing_addr_storage_write(uint64_t value)
+{
+    u8 i;
+    u8 b;
+    u8 err;
+    static u8 ioerr_printed = 0;
+
+    AdaptiveReport_SensorLock();
+    EEPROM24C02_Init();
+
+    for (i = 0; i < 8; i++)
+    {
+        b = (u8)(value >> (8u * i));
+        err = EEPROM24C02_WriteByte((u8)(ROUTING_EEPROM_ADDR_BASE + i), b);
+        if (err)
+        {
+            if (ioerr_printed == 0)
+            {
+                printf("WARN: EEPROM write failed\r\n");
+                ioerr_printed = 1;
+            }
+            AdaptiveReport_SensorUnlock();
+            return;
+        }
+    }
+
+    (void)EEPROM24C02_WriteByte(ROUTING_EEPROM_MAGIC_ADDR, ROUTING_EEPROM_MAGIC0);
+    (void)EEPROM24C02_WriteByte((u8)(ROUTING_EEPROM_MAGIC_ADDR + 1u), ROUTING_EEPROM_MAGIC1);
+
+    AdaptiveReport_SensorUnlock();
+}
+static uint64_t routing_addr_storage_read(void)
+{
+    uint64_t value = ROUTING_ADDR_INVALID;
+    uint64_t flash_value = ROUTING_ADDR_INVALID;
+    u8 magic0 = 0;
+    u8 magic1 = 0;
+    u8 b = 0;
+    u8 err;
+    u8 i;
+
+    AdaptiveReport_SensorLock();
+    EEPROM24C02_Init();
+
+    if ((EEPROM24C02_ReadByte(ROUTING_EEPROM_MAGIC_ADDR, &magic0) == 0) &&
+        (EEPROM24C02_ReadByte((u8)(ROUTING_EEPROM_MAGIC_ADDR + 1u), &magic1) == 0) &&
+        (magic0 == ROUTING_EEPROM_MAGIC0) && (magic1 == ROUTING_EEPROM_MAGIC1))
+    {
+        value = 0;
+        for (i = 0; i < 8; i++)
+        {
+            err = EEPROM24C02_ReadByte((u8)(ROUTING_EEPROM_ADDR_BASE + i), &b);
+            if (err)
+            {
+                value = ROUTING_ADDR_INVALID;
+                break;
+            }
+            value |= ((uint64_t)b) << (8u * i);
+        }
+    }
+
+    AdaptiveReport_SensorUnlock();
+
+    if ((value == ROUTING_ADDR_INVALID) || (value == 0))
+    {
+        flash_value = read_from_flash();
+        if ((flash_value != ROUTING_ADDR_INVALID) && (flash_value != 0))
+        {
+            routing_addr_storage_write(flash_value);
+            value = flash_value;
+        }
+    }
+
+    return value;
+}
 RoutingTable routing_table; //定义路由表
+
+/* 上报调度：保存“下一次上报间隔”，并在上报包中携带，用于父节点动态超时判活 */
+static uint32_t g_route_next_report_period_ms = 0;
+
+/* 父节点链路失败统计，用于失败触发快速换父 */
+static uint8_t g_route_parent_fail_rts = 0; /* 未收到CTS */
+static uint8_t g_route_parent_fail_ack = 0; /* 未收到ACK */
+
+static uint32_t routing_get_next_period_ms(void)
+{
+    if (IS_GATWAY)
+    {
+        return (uint32_t)ADAPT_REPORT_TMAX_MINUTES * 60U * 1000U;
+    }
+    return AdaptiveReport_GetNextPeriodMs(routing_table.tree_depth);
+}
 
 /**
   * @brief  初始化路由表
@@ -84,7 +238,7 @@ void RoutingTableInitial(RoutingTable *table)
     }
 
     table->tree_pointer = NULL;
-    table->node_addr.addr = read_from_flash();
+    table->node_addr.addr = routing_addr_storage_read();
     table->parent_addr = 0;
     table->parent_rssi = 0xff;
     table->child_count = 0;
@@ -104,11 +258,11 @@ void write_my_addr_route(void)
     u8 i = 0;
     while(1)
     {
-        route_eventgroup_bit = xEventGroupWaitBits(route_eventgroup_handle, IS_ADDR_NULL | WRITE_ADDR_ORDER, pdTRUE, pdFALSE, portMAX_DELAY);
+        route_eventgroup_bit = xEventGroupWaitBits(route_eventgroup_handle, IS_ADDR_NULL | WRITE_ADDR_ORDER, pdFALSE, pdFALSE, portMAX_DELAY);
         while((routing_table.node_addr.addr == NULL) || (routing_table.node_addr.addr == 0xffffffffffffffff)) //当前没有写入过地址
         {
             printf("请输入经纬度，默认北纬东经，先经度后纬度，示例：1025027;314544\r\n");
-            delay_xms(2000);
+            delay_ms(2000);
             if(USART_RX_STA != 0)
             {
                 routing_table.node_addr.long_latitude[0] = 0;
@@ -133,17 +287,19 @@ void write_my_addr_route(void)
                     }
                     i++;
                 }
-                write_to_flash(((uint64_t)routing_table.node_addr.long_latitude[1] << 32) + routing_table.node_addr.long_latitude[0]);
+                routing_addr_storage_write(((uint64_t)routing_table.node_addr.long_latitude[1] << 32) + routing_table.node_addr.long_latitude[0]);
                 
                 for(i=0;i<USART_RX_STA;i++)
                     USART_RX_BUF[i]=0;//缓存
                 USART_RX_STA=0;
             }
             printf("\r\nlongtitude:%d,latitude:%d\r\n", routing_table.node_addr.long_latitude[0], routing_table.node_addr.long_latitude[1]);
-            routing_table.node_addr.addr = read_from_flash();
+            routing_table.node_addr.addr = routing_addr_storage_read();
             xEventGroupClearBits(route_eventgroup_handle, WRITE_ADDR_ORDER);
         }
         
+        xEventGroupClearBits(route_eventgroup_handle, IS_ADDR_NULL);
+
         if((route_eventgroup_bit & WRITE_ADDR_ORDER) && (USART_RX_BUF[0] != ';')) //已经写入过地址了，但需要修改当前地址
         {
             printf((char *)USART_RX_BUF);
@@ -171,7 +327,9 @@ void write_my_addr_route(void)
                     }
                     i++;
                 }
-                write_to_flash(((uint64_t)routing_table.node_addr.long_latitude[1] << 32) + routing_table.node_addr.long_latitude[0]);
+                routing_addr_storage_write(((uint64_t)routing_table.node_addr.long_latitude[1] << 32) + routing_table.node_addr.long_latitude[0]);
+                routing_table.node_addr.addr = routing_addr_storage_read();
+                xEventGroupClearBits(route_eventgroup_handle, IS_ADDR_NULL);
                 xEventGroupClearBits(route_eventgroup_handle, WRITE_ADDR_ORDER);
                 for(i=0;i<USART_RX_STA;i++)
                     USART_RX_BUF[i]=0;//缓存
@@ -204,28 +362,48 @@ void node_check_route(void)
   */
 void data_report_route(void)
 {
-    uint32_t period_ms = 0;
+    uint32_t wait_period_ms = 0;
+    uint32_t next_period_ms = 0;
     TickType_t period_ticks = 0;
 
-    if(IS_GATWAY)
+    if (g_route_next_report_period_ms == 0)
     {
-        period_ms = (uint32_t)ADAPT_REPORT_TMAX_MINUTES * 60U * 1000U;
+        g_route_next_report_period_ms = routing_get_next_period_ms();
+        if (g_route_next_report_period_ms == 0)
+        {
+            g_route_next_report_period_ms = 60U * 1000U;
+        }
     }
-    else
-    {
-        period_ms = AdaptiveReport_GetNextPeriodMs(routing_table.tree_depth);
-    }
-    period_ticks = routing_ms_to_ticks_safe(period_ms);
+
+    wait_period_ms = g_route_next_report_period_ms;
+    period_ticks = routing_ms_to_ticks_safe(wait_period_ms);
 
     xEventGroupClearBits(route_eventgroup_handle, TIMER_OK_4);
     xTimerChangePeriod(send_timer_handle, period_ticks, portMAX_DELAY);
-    route_eventgroup_bit = xEventGroupWaitBits(route_eventgroup_handle, TIMER_OK_4, pdTRUE, pdTRUE, portMAX_DELAY);	//超时时间到且发送空闲
+    /* 等待定时器到期；若期间进入未入网状态则直接退出，避免“已未入网仍继续上报”。 */
+    route_eventgroup_bit = xEventGroupWaitBits(route_eventgroup_handle, TIMER_OK_4 | IS_JOIN_WAN, pdFALSE, pdFALSE, portMAX_DELAY);
+    if (route_eventgroup_bit & IS_JOIN_WAN)
+    {
+        return;
+    }
+    if (route_eventgroup_bit & TIMER_OK_4)
+    {
+        xEventGroupClearBits(route_eventgroup_handle, TIMER_OK_4);
+    }
+
+    /* 计算“下一次”上报周期，并写入本次上报包（父节点按此动态设置超时） */
+    next_period_ms = routing_get_next_period_ms();
+    if (next_period_ms == 0)
+    {
+        next_period_ms = wait_period_ms;
+    }
 
     if(IS_GATWAY)
     {
         xSemaphoreTake(is_sender_route_handle, portMAX_DELAY); //获取信号量并死等
         printf("开启上报数据\r\n");
         send_frame_route.payload.routing_sensor_data.addr_src = routing_table.node_addr.addr;
+        send_frame_route.payload.routing_sensor_data.next_report_ms = next_period_ms;
         SensorDataGet();
         (void)MqttReport(send_frame_route);
         xSemaphoreGive(is_sender_route_handle); //释放信号量，表示重新回到发送空闲
@@ -244,14 +422,41 @@ void data_report_route(void)
         send_frame_route.route_frame_type = 4;
         send_frame_route.depth = routing_table.tree_depth;
         send_frame_route.payload.routing_sensor_data.addr_src = routing_table.node_addr.addr;
+        send_frame_route.payload.routing_sensor_data.next_report_ms = next_period_ms;
         SensorDataGet();
         memcpy((&send_frame)->payload, &send_frame_route, sizeof(RoutingFrame));
         tx_ret = mac_send_without_data_recv();
         AdaptiveReport_RecordTxResult(tx_ret == 2);
-        if(tx_ret == 0) xEventGroupSetBits(route_eventgroup_handle, IS_JOIN_WAN); //如果发送失败则进入未入网状态，重新选择父节点
+
+        if (tx_ret == 2)
+        {
+            g_route_parent_fail_rts = 0;
+            g_route_parent_fail_ack = 0;
+        }
+        else if (tx_ret == 0) /* 未收到CTS */
+        {
+            if (g_route_parent_fail_rts < 0xFFu) g_route_parent_fail_rts++;
+            g_route_parent_fail_ack = 0;
+            if (g_route_parent_fail_rts >= (uint8_t)ROUTING_FAST_SWITCH_RTS_FAIL_LIMIT)
+            {
+                xEventGroupSetBits(route_eventgroup_handle, IS_JOIN_WAN);
+            }
+        }
+        else if (tx_ret == 1) /* 未收到ACK */
+        {
+            if (g_route_parent_fail_ack < 0xFFu) g_route_parent_fail_ack++;
+            g_route_parent_fail_rts = 0;
+            if (g_route_parent_fail_ack >= (uint8_t)ROUTING_FAST_SWITCH_ACK_FAIL_LIMIT)
+            {
+                xEventGroupSetBits(route_eventgroup_handle, IS_JOIN_WAN);
+            }
+        }
         xSemaphoreGive(is_sender_route_handle); //释放信号量，表示重新回到发送空闲
         printf("上报数据完毕\r\n");
     }
+
+    /* 保存本次计算得到的“下一次周期”，供下一次等待使用 */
+    g_route_next_report_period_ms = next_period_ms;
 }
 
 
@@ -280,6 +485,7 @@ void SensorDataGet(void)
     send_frame_route.payload.routing_sensor_data.humidity = raw_data >> 16;
 #endif
     printf("Temperature: %f, Humidity:%f\r\n", (-45 + 175*(send_frame_route.payload.routing_sensor_data.temperature)/65535.0), (-6 + 125*(send_frame_route.payload.routing_sensor_data.humidity)/65535.0));
+   
     if(BMP280()){
         delay_ms(50);
         raw_data = bmp280GetRawData();
@@ -287,10 +493,11 @@ void SensorDataGet(void)
     else raw_data = 0;
     send_frame_route.payload.routing_sensor_data.pressure = raw_data;
     printf("pressure:%f\r\n", send_frame_route.payload.routing_sensor_data.pressure/256.0f);
-		delay_ms(100);
+	delay_ms(100);
+
     raw_data = CurrentSoilstate(0x05);
     send_frame_route.payload.routing_sensor_data.soilstate1 = raw_data;
-		delay_ms(100);
+	delay_ms(100);
     raw_data = CurrentSoilstate(0x06);
     send_frame_route.payload.routing_sensor_data.soilstate2 = raw_data;
     delay_ms(100);
@@ -324,35 +531,44 @@ void SensorDataGet(void)
   */
 void data_relay_route(void)
 {
+    RoutingFrame frame;
+
+    if (route_relay_queue == NULL)
+    {
+        return;
+    }
+
+    if (xQueueReceive(route_relay_queue, &frame, portMAX_DELAY) != pdPASS)
+    {
+        return;
+    }
+
     if(IS_GATWAY)
     {
-        route_eventgroup_bit = xEventGroupWaitBits(route_eventgroup_handle,  RELAY_TASK_START, pdTRUE, pdTRUE, portMAX_DELAY);	//超时时间到且发送空闲
         xSemaphoreTake(is_sender_route_handle, portMAX_DELAY); //获取信号量并死等 
         printf("开启转发数据\r\n");
-        MqttReport(recv_frame_route);
-        printf("转发数据的源节点地址：%llx\r\n", relay_frame_route.payload.routing_sensor_data.addr_src);
+        MqttReport(frame);
+        printf("转发数据的源节点地址：%llx\r\n", frame.payload.routing_sensor_data.addr_src);
         xSemaphoreGive(is_sender_route_handle); //释放信号量，表示重新回到发送空闲
         printf("转发数据完毕\r\n");
     }
     else
     {
-        route_eventgroup_bit = xEventGroupWaitBits(route_eventgroup_handle, RELAY_TASK_START, pdTRUE, pdTRUE, portMAX_DELAY);	//超时时间到且发送空闲
         xSemaphoreTake(is_sender_route_handle, portMAX_DELAY); //获取信号量并死等 
         printf("开启转发数据\r\n");
         mac_frame_clear(&send_frame);
         routing_frame_clear(&send_frame_route);
-        memcpy(&send_frame_route, &relay_frame_route, sizeof(RoutingFrame));
+        memcpy(&send_frame_route, &frame, sizeof(RoutingFrame));
         send_frame_route.route_frame_type = 4;
         send_frame_route.depth = routing_table.tree_depth;    
         send_frame.src_addr = routing_table.node_addr.addr;
         send_frame.dst_addr = routing_table.parent_addr;
-        memcpy((&send_frame)->payload, &send_frame_route, sizeof(RoutingFrame));	    
+        memcpy((&send_frame)->payload, &send_frame_route, sizeof(RoutingFrame));    
         if(mac_send_without_data_recv() == 0) xEventGroupSetBits(route_eventgroup_handle, IS_JOIN_WAN); //如果发送失败则进入未入网状态，重新选择父节点
         xSemaphoreGive(is_sender_route_handle); //释放信号量，表示重新回到发送空闲
         printf("转发数据完毕\r\n");      
     }
 }
-
 /**
   * @brief  4g模块接入阿里云函数
   * @param  None
@@ -387,7 +603,7 @@ void MqttConnect(void)
   */
 u8 MqttReport(RoutingFrame report_data_frame)
 {    
-    memset(send_data_4g,0,BUFLEN);//AtStrBuf_EC800清零
+    memset(send_data_4g, 0, sizeof(send_data_4g));//AtStrBuf_EC800清零
     sprintf(send_data_4g, "{\"params\":\"%llx %x %x %x %x %x %x %x %x %x %x\"}",
             report_data_frame.payload.routing_sensor_data.addr_src, report_data_frame.payload.routing_sensor_data.temperature, 
             report_data_frame.payload.routing_sensor_data.humidity, report_data_frame.payload.routing_sensor_data.pressure,
@@ -395,7 +611,7 @@ u8 MqttReport(RoutingFrame report_data_frame)
             report_data_frame.payload.routing_sensor_data.soilstate3, report_data_frame.payload.routing_sensor_data.precipitation,
             report_data_frame.payload.routing_sensor_data.windspeed, report_data_frame.payload.routing_sensor_data.wind_direction,
             report_data_frame.payload.routing_sensor_data.radiation);
-    printf(send_data_4g);
+    printf("%s", send_data_4g);
     return EC20_MQTT_SEND_DATA((u8 *)"sensor/data",(u8 *)send_data_4g);   //发送数据
 }
 
@@ -406,17 +622,28 @@ u8 MqttReport(RoutingFrame report_data_frame)
   */
 void update_broadcast_route(void)
 {
-    route_eventgroup_bit = xEventGroupWaitBits(route_eventgroup_handle, UPDATE_TASK_START, pdTRUE, pdTRUE, portMAX_DELAY);	
+    RoutingFrame frame;
+
+    if (route_update_queue == NULL)
+    {
+        return;
+    }
+
+    if (xQueueReceive(route_update_queue, &frame, portMAX_DELAY) != pdPASS)
+    {
+        return;
+    }
+
     xSemaphoreTake(is_sender_route_handle, portMAX_DELAY); //获取信号量并死等 
     printf("开启发送路由更新\r\n");
     mac_frame_clear(&send_frame);
     routing_frame_clear(&send_frame_route);
-    memcpy(&send_frame_route, &update_frame_route, sizeof(RoutingFrame));
+    memcpy(&send_frame_route, &frame, sizeof(RoutingFrame));
     send_frame_route.route_frame_type = 3;
     send_frame_route.depth = routing_table.tree_depth;    
     send_frame.src_addr = routing_table.node_addr.addr;
     send_frame.dst_addr = routing_table.parent_addr;
-    memcpy((&send_frame)->payload, &send_frame_route, sizeof(RoutingFrame));	    
+    memcpy((&send_frame)->payload, &send_frame_route, sizeof(RoutingFrame));    
     mac_send_broadcast();
     xSemaphoreGive(is_sender_route_handle); //释放信号量，表示重新回到发送空闲
     printf("转发数据完毕\r\n");      
@@ -518,7 +745,7 @@ void beacon_send_route(void)
     mac_send_broadcast();
     xSemaphoreGive(is_sender_route_handle); //释放信号量，表示重新回到发送空闲
     printf("发送Beacon完毕\r\n");
-    printf("开启Beacon发送定时器定时\r\n");
+    // printf("开启Beacon发送定时器定时\r\n");
     xTimerStart(beacon_send_timer_handle, portMAX_DELAY);
     route_eventgroup_bit = xEventGroupWaitBits(route_eventgroup_handle, BEACON_TIMER_OK, pdTRUE, pdTRUE, portMAX_DELAY);	//超时时间到且发送空闲
     
@@ -547,10 +774,40 @@ void packet_process_route(void)
     u8 number = 0;
     while(1)
     {
-        printf("等待mac接收数据型帧\r\n");
-        recv_eventgroup_bit = xEventGroupWaitBits(recv_eventgroup_handle, ROUTE_PACKET_RECV_SENDER | ROUTE_PACKET_RECV_RECEIVCER | ROUTE_PACKET_RECV_SLEEP, pdTRUE, pdFALSE, portMAX_DELAY);
-        printf("路由层接收到数据型帧了！！！！\r\n");
-				packet_receive_route();
+        const EventBits_t wait_bits = ROUTE_PACKET_RECV_SENDER | ROUTE_PACKET_RECV_RECEIVCER | ROUTE_PACKET_RECV_SLEEP;
+        const TickType_t wait_ticks = pdMS_TO_TICKS(1000);
+
+        recv_eventgroup_bit = xEventGroupWaitBits(recv_eventgroup_handle, wait_bits, pdTRUE, pdFALSE, wait_ticks);
+        if((recv_eventgroup_bit & wait_bits) == 0)
+        {
+            WDG_Heartbeat(WDG_HB_ID_ROUTE);
+            continue;
+        }
+
+		packet_receive_route();
+        WDG_Heartbeat(WDG_HB_ID_ROUTE);
+
+        /* 任意有效包都可视为“看到该节点”，用于父节点动态超时判活。 */
+        if (routing_table.tree_pointer != NULL)
+        {
+            TreeNode* sender = NULL;
+            FindTarget(routing_table.tree_pointer, recv_frame.src_addr, &sender);
+            if ((sender != NULL) && (sender != routing_table.tree_pointer))
+            {
+                sender->is_node_alive = 1;
+                sender->last_seen_tick = (uint32_t)xTaskGetTickCount();
+            }
+        }
+        if (routing_table.neighbor_count > 0)
+        {
+            u8 neighbor_idx = search_neighbor_route(recv_frame.src_addr);
+            if (neighbor_idx != 0xff)
+            {
+                routing_table.neighbors[neighbor_idx].is_neighbors_alive = 1;
+                routing_table.neighbors[neighbor_idx].last_seen_tick = routing_get_now_tick();
+            }
+        }
+
         if(recv_eventgroup_bit & ROUTE_PACKET_RECV_SENDER)
         {
             if(recv_frame_route.route_frame_type == 2)
@@ -603,16 +860,21 @@ void packet_process_route(void)
                         printf("更新子节点%llx\r\n", recv_frame.src_addr);
                         ChangeChild(routing_table.tree_pointer, routing_table.tree_pointer, child1);
                         child1->is_node_alive = 1;
+                        child1->last_seen_tick = (uint32_t)xTaskGetTickCount();
                     }
                     else
                     {
                         printf("添加子节点%llx, 发送路由更新\r\n", recv_frame.src_addr);
-                        AddChild(routing_table.tree_pointer, createNode(recv_frame.src_addr));
+                        child1 = createNode(recv_frame.src_addr);
+                        if (child1 != NULL)
+                        {
+                            AddChild(routing_table.tree_pointer, child1);
+                        }
                         routing_frame_clear(&update_frame_route);
                         update_frame_route.payload.routing_control.control_code = 1;
                         update_frame_route.payload.routing_control.father = routing_table.node_addr.addr;
                         update_frame_route.payload.routing_control.child = recv_frame.src_addr;
-                        xEventGroupSetBits(route_eventgroup_handle, UPDATE_TASK_START);  
+                        routing_update_enqueue(&update_frame_route);  
                         routing_table.child_count ++;
                     }
                     mac_frame_clear(&send_frame);
@@ -666,17 +928,36 @@ void packet_process_route(void)
                             printf("更新子节点%llx\r\n", recv_frame.src_addr);
                             ChangeChild(routing_table.tree_pointer, routing_table.tree_pointer, child1);
                             child1->is_node_alive = 1;
+                            child1->last_seen_tick = (uint32_t)xTaskGetTickCount();
                         }
                         else
                         {
                             printf("添加子节点%llx, 发送路由更新\r\n", recv_frame.src_addr);
-                            AddChild(routing_table.tree_pointer, createNode(recv_frame.src_addr));
+                            child1 = createNode(recv_frame.src_addr);
+                            if (child1 != NULL)
+                            {
+                                AddChild(routing_table.tree_pointer, child1);
+                            }
                             routing_frame_clear(&update_frame_route);
                             update_frame_route.payload.routing_control.control_code = 1;
                             update_frame_route.payload.routing_control.father = routing_table.node_addr.addr;
                             update_frame_route.payload.routing_control.child = recv_frame.src_addr;
-                            xEventGroupSetBits(route_eventgroup_handle, UPDATE_TASK_START);                       
+                            routing_update_enqueue(&update_frame_route);                       
                             routing_table.child_count ++;
+                        }
+
+                        /* 更新节点存活时间与期望上报周期（只有源节点addr_src自身上报时才更新其period） */
+                        if (child1 != NULL)
+                        {
+                            child1->is_node_alive = 1;
+                            child1->last_seen_tick = (uint32_t)xTaskGetTickCount();
+                            if (recv_frame.src_addr == recv_frame_route.payload.routing_sensor_data.addr_src)
+                            {
+                                if (recv_frame_route.payload.routing_sensor_data.next_report_ms != 0)
+                                {
+                                    child1->expected_next_report_ms = recv_frame_route.payload.routing_sensor_data.next_report_ms;
+                                }
+                            }
                         }
                         if(recv_frame.src_addr != recv_frame_route.payload.routing_sensor_data.addr_src)
                         {
@@ -684,25 +965,44 @@ void packet_process_route(void)
                             if(child2 != NULL)  //已经是自己的子节点
                             {
                                 printf("更新子节点%llx\r\n", recv_frame_route.payload.routing_sensor_data.addr_src);
-                                ChangeChild(routing_table.tree_pointer, child1, child2);
-                                child1->is_node_alive = 1;
+                                if (child1 != NULL)
+                                {
+                                    ChangeChild(routing_table.tree_pointer, child1, child2);
+                                }
+                                if (child1 != NULL)
+                                {
+                                    child1->is_node_alive = 1;
+                                }
                                 child2->is_node_alive = 1;
+                                child2->last_seen_tick = (uint32_t)xTaskGetTickCount();
+                                if (recv_frame_route.payload.routing_sensor_data.next_report_ms != 0)
+                                {
+                                    child2->expected_next_report_ms = recv_frame_route.payload.routing_sensor_data.next_report_ms;
+                                }
                             }
                             else  //如果传感器数据源节点地址不是自己的子节点，那么该节点大概率是自己子节点的子节点，但由于并不知道到底是哪个子节点的儿子，所以姑且认为是当前节点的子节点吧
                             {
                                 printf("添加子节点%llx, 发送路由更新\r\n", recv_frame_route.payload.routing_sensor_data.addr_src);
-                                AddChild(routing_table.tree_pointer, createNode(recv_frame_route.payload.routing_sensor_data.addr_src));
+                                child2 = createNode(recv_frame_route.payload.routing_sensor_data.addr_src);
+                                if (child2 != NULL)
+                                {
+                                    AddChild(routing_table.tree_pointer, child2);
+                                    if (recv_frame_route.payload.routing_sensor_data.next_report_ms != 0)
+                                    {
+                                        child2->expected_next_report_ms = recv_frame_route.payload.routing_sensor_data.next_report_ms;
+                                    }
+                                }
                                 routing_frame_clear(&update_frame_route);
                                 update_frame_route.payload.routing_control.control_code = 1;
                                 update_frame_route.payload.routing_control.father = routing_table.node_addr.addr;
                                 update_frame_route.payload.routing_control.child = recv_frame.src_addr;
-                                xEventGroupSetBits(route_eventgroup_handle, UPDATE_TASK_START);   
+                                routing_update_enqueue(&update_frame_route);   
                                 routing_table.child_count ++;
                             }
                         }
                         printf("启动数据转发任务\r\n");
                         memcpy(&relay_frame_route, &recv_frame_route, sizeof(RoutingFrame));
-                        xEventGroupSetBits(route_eventgroup_handle, RELAY_TASK_START);  //启动消息转发
+                        routing_relay_enqueue(&relay_frame_route);  //启动消息转发
                     }
                     else
                     {
@@ -764,7 +1064,7 @@ void packet_process_route(void)
                                 update_frame_route.payload.routing_control.control_code = 0;
                                 update_frame_route.payload.routing_control.father = routing_table.node_addr.addr;
                                 update_frame_route.payload.routing_control.child = child1->addr;
-                                xEventGroupSetBits(route_eventgroup_handle, UPDATE_TASK_START);
+                                routing_update_enqueue(&update_frame_route);
                             }
                             DelSubtree(routing_table.tree_pointer, child1); 
                             routing_table.child_count --;
@@ -833,7 +1133,7 @@ void packet_process_route(void)
                         update_frame_route.payload.routing_control.control_code = 0;
                         update_frame_route.payload.routing_control.father = routing_table.node_addr.addr;
                         update_frame_route.payload.routing_control.child = child1->addr;
-                        xEventGroupSetBits(route_eventgroup_handle, UPDATE_TASK_START);
+                        routing_update_enqueue(&update_frame_route);
                     }
                     DelSubtree(routing_table.tree_pointer, child1); 
                 }
@@ -851,14 +1151,15 @@ void packet_process_route(void)
                         update_frame_route.payload.routing_control.control_code = 0;
                         update_frame_route.payload.routing_control.father = routing_table.node_addr.addr;
                         update_frame_route.payload.routing_control.child = child2->addr;
-                        xEventGroupSetBits(route_eventgroup_handle, UPDATE_TASK_START);
+                        routing_update_enqueue(&update_frame_route);
                     }
                     DelSubtree(routing_table.tree_pointer, child2); 
                     printf("添加邻居%llx\r\n", recv_frame.src_addr);
                     add_neighbor_route(recv_frame.src_addr, recv_rssi, recv_frame_route.depth);
                 }
             }
-				}   
+        }   
+        WDG_Heartbeat(WDG_HB_ID_ROUTE);
         vTaskDelay(10);
     }
 }
@@ -871,6 +1172,7 @@ void packet_process_route(void)
 void add_neighbor_route(NodeAddr addr, uint8_t rssi, uint8_t depth)
 {
     u8 number = 0, max_number = 0, max_rssi = 0;
+    uint32_t now_tick = routing_get_now_tick();
     number = search_neighbor_route(addr);   
     if(number == 0xff)  //新节点
     {
@@ -880,6 +1182,7 @@ void add_neighbor_route(NodeAddr addr, uint8_t rssi, uint8_t depth)
             routing_table.neighbors[routing_table.neighbor_count].depth = depth;
             routing_table.neighbors[routing_table.neighbor_count].rssi = rssi;
             routing_table.neighbors[routing_table.neighbor_count].is_neighbors_alive = 1;
+            routing_table.neighbors[routing_table.neighbor_count].last_seen_tick = now_tick;
             routing_table.neighbor_count ++;
         }
         else  //邻居节点个数等于于MAX_NEIGHBORS，判断是否可以替换
@@ -891,6 +1194,7 @@ void add_neighbor_route(NodeAddr addr, uint8_t rssi, uint8_t depth)
                 routing_table.neighbors[max_number].depth = depth;
                 routing_table.neighbors[max_number].rssi = rssi;
                 routing_table.neighbors[max_number].is_neighbors_alive = 1;
+                routing_table.neighbors[max_number].last_seen_tick = now_tick;
             }
         }
     }
@@ -899,6 +1203,7 @@ void add_neighbor_route(NodeAddr addr, uint8_t rssi, uint8_t depth)
         routing_table.neighbors[number].depth = depth;
         routing_table.neighbors[number].rssi = rssi;
         routing_table.neighbors[number].is_neighbors_alive = 1;
+        routing_table.neighbors[number].last_seen_tick = now_tick;
     }
 }
 
@@ -972,6 +1277,7 @@ void delete_neighbor_route(NodeAddr addr_neighbor)
             routing_table.neighbors[dst].depth = routing_table.neighbors[src].depth;
             routing_table.neighbors[dst].rssi = routing_table.neighbors[src].rssi;
             routing_table.neighbors[dst].is_neighbors_alive = routing_table.neighbors[src].is_neighbors_alive;
+            routing_table.neighbors[dst].last_seen_tick = routing_table.neighbors[src].last_seen_tick;
             dst ++;
             src ++;
         } 
@@ -989,10 +1295,11 @@ void delete_dead_neighbor_route(void)
 {
     uint8_t i = 0, count = 0, j = 0;
     NodeAddr addr = 0;
+    uint32_t now_tick = routing_get_now_tick();
     count = routing_table.neighbor_count;
     for(i = 0; i < count; i ++)
     {
-        if(routing_table.neighbors[j].is_neighbors_alive == 0)
+        if(routing_neighbor_is_timed_out(routing_table.neighbors[j].last_seen_tick, now_tick))
         {
             addr = routing_table.neighbors[j].addr;
             printf("要删除的neighbor:%llx\r\n", addr);
@@ -1034,7 +1341,7 @@ void route_update_process(void)
             update_frame_route.payload.routing_control.child = recv_frame_route.payload.routing_control.child;
             DelSubtree(routing_table.tree_pointer, child);  
             routing_table.child_count --;
-            xEventGroupSetBits(route_eventgroup_handle, UPDATE_TASK_START);     
+            routing_update_enqueue(&update_frame_route);     
             return;
         }
     }
@@ -1049,7 +1356,7 @@ void route_update_process(void)
             update_frame_route.payload.routing_control.child = recv_frame_route.payload.routing_control.child;
             DelSubtree(routing_table.tree_pointer, child);
             routing_table.child_count --;
-            xEventGroupSetBits(route_eventgroup_handle, UPDATE_TASK_START); 
+            routing_update_enqueue(&update_frame_route); 
             return;
         }
         if((recv_frame_route.payload.routing_control.father == routing_table.parent_addr) && (father != NULL)) //父节点是自己的子节点，则未入网
@@ -1081,11 +1388,32 @@ void route_update_process(void)
             update_frame_route.payload.routing_control.control_code = 1;
             update_frame_route.payload.routing_control.father = recv_frame_route.payload.routing_control.father;
             update_frame_route.payload.routing_control.child = recv_frame_route.payload.routing_control.child;
-            xEventGroupSetBits(route_eventgroup_handle, UPDATE_TASK_START); 
+            routing_update_enqueue(&update_frame_route); 
             return;
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

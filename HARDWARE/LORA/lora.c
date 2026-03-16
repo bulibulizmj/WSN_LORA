@@ -7,13 +7,12 @@
 int errcount_LORA = 0;
 
 char *strx;
-extern char lora_serialRXbuf_st[200];
+extern u8 lora_serialRXbuf_st[LORA_SERIAL_BUF_SIZE];
 extern u16 lora_Rxcouter;
 
 void Clear_Buffer_LORA(void)//Çå¿Õ»º´æ
 {
     u16 i;
-    printf(lora_serialRXbuf_st);
     for(i=0;i<lora_Rxcouter;i++)
         lora_serialRXbuf_st[i]=0;//»º´æ
     lora_Rxcouter=0;
@@ -187,6 +186,7 @@ void atk_mw1268d_change_mode(atk_mw1268d_workmode_t mode)
  */
 void atk_mw1268d_enter_config(void)
 {
+    g_lora_rx_framing_enable = 0;
     ATK_MW1268D_MD0_GPIO_PIN =1;
 }
 
@@ -198,6 +198,7 @@ void atk_mw1268d_enter_config(void)
  */
 void atk_mw1268d_exit_config(void)
 {
+    g_lora_rx_framing_enable = 1;
     ATK_MW1268D_MD0_GPIO_PIN = 0;
 }
 
