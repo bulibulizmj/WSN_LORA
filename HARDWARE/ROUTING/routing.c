@@ -485,6 +485,7 @@ void SensorDataGet(void)
     send_frame_route.payload.routing_sensor_data.humidity = raw_data >> 16;
 #endif
     printf("Temperature: %f, Humidity:%f\r\n", (-45 + 175*(send_frame_route.payload.routing_sensor_data.temperature)/65535.0), (-6 + 125*(send_frame_route.payload.routing_sensor_data.humidity)/65535.0));
+   
     if(BMP280()){
         delay_ms(50);
         raw_data = bmp280GetRawData();
@@ -492,10 +493,11 @@ void SensorDataGet(void)
     else raw_data = 0;
     send_frame_route.payload.routing_sensor_data.pressure = raw_data;
     printf("pressure:%f\r\n", send_frame_route.payload.routing_sensor_data.pressure/256.0f);
-		delay_ms(100);
+	delay_ms(100);
+
     raw_data = CurrentSoilstate(0x05);
     send_frame_route.payload.routing_sensor_data.soilstate1 = raw_data;
-		delay_ms(100);
+	delay_ms(100);
     raw_data = CurrentSoilstate(0x06);
     send_frame_route.payload.routing_sensor_data.soilstate2 = raw_data;
     delay_ms(100);
@@ -743,7 +745,7 @@ void beacon_send_route(void)
     mac_send_broadcast();
     xSemaphoreGive(is_sender_route_handle); //释放信号量，表示重新回到发送空闲
     printf("发送Beacon完毕\r\n");
-    printf("开启Beacon发送定时器定时\r\n");
+    // printf("开启Beacon发送定时器定时\r\n");
     xTimerStart(beacon_send_timer_handle, portMAX_DELAY);
     route_eventgroup_bit = xEventGroupWaitBits(route_eventgroup_handle, BEACON_TIMER_OK, pdTRUE, pdTRUE, portMAX_DELAY);	//超时时间到且发送空闲
     

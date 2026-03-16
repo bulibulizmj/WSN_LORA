@@ -174,6 +174,7 @@ void routing_update(void * pvParameters);
 #define NODE_CHECK_PRIO 				15
 #define NODE_CHECK_STACK_SIZE		    128 
 TaskHandle_t node_check_handler;//任务句柄
+#define ENV_SAMPLE_STACK_SIZE           512
 TaskHandle_t env_sample_handler;//任务句柄
 void node_check(void * pvParameters);
 
@@ -448,7 +449,7 @@ void start_task(void * pvParameters)
 								(TaskHandle_t *         )   &node_check_handler );                   
 		xTaskCreate((TaskFunction_t 				)   AdaptiveReport_EnvTask,
 								(char *                 )   "env_sample",
-								(configSTACK_DEPTH_TYPE )   256,
+								(configSTACK_DEPTH_TYPE )   ENV_SAMPLE_STACK_SIZE,
 								(void *                 )   NULL,
 								(UBaseType_t            )   (tskIDLE_PRIORITY + 1),
 								(TaskHandle_t *         )   &env_sample_handler );
@@ -839,7 +840,7 @@ void Reset_Recv_Timer_Callback( TimerHandle_t pxTimer )
   */
 void Beacon_Send_Timer_Callback( TimerHandle_t pxTimer )
 {
-    printf("Beacon发送时间到\r\n");
+    // printf("Beacon发送时间到\r\n");
     xEventGroupSetBits(route_eventgroup_handle, BEACON_TIMER_OK);	/* 将事件标志组BEACON_TIMER_OK置1 */
 }
 
