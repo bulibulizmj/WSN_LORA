@@ -31,7 +31,8 @@ u16 CurrentWindsSpeed(void);
 u16 CurrentWindsDirection(void);
 void CurrentAddress(void);
 u16 CurrentRadiation(void);
-
+u32 CurrentAtmosphericState(u8 DeviceAdd);
+u32 CurrentAtmosphericPressure(u8 DeviceAdd);
 #endif
 
 

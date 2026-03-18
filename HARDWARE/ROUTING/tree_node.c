@@ -290,6 +290,40 @@ void Disconnect(TreeNode* rootnode, TreeNode* child)
         }    
 }
 
+static uint8_t TreeContainsPointer(TreeNode* root, TreeNode* target)
+{
+    TreeNode* p;
+    uint16_t guard = 0;
+
+    if ((root == NULL) || (target == NULL))
+    {
+        return 0;
+    }
+    if (root == target)
+    {
+        return 1;
+    }
+
+    p = root->firstChild;
+    while (p != NULL)
+    {
+        if (TreeContainsPointer(p, target))
+        {
+            return 1;
+        }
+        if (p->nextBrother == p)
+        {
+            break;
+        }
+        p = p->nextBrother;
+        if (++guard > 512)
+        {
+            break;
+        }
+    }
+    return 0;
+}
+
 /**
   * @brief  修改子节点,将子节点及其子树添加到新的父节点下，并断开与旧的父节点的联系
   * @param  rootnode：整棵树的根节点；newfather：新的父节点；child：指向待操作的节点的指针
@@ -298,18 +332,51 @@ void Disconnect(TreeNode* rootnode, TreeNode* child)
 void ChangeChild(TreeNode* rootnode, TreeNode* newfather, TreeNode* child)
 {
     TreeNode* p;
+    uint16_t guard = 0;
+
+    if ((rootnode == NULL) || (newfather == NULL) || (child == NULL) || (newfather == child))
+    {
+        return;
+    }
+
+    /* 防止把节点挂到自己的子树下面形成环。 */
+    if (TreeContainsPointer(child, newfather))
+    {
+        return;
+    }
+
     Disconnect(rootnode, child);
 
     if(newfather->firstChild == NULL)//如果父节点没有子节点
     {
+        child->nextBrother = NULL;
         newfather->firstChild = child;
         return;
     }
     p = newfather->firstChild;
     while (p->nextBrother)//退出循环时p指向最右边的子节点
     {
+        if (p == child)
+        {
+            child->nextBrother = NULL;
+            return;
+        }
+        if (p->nextBrother == p)
+        {
+            return;
+        }
         p = p->nextBrother;
+        if (++guard > 512)
+        {
+            return;
+        }
     }
+    if (p == child)
+    {
+        child->nextBrother = NULL;
+        return;
+    }
+    child->nextBrother = NULL;
     p->nextBrother = child;
 }
 

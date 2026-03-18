@@ -302,7 +302,7 @@ void write_my_addr_route(void)
 
         if((route_eventgroup_bit & WRITE_ADDR_ORDER) && (USART_RX_BUF[0] != ';')) //已经写入过地址了，但需要修改当前地址
         {
-            printf((char *)USART_RX_BUF);
+            printf("%s", (char *)USART_RX_BUF);
             if(USART_RX_STA != 0)
             {
                 routing_table.node_addr.long_latitude[0] = 0;
@@ -479,20 +479,18 @@ void SensorDataGet(void)
     send_frame_route.payload.routing_sensor_data.humidity = AdaptiveReport_TestSeqHumidityToSht45Raw(humidity);
     send_frame_route.payload.routing_sensor_data.radiation = radiation_raw;
 #else
-    sht45init();
-    raw_data = SHT45_ReadRawData(1);
+    // sht45init();
+    // raw_data = SHT45_ReadRawData(1);
+    raw_data = CurrentAtmosphericState(0x08); //读取温湿度、气压
     send_frame_route.payload.routing_sensor_data.temperature = raw_data & 0xFFFF;
     send_frame_route.payload.routing_sensor_data.humidity = raw_data >> 16;
 #endif
-    printf("Temperature: %f, Humidity:%f\r\n", (-45 + 175*(send_frame_route.payload.routing_sensor_data.temperature)/65535.0), (-6 + 125*(send_frame_route.payload.routing_sensor_data.humidity)/65535.0));
-   
-    if(BMP280()){
-        delay_ms(50);
-        raw_data = bmp280GetRawData();
-    }
-    else raw_data = 0;
+    printf("Temperature: %f, Humidity:%f\r\n", send_frame_route.payload.routing_sensor_data.temperature/10.0f, send_frame_route.payload.routing_sensor_data.humidity/10.0f);
+   	delay_ms(200);
+
+    raw_data = CurrentAtmosphericPressure(0x08);
     send_frame_route.payload.routing_sensor_data.pressure = raw_data;
-    printf("pressure:%f\r\n", send_frame_route.payload.routing_sensor_data.pressure/256.0f);
+    printf("pressure:%llf\r\n", send_frame_route.payload.routing_sensor_data.pressure/10.0f);
 	delay_ms(100);
 
     raw_data = CurrentSoilstate(0x05);
@@ -1367,18 +1365,18 @@ void route_update_process(void)
         }
         if(father != NULL)  //如果是自己子节点添加了子节点，则判断该添加的子节点是否已经是自己的子节点，若是则修改，若不是则添加
         {
-            if((child != NULL) && (result->addr == father->addr))
+            if((child != NULL) && (result != NULL) && (result->addr == father->addr))
             {
                 return;
             }
-            if((child != NULL) && (result->addr != father->addr))
+            if(child != NULL)
             {
                 printf("更新拓扑结构，子节点 %llx 为子节点 %llx 的父节点,并转发路由更新\r\n", father->addr, child->addr);
                 ChangeChild(routing_table.tree_pointer, father, child);
                 father->is_node_alive = 1;
                 child->is_node_alive = 1;
             }
-            else if(child == NULL)
+            else
             {
                 printf("添加子节点%llx,并转发路由更新\r\n", recv_frame_route.payload.routing_control.child);
                 AddChild(father, createNode(recv_frame_route.payload.routing_control.child));

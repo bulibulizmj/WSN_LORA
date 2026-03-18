@@ -196,6 +196,66 @@ u32 CurrentSoilstate(u8 DeviceAdd)
 }
  
 /*
+查询当前温湿度，functioncode 0x03 
+参数DeviceAdd：设备地址
+返回值为：温湿度原始数据
+*/
+u32 CurrentAtmosphericState(u8 DeviceAdd)
+{
+	u8 errcount = 0;
+	//定义要发送的信息
+	_mbdata_st mbp_s;
+	_mbdata_st mbp_r; 
+	mbp_s.addr = DeviceAdd;
+	mbp_s.start = 0x0000;
+	mbp_s.len = 0x02;//如果是0x06则此处意义不是读取寄存器个数
+	
+	mbp_r.addr = mbp_s.addr;
+	mbp_r.start = mbp_s.start;
+	mb_sent_writeHoldingReg_all(mbp_s, 0x03);
+	delay_ms(10);//进入中断函数，防止直接进入while循环
+	while(mb_recv_readHoldingReg_all(&mbp_r,0x03) != res_OK)
+	{
+		delay_ms(20);
+		mb_sent_writeHoldingReg_all(mbp_s, 0x03);
+		errcount++;
+		if(errcount>20) {errcount = 0; printf("soilsensor error!\r\n"); return 0xffffffff;}
+	}//接收到数据并保存在mbp_r中,若错误则间隔20ms重复发送
+	//printf("raw data:%d\r\n", mbp_r.buf[0]);
+	return (mbp_r.buf[0]<<16) + mbp_r.buf[1];//返回的大气压值与温湿度数据扩大了十倍
+}
+
+/*
+查询当前大气压，functioncode 0x03 
+参数DeviceAdd：设备地址
+返回值为：大气压原始数据
+*/
+u32 CurrentAtmosphericPressure(u8 DeviceAdd)
+{
+	u8 errcount = 0;
+	//定义要发送的信息
+	_mbdata_st mbp_s;
+	_mbdata_st mbp_r; 
+	mbp_s.addr = DeviceAdd;
+	mbp_s.start = 0x0002;
+	mbp_s.len = 0x02;//如果是0x06则此处意义不是读取寄存器个数
+	
+	mbp_r.addr = mbp_s.addr;
+	mbp_r.start = mbp_s.start;
+	mb_sent_writeHoldingReg_all(mbp_s, 0x03);
+	delay_ms(10);//进入中断函数，防止直接进入while循环
+	while(mb_recv_readHoldingReg_all(&mbp_r,0x03) != res_OK)
+	{
+		delay_ms(20);
+		mb_sent_writeHoldingReg_all(mbp_s, 0x03);
+		errcount++;
+		if(errcount>20) {errcount = 0; printf("soilsensor error!\r\n"); return 0xffffffff;}
+	}//接收到数据并保存在mbp_r中,若错误则间隔20ms重复发送
+	//printf("raw data:%d\r\n", mbp_r.buf[0]);
+	return (mbp_r.buf[0]<<16) + mbp_r.buf[1];//返回的大气压值与温湿度数据扩大了十倍
+}
+
+/*
 查询当前雨量值，functioncode 0x03 
 返回值为 当前雨量值*10
 */

@@ -664,9 +664,15 @@ void node_check(void * pvParameters)
         route_eventgroup_bit = xEventGroupWaitBits(route_eventgroup_handle, IS_JOIN_WAN, pdFALSE, pdTRUE, 0);	//判断是否入网,IS_JOIN_WAN位为1表示未入网
         if(!(route_eventgroup_bit & IS_JOIN_WAN))
         {
+            u32 tree_ptr_val = (u32)routing_table.tree_pointer;
             printf("检查邻居节点与子节点任务启动！\r\n");
             node_check_route();
-            ReSetNode(routing_table.tree_pointer);
+            if ((routing_table.tree_pointer != NULL) &&
+                (tree_ptr_val >= 0x20000000u) &&
+                (tree_ptr_val <= 0x20040000u))
+            {
+                ReSetNode(routing_table.tree_pointer);
+            }
         }
         vTaskDelay(node_check_period_ms);
 		}

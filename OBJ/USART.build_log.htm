@@ -22,19 +22,28 @@ Dialog DLL:      TCM.DLL V1.14.4.0
  
 <h2>Project:</h2>
 C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\USART.uvprojx
-Project File Date:  02/08/2026
+Project File Date:  03/16/2026
 
 <h2>Output:</h2>
 Build target 'USART'
+compiling main.c...
+compiling adaptive_report.c...
+adaptive_report.c(430): warning:  #550-D: variable "clamp_hard" was set but never used
+      uint8_t clamp_hard = 0;
+adaptive_report.c(431): warning:  #550-D: variable "clamp_grad" was set but never used
+      uint8_t clamp_grad = 0;
+adaptive_report.c(432): warning:  #550-D: variable "clamp_final" was set but never used
+      uint8_t clamp_final = 0;
+adaptive_report.c: 3 warnings, 0 errors
+compiling mdbs_func.c...
 compiling routing.c...
 ..\HARDWARE\ROUTING\routing.c(225): warning:  #111-D: statement is unreachable
       return AdaptiveReport_GetNextPeriodMs(routing_table.tree_depth);
 ..\HARDWARE\ROUTING\routing.c: 1 warning, 0 errors
-compiling freertos_demo.c...
 linking...
-Program Size: Code=67714 RO-data=1846 RW-data=452 ZI-data=40684  
+Program Size: Code=66858 RO-data=1846 RW-data=440 ZI-data=40648  
 FromELF: creating hex file...
-"..\OBJ\USART.axf" - 0 Error(s), 1 Warning(s).
+"..\OBJ\USART.axf" - 0 Error(s), 4 Warning(s).
 
 <h2>Collection of Component include folders:</h2>
   C:\Users\82699\Desktop\FreeRTOS\FreeRTOS_code\FreeRTOS_code\WSN_GW_v0.5\USER\RTE
