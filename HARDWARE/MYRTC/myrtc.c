@@ -5,7 +5,7 @@
 #include "LED.h"
 
 volatile uint32_t overflow_count = 0;
-const uint32_t target_overflows = 48; // 溢出次数：当 WAKE_UP_SECONDS=3600 时，每 1 小时溢出 1 次；target_overflows=2 即约 2 小时重启
+const uint32_t target_overflows = 72; // 溢出次数：当 WAKE_UP_SECONDS=3600 时，每 1 小时溢出 1 次；target_overflows=2 即约 2 小时重启
 
 static uint32_t g_lsi_freq_hz = 0;
 

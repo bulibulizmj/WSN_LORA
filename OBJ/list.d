@@ -1,11 +1,11 @@
 ..\obj\list.o: ..\FreeRTOS\list.c
-..\obj\list.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdlib.h
+..\obj\list.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdlib.h
 ..\obj\list.o: ..\FreeRTOS\include\FreeRTOS.h
-..\obj\list.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stddef.h
-..\obj\list.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdint.h
+..\obj\list.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stddef.h
+..\obj\list.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdint.h
 ..\obj\list.o: ..\FreeRTOS\include\FreeRTOSConfig.h
 ..\obj\list.o: ..\SYSTEM\usart\usart.h
-..\obj\list.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdio.h
+..\obj\list.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\list.o: ..\USER\stm32f4xx_conf.h
 ..\obj\list.o: ..\FWLIB\inc\stm32f4xx_adc.h
 ..\obj\list.o: ..\USER\stm32f4xx.h
@@ -43,7 +43,7 @@
 ..\obj\list.o: ..\SYSTEM\sys\sys.h
 ..\obj\list.o: ..\HARDWARE\timer\timer.h
 ..\obj\list.o: ..\SYSTEM\mb_usart\Mb_usart.h
-..\obj\list.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdbool.h
+..\obj\list.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\list.o: ..\SYSTEM\freertos_demo\freertos_demo.h
 ..\obj\list.o: ..\FreeRTOS\include\projdefs.h
 ..\obj\list.o: ..\FreeRTOS\include\portable.h

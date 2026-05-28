@@ -1,11 +1,11 @@
 ..\obj\bmp280.o: ..\HARDWARE\BMP280\bmp280.c
-..\obj\bmp280.o: G:\MDK5\ARM\ARMCC\Bin\..\include\math.h
-..\obj\bmp280.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdbool.h
+..\obj\bmp280.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\math.h
+..\obj\bmp280.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\bmp280.o: ..\SYSTEM\delay\delay.h
 ..\obj\bmp280.o: ..\SYSTEM\sys\sys.h
 ..\obj\bmp280.o: ..\USER\stm32f4xx.h
 ..\obj\bmp280.o: ..\CORE\core_cm4.h
-..\obj\bmp280.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdint.h
+..\obj\bmp280.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdint.h
 ..\obj\bmp280.o: ..\CORE\core_cmInstr.h
 ..\obj\bmp280.o: ..\CORE\core_cmFunc.h
 ..\obj\bmp280.o: ..\CORE\core_cm4_simd.h
@@ -41,4 +41,4 @@
 ..\obj\bmp280.o: ..\HARDWARE\BMP280\bmp280.h
 ..\obj\bmp280.o: ..\HARDWARE\IIC\myiic.h
 ..\obj\bmp280.o: ..\SYSTEM\usart\usart.h
-..\obj\bmp280.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdio.h
+..\obj\bmp280.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdio.h

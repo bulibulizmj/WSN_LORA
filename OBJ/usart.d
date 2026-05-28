@@ -2,7 +2,7 @@
 ..\obj\usart.o: ..\SYSTEM\sys\sys.h
 ..\obj\usart.o: ..\USER\stm32f4xx.h
 ..\obj\usart.o: ..\CORE\core_cm4.h
-..\obj\usart.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdint.h
+..\obj\usart.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdint.h
 ..\obj\usart.o: ..\CORE\core_cmInstr.h
 ..\obj\usart.o: ..\CORE\core_cmFunc.h
 ..\obj\usart.o: ..\CORE\core_cm4_simd.h
@@ -36,10 +36,10 @@
 ..\obj\usart.o: ..\FWLIB\inc\stm32f4xx_dcmi.h
 ..\obj\usart.o: ..\FWLIB\inc\stm32f4xx_fsmc.h
 ..\obj\usart.o: ..\SYSTEM\usart\usart.h
-..\obj\usart.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdio.h
+..\obj\usart.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\usart.o: ..\HARDWARE\MAC\mac.h
 ..\obj\usart.o: ..\HARDWARE\CRC16\crc16.h
-..\obj\usart.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdbool.h
+..\obj\usart.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\usart.o: ..\HARDWARE\LORA\lora.h
 ..\obj\usart.o: ..\SYSTEM\delay\delay.h
 ..\obj\usart.o: ..\HARDWARE\MAC\mac.h
@@ -47,7 +47,7 @@
 ..\obj\usart.o: ..\HARDWARE\ROUTING\tree_node.h
 ..\obj\usart.o: ..\USER\adaptive_report.h
 ..\obj\usart.o: ..\FreeRTOS\include\FreeRTOS.h
-..\obj\usart.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stddef.h
+..\obj\usart.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stddef.h
 ..\obj\usart.o: ..\FreeRTOS\include\FreeRTOSConfig.h
 ..\obj\usart.o: ..\HARDWARE\timer\timer.h
 ..\obj\usart.o: ..\SYSTEM\mb_usart\Mb_usart.h

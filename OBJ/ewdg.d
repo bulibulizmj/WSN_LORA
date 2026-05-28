@@ -2,7 +2,7 @@
 ..\obj\ewdg.o: ..\HARDWARE\EWDG\ewdg.h
 ..\obj\ewdg.o: ..\USER\stm32f4xx.h
 ..\obj\ewdg.o: ..\CORE\core_cm4.h
-..\obj\ewdg.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdint.h
+..\obj\ewdg.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdint.h
 ..\obj\ewdg.o: ..\CORE\core_cmInstr.h
 ..\obj\ewdg.o: ..\CORE\core_cmFunc.h
 ..\obj\ewdg.o: ..\CORE\core_cm4_simd.h

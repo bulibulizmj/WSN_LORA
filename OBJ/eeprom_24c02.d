@@ -1,7 +1,7 @@
 ..\obj\eeprom_24c02.o: ..\HARDWARE\EEPROM\eeprom_24c02.c
 ..\obj\eeprom_24c02.o: ..\HARDWARE\EEPROM\eeprom_24c02.h
-..\obj\eeprom_24c02.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdint.h
-..\obj\eeprom_24c02.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stddef.h
+..\obj\eeprom_24c02.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdint.h
+..\obj\eeprom_24c02.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stddef.h
 ..\obj\eeprom_24c02.o: ..\SYSTEM\sys\sys.h
 ..\obj\eeprom_24c02.o: ..\USER\stm32f4xx.h
 ..\obj\eeprom_24c02.o: ..\CORE\core_cm4.h

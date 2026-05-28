@@ -1,7 +1,7 @@
 ..\obj\myrtc.o: ..\HARDWARE\MYRTC\myrtc.c
 ..\obj\myrtc.o: ..\USER\stm32f4xx.h
 ..\obj\myrtc.o: ..\CORE\core_cm4.h
-..\obj\myrtc.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdint.h
+..\obj\myrtc.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdint.h
 ..\obj\myrtc.o: ..\CORE\core_cmInstr.h
 ..\obj\myrtc.o: ..\CORE\core_cmFunc.h
 ..\obj\myrtc.o: ..\CORE\core_cm4_simd.h
@@ -38,5 +38,5 @@
 ..\obj\myrtc.o: ..\SYSTEM\delay\delay.h
 ..\obj\myrtc.o: ..\SYSTEM\sys\sys.h
 ..\obj\myrtc.o: ..\SYSTEM\usart\usart.h
-..\obj\myrtc.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdio.h
+..\obj\myrtc.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\myrtc.o: ..\HARDWARE\LED\LED.h

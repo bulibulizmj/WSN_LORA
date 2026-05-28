@@ -3,7 +3,7 @@
 ..\obj\myiic.o: ..\SYSTEM\sys\sys.h
 ..\obj\myiic.o: ..\USER\stm32f4xx.h
 ..\obj\myiic.o: ..\CORE\core_cm4.h
-..\obj\myiic.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdint.h
+..\obj\myiic.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdint.h
 ..\obj\myiic.o: ..\CORE\core_cmInstr.h
 ..\obj\myiic.o: ..\CORE\core_cmFunc.h
 ..\obj\myiic.o: ..\CORE\core_cm4_simd.h
@@ -38,4 +38,4 @@
 ..\obj\myiic.o: ..\FWLIB\inc\stm32f4xx_fsmc.h
 ..\obj\myiic.o: ..\SYSTEM\delay\delay.h
 ..\obj\myiic.o: ..\SYSTEM\usart\usart.h
-..\obj\myiic.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdio.h
+..\obj\myiic.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdio.h

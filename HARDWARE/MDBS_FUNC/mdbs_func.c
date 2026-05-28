@@ -221,7 +221,7 @@ u32 CurrentAtmosphericState(u8 DeviceAdd)
 		errcount++;
 		if(errcount>20) {errcount = 0; printf("soilsensor error!\r\n"); return 0xffffffff;}
 	}//接收到数据并保存在mbp_r中,若错误则间隔20ms重复发送
-	//printf("raw data:%d\r\n", mbp_r.buf[0]);
+//	printf("raw data:%f\r\n", mbp_r.buf[2]/10.0f);
 	return (mbp_r.buf[0]<<16) + mbp_r.buf[1];//返回的大气压值与温湿度数据扩大了十倍
 }
 
@@ -238,7 +238,7 @@ u32 CurrentAtmosphericPressure(u8 DeviceAdd)
 	_mbdata_st mbp_r; 
 	mbp_s.addr = DeviceAdd;
 	mbp_s.start = 0x0002;
-	mbp_s.len = 0x02;//如果是0x06则此处意义不是读取寄存器个数
+	mbp_s.len = 0x01;//如果是0x06则此处意义不是读取寄存器个数
 	
 	mbp_r.addr = mbp_s.addr;
 	mbp_r.start = mbp_s.start;
@@ -252,7 +252,7 @@ u32 CurrentAtmosphericPressure(u8 DeviceAdd)
 		if(errcount>20) {errcount = 0; printf("soilsensor error!\r\n"); return 0xffffffff;}
 	}//接收到数据并保存在mbp_r中,若错误则间隔20ms重复发送
 	//printf("raw data:%d\r\n", mbp_r.buf[0]);
-	return (mbp_r.buf[0]<<16) + mbp_r.buf[1];//返回的大气压值与温湿度数据扩大了十倍
+	return mbp_r.buf[0];//返回的大气压值与温湿度数据扩大了十倍
 }
 
 /*

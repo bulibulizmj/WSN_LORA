@@ -1,6 +1,6 @@
 ..\obj\freertos_demo.o: ..\SYSTEM\freertos_demo\freertos_demo.c
 ..\obj\freertos_demo.o: ..\SYSTEM\freertos_demo\freertos_demo.h
-..\obj\freertos_demo.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdint.h
+..\obj\freertos_demo.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdint.h
 ..\obj\freertos_demo.o: ..\HARDWARE\LED\led.h
 ..\obj\freertos_demo.o: ..\SYSTEM\sys\sys.h
 ..\obj\freertos_demo.o: ..\USER\stm32f4xx.h
@@ -39,14 +39,14 @@
 ..\obj\freertos_demo.o: ..\FWLIB\inc\stm32f4xx_fsmc.h
 ..\obj\freertos_demo.o: ..\HARDWARE\KEY\key.h
 ..\obj\freertos_demo.o: ..\SYSTEM\usart\usart.h
-..\obj\freertos_demo.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdio.h
+..\obj\freertos_demo.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\freertos_demo.o: ..\SYSTEM\delay\delay.h
 ..\obj\freertos_demo.o: ..\FreeRTOS\include\FreeRTOS.h
-..\obj\freertos_demo.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stddef.h
+..\obj\freertos_demo.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stddef.h
 ..\obj\freertos_demo.o: ..\FreeRTOS\include\FreeRTOSConfig.h
 ..\obj\freertos_demo.o: ..\HARDWARE\timer\timer.h
 ..\obj\freertos_demo.o: ..\SYSTEM\mb_usart\Mb_usart.h
-..\obj\freertos_demo.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdbool.h
+..\obj\freertos_demo.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\freertos_demo.o: ..\FreeRTOS\include\projdefs.h
 ..\obj\freertos_demo.o: ..\FreeRTOS\include\portable.h
 ..\obj\freertos_demo.o: ..\FreeRTOS\include\deprecated_definitions.h

@@ -231,6 +231,10 @@ void  EC800_Init(void)
 
     Uart2_SendStr("AT+CGATT?\r\n");//查询激活状态
     delay_ms(300);
+		
+//		Uart2_SendStr("AT+QMTCFG=?\r\n");//查询激活状态
+//    delay_ms(300);
+		
     strx_EC800=strstr((const char*)AtRxBuffer_EC800,(const char*)"+CGATT: 1");//返1 表明激活成功 获取到IP地址了
     Clear_Buffer_EC800();
     errcount = 0;
@@ -278,7 +282,12 @@ u8 EC20_CONNECT_MQTT_SERVER(u8 *CLIENTID,u8 *USERNAME,u8 *PASSWORD)
     Uart2_SendStr("AT+QMTDISC=0\r\n");//关闭和MQTT服务器的所有连接
     delay_ms(500);
     Clear_Buffer_EC800();
-
+    memset(AtStrBuf_EC800,0,BUFLEN);
+    sprintf(AtStrBuf_EC800,"AT+QMTCFG=\"keepalive\",0,600\r\n");
+    Uart2_SendStr(AtStrBuf_EC800);
+    delay_ms(200);
+	
+    Clear_Buffer_EC800();
     //打开EMQX的连接
     memset(AtStrBuf_EC800,0,BUFLEN);
     sprintf(AtStrBuf_EC800,"AT+QMTOPEN=0,\"%s\",%d\r\n",SERVERIP,SERVERPORT);
@@ -303,12 +312,9 @@ u8 EC20_CONNECT_MQTT_SERVER(u8 *CLIENTID,u8 *USERNAME,u8 *PASSWORD)
         }
     }
     Clear_Buffer_EC800();
-
-    memset(AtStrBuf_EC800,0,BUFLEN);
-    sprintf(AtStrBuf_EC800,"AT+QMTCFG=\"keepalive\",0,600\r\n");
-    Uart2_SendStr(AtStrBuf_EC800);
     delay_ms(200);
-    Clear_Buffer_EC800();
+
+
 
     //连接到EMQX服务器
     memset(AtStrBuf_EC800,0,BUFLEN);

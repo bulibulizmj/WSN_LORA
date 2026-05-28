@@ -471,7 +471,11 @@ void SensorDataGet(void)
     UBaseType_t uxHighWaterMark;
     AdaptiveReport_SensorLock();
     sensor_power_on();
-    delay_ms(50);
+    delay_ms(1000);
+    delay_ms(1000);
+	  delay_ms(1000);
+    delay_ms(1000);
+	  delay_ms(1000);
 
 #if ADAPT_REPORT_SENSOR_TESTSEQ_ENABLE
     AdaptiveReport_TestSeqNext(&temperature_c, &humidity, &radiation_raw);
@@ -486,12 +490,18 @@ void SensorDataGet(void)
     send_frame_route.payload.routing_sensor_data.humidity = raw_data >> 16;
 #endif
     printf("Temperature: %f, Humidity:%f\r\n", send_frame_route.payload.routing_sensor_data.temperature/10.0f, send_frame_route.payload.routing_sensor_data.humidity/10.0f);
-   	delay_ms(200);
-
+    sensor_power_off();
+		delay_ms(50);
+		sensor_power_on();
+    delay_ms(1000);
+    delay_ms(1000);
+	  delay_ms(1000);
+    delay_ms(1000);
+	  delay_ms(1000);
     raw_data = CurrentAtmosphericPressure(0x08);
-    send_frame_route.payload.routing_sensor_data.pressure = raw_data;
-    printf("pressure:%llf\r\n", send_frame_route.payload.routing_sensor_data.pressure/10.0f);
-	delay_ms(100);
+    send_frame_route.payload.routing_sensor_data.pressure = raw_data & 0xFFFF;
+    printf("pressure:%f\r\n", send_frame_route.payload.routing_sensor_data.pressure/10.0f);
+		delay_ms(100);
 
     raw_data = CurrentSoilstate(0x05);
     send_frame_route.payload.routing_sensor_data.soilstate1 = raw_data;

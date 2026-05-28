@@ -1,10 +1,10 @@
 ..\obj\port.o: ..\FreeRTOS\portable\RVDS\ARM_CM4F\port.c
 ..\obj\port.o: ..\FreeRTOS\include\FreeRTOS.h
-..\obj\port.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stddef.h
-..\obj\port.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdint.h
+..\obj\port.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stddef.h
+..\obj\port.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdint.h
 ..\obj\port.o: ..\FreeRTOS\include\FreeRTOSConfig.h
 ..\obj\port.o: ..\SYSTEM\usart\usart.h
-..\obj\port.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdio.h
+..\obj\port.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\port.o: ..\USER\stm32f4xx_conf.h
 ..\obj\port.o: ..\FWLIB\inc\stm32f4xx_adc.h
 ..\obj\port.o: ..\USER\stm32f4xx.h
@@ -42,7 +42,7 @@
 ..\obj\port.o: ..\SYSTEM\sys\sys.h
 ..\obj\port.o: ..\HARDWARE\timer\timer.h
 ..\obj\port.o: ..\SYSTEM\mb_usart\Mb_usart.h
-..\obj\port.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdbool.h
+..\obj\port.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\port.o: ..\SYSTEM\freertos_demo\freertos_demo.h
 ..\obj\port.o: ..\FreeRTOS\include\projdefs.h
 ..\obj\port.o: ..\FreeRTOS\include\portable.h

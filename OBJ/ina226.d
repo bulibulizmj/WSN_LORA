@@ -3,7 +3,7 @@
 ..\obj\ina226.o: ..\SYSTEM\sys\sys.h
 ..\obj\ina226.o: ..\USER\stm32f4xx.h
 ..\obj\ina226.o: ..\CORE\core_cm4.h
-..\obj\ina226.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdint.h
+..\obj\ina226.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdint.h
 ..\obj\ina226.o: ..\CORE\core_cmInstr.h
 ..\obj\ina226.o: ..\CORE\core_cmFunc.h
 ..\obj\ina226.o: ..\CORE\core_cm4_simd.h
@@ -37,4 +37,4 @@
 ..\obj\ina226.o: ..\FWLIB\inc\stm32f4xx_dcmi.h
 ..\obj\ina226.o: ..\FWLIB\inc\stm32f4xx_fsmc.h
 ..\obj\ina226.o: ..\HARDWARE\IIC\myiic.h
-..\obj\ina226.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stddef.h
+..\obj\ina226.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stddef.h

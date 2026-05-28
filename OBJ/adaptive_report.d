@@ -1,10 +1,10 @@
 ..\obj\adaptive_report.o: adaptive_report.c
 ..\obj\adaptive_report.o: adaptive_report.h
-..\obj\adaptive_report.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdint.h
-..\obj\adaptive_report.o: G:\MDK5\ARM\ARMCC\Bin\..\include\math.h
-..\obj\adaptive_report.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdio.h
+..\obj\adaptive_report.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdint.h
+..\obj\adaptive_report.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\math.h
+..\obj\adaptive_report.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\adaptive_report.o: ..\FreeRTOS\include\FreeRTOS.h
-..\obj\adaptive_report.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stddef.h
+..\obj\adaptive_report.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stddef.h
 ..\obj\adaptive_report.o: ..\FreeRTOS\include\FreeRTOSConfig.h
 ..\obj\adaptive_report.o: ..\SYSTEM\usart\usart.h
 ..\obj\adaptive_report.o: ..\USER\stm32f4xx_conf.h
@@ -44,7 +44,7 @@
 ..\obj\adaptive_report.o: ..\SYSTEM\sys\sys.h
 ..\obj\adaptive_report.o: ..\HARDWARE\timer\timer.h
 ..\obj\adaptive_report.o: ..\SYSTEM\mb_usart\Mb_usart.h
-..\obj\adaptive_report.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdbool.h
+..\obj\adaptive_report.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\adaptive_report.o: ..\SYSTEM\freertos_demo\freertos_demo.h
 ..\obj\adaptive_report.o: ..\FreeRTOS\include\projdefs.h
 ..\obj\adaptive_report.o: ..\FreeRTOS\include\portable.h

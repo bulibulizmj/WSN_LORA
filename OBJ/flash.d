@@ -2,7 +2,7 @@
 ..\obj\flash.o: ..\HARDWARE\FLASH\flash.h
 ..\obj\flash.o: ..\USER\stm32f4xx.h
 ..\obj\flash.o: ..\CORE\core_cm4.h
-..\obj\flash.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdint.h
+..\obj\flash.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdint.h
 ..\obj\flash.o: ..\CORE\core_cmInstr.h
 ..\obj\flash.o: ..\CORE\core_cmFunc.h
 ..\obj\flash.o: ..\CORE\core_cm4_simd.h
@@ -36,12 +36,12 @@
 ..\obj\flash.o: ..\FWLIB\inc\stm32f4xx_dcmi.h
 ..\obj\flash.o: ..\FWLIB\inc\stm32f4xx_fsmc.h
 ..\obj\flash.o: ..\HARDWARE\MAC\mac.h
-..\obj\flash.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdio.h
+..\obj\flash.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\flash.o: ..\SYSTEM\sys\sys.h
 ..\obj\flash.o: ..\HARDWARE\CRC16\crc16.h
-..\obj\flash.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdbool.h
+..\obj\flash.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdbool.h
 ..\obj\flash.o: ..\SYSTEM\usart\usart.h
 ..\obj\flash.o: ..\HARDWARE\LORA\lora.h
 ..\obj\flash.o: ..\SYSTEM\delay\delay.h
 ..\obj\flash.o: ..\HARDWARE\MAC\mac.h
-..\obj\flash.o: G:\MDK5\ARM\ARMCC\Bin\..\include\string.h
+..\obj\flash.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\string.h

@@ -1,11 +1,11 @@
 ..\obj\mb_usart.o: ..\SYSTEM\mb_usart\Mb_usart.c
 ..\obj\mb_usart.o: ..\SYSTEM\mb_usart\Mb_usart.h
-..\obj\mb_usart.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdio.h
+..\obj\mb_usart.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdio.h
 ..\obj\mb_usart.o: ..\USER\stm32f4xx_conf.h
 ..\obj\mb_usart.o: ..\FWLIB\inc\stm32f4xx_adc.h
 ..\obj\mb_usart.o: ..\USER\stm32f4xx.h
 ..\obj\mb_usart.o: ..\CORE\core_cm4.h
-..\obj\mb_usart.o: G:\MDK5\ARM\ARMCC\Bin\..\include\stdint.h
+..\obj\mb_usart.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\stdint.h
 ..\obj\mb_usart.o: ..\CORE\core_cmInstr.h
 ..\obj\mb_usart.o: ..\CORE\core_cmFunc.h
 ..\obj\mb_usart.o: ..\CORE\core_cm4_simd.h
@@ -37,4 +37,4 @@
 ..\obj\mb_usart.o: ..\FWLIB\inc\stm32f4xx_dcmi.h
 ..\obj\mb_usart.o: ..\FWLIB\inc\stm32f4xx_fsmc.h
 ..\obj\mb_usart.o: ..\SYSTEM\sys\sys.h
-..\obj\mb_usart.o: G:\MDK5\ARM\ARMCC\Bin\..\include\string.h
+..\obj\mb_usart.o: C:\apps\Keil\ARM\ARMCC\Bin\..\include\string.h
